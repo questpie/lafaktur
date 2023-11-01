@@ -1,0 +1,11 @@
+{
+  "auth": {
+    "err": {
+      "user-already-exists": "Používateľ už existuje",
+      "please-login-to-continue": "Prosím prihláste sa pre pokračovanie."
+    }
+  },
+  "homepage": {
+    "hello-message": "Získajte viac informácií o aplikácii Create T3, knižniciach, ktoré používa, a o tom, ako ju nasadiť."
+  }
+}

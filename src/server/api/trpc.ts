@@ -11,6 +11,7 @@ import { initTRPC, TRPCError } from "@trpc/server";
 import { type NextRequest } from "next/server";
 import superjson from "superjson";
 import { ZodError } from "zod";
+import { $t } from "~/i18n/dummy";
 
 import { getServerAuthSession } from "~/server/auth";
 import { db } from "~/server/db";
@@ -109,7 +110,10 @@ export const publicProcedure = t.procedure;
 /** Reusable middleware that enforces users are logged in before running the procedure. */
 const enforceUserIsAuthed = t.middleware(({ ctx, next }) => {
   if (!ctx.session || !ctx.session.user) {
-    throw new TRPCError({ code: "UNAUTHORIZED" });
+    throw new TRPCError({
+      code: "UNAUTHORIZED",
+      message: $t("auth.err.please-login-to-continue"),
+    });
   }
   return next({
     ctx: {

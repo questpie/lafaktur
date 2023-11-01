@@ -3,9 +3,10 @@ import "~/styles/globals.css";
 import { Inter } from "next/font/google";
 import { headers } from "next/headers";
 
-import { TRPCReactProvider } from "~/trpc/react";
-import { cn } from "~/app/_utils/styles-utils";
 import { ThemeProvider } from "~/app/_components/theme/theme-provider";
+import { cn } from "~/app/_utils/styles-utils";
+import { I18nProviderClient } from "~/i18n/client";
+import { TRPCReactProvider } from "~/trpc/react";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -18,27 +19,36 @@ export const metadata = {
   icons: [{ rel: "icon", url: "/favicon.ico" }],
 };
 
+export function generateStaticParams() {
+  return [{ locale: "en" }];
+}
+
 export default function RootLayout({
   children,
+  params: { locale },
 }: {
   children: React.ReactNode;
+  params: { locale: string };
 }) {
   return (
     <html lang="en">
       <body
         className={cn(
-          `bg-background min-h-screen font-sans antialiased`,
+          `min-h-screen bg-background font-sans antialiased`,
           inter.variable,
         )}
       >
-        {" "}
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
           enableSystem
           disableTransitionOnChange
         >
-          <TRPCReactProvider headers={headers()}>{children}</TRPCReactProvider>
+          <I18nProviderClient locale={locale}>
+            <TRPCReactProvider headers={headers()}>
+              {children}
+            </TRPCReactProvider>
+          </I18nProviderClient>
         </ThemeProvider>
       </body>
     </html>

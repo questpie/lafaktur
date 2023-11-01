@@ -1,0 +1,11 @@
+{
+  "auth": {
+    "err": {
+      "user-already-exists": "User already exists",
+      "please-login-to-continue": "Please log in to continue."
+    }
+  },
+  "homepage": {
+    "hello-message": "Learn more about Create T3 App, the libraries it uses, and how to deploy it."
+  }
+}
