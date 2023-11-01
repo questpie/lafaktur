@@ -17,7 +17,7 @@ import { type AdapterAccount } from "next-auth/adapters";
 import {
   INVOICE_STATUS,
   type InvoiceTemplateData,
-} from "~/server/api/modules/invoice-templates/invoice-template-types";
+} from "~/shared/invoice-template/invoice-template-types";
 import { typedJson } from "~/server/db/types/typed-json";
 
 /**
