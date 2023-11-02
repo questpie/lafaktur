@@ -13,9 +13,7 @@ const withBundleAnalyzer = (await import("@next/bundle-analyzer")).default({
 
 /** @type {import("next").NextConfig} */
 const config = {
-  experimental: {
-    typedRoutes: true,
-  },
+  experimental: {},
 };
 
 export default withBundleAnalyzer(withNextIntl(config));

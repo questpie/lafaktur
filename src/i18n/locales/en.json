@@ -2,7 +2,46 @@
   "auth": {
     "err": {
       "user-already-exists": "User already exists",
-      "please-login-to-continue": "Please log in to continue."
+      "please-login-to-continue": "Please log in to continue.",
+      "passwords-dont-match": "Passwords do not match",
+      "name-is-required": "Name is required",
+      "invalid-email": "Invalid email address",
+      "password-too-short": "Password must be at least 8 characters long"
+    },
+    "sign-in": {
+      "title": "Welcome back!",
+      "description": "Enter your email below to sign in to your account!",
+      "email": {
+        "label": "Email",
+        "placeholder": "my@email.com"
+      },
+      "password": {
+        "label": "Password"
+      },
+      "forgot-password": "Forgot password?",
+      "or-create-an-account-here": "Or create an account <link>here</link>.",
+      "submit": "Sign in"
+    },
+    "or-continue-with": "Or continue with",
+    "sign-up": {
+      "title": "Create an account",
+      "description": "Enter your details below to create your account",
+      "name": {
+        "label": "Your name",
+        "placeholder": "John Doe"
+      },
+      "email": {
+        "label": "Email",
+        "placeholder": "joh.doe@mail.com"
+      },
+      "password": {
+        "label": "Password"
+      },
+      "confirm-password": {
+        "label": "Confirm password"
+      },
+      "have-an-account-log-in": "Have an account already? <link>Sign in</link>.",
+      "submit": "Create account"
     }
   },
   "homepage": {

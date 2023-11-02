@@ -2,19 +2,13 @@ import { TRPCError } from "@trpc/server";
 import { hash } from "bcrypt";
 import { randomUUID } from "crypto";
 import { eq } from "drizzle-orm";
-import { z } from "zod";
-import { $t } from "~/tolgee/dummy";
+import { $t } from "~/i18n/dummy";
 import { publicProcedure } from "~/server/api/trpc";
 import { usersTable, type UserInsert } from "~/server/db/schema";
+import { signUpSchema } from "~/shared/auth/auth-schemas";
 
 export const signUpMutation = publicProcedure
-  .input(
-    z.object({
-      email: z.string().email(),
-      password: z.string().min(8),
-      name: z.string().min(1),
-    }),
-  )
+  .input(signUpSchema)
   .mutation(async ({ input, ctx }) => {
     const [existingUser] = await ctx.db
       .select({ id: usersTable.id })

@@ -58,8 +58,12 @@ export const authOptions: NextAuthOptions = {
       return token;
     },
   },
+  pages: {
+    signIn: "/auth/signin",
+    error: "/auth/error",
+    // verifyRequest: "/auth/verify-request",
+  },
   adapter: DrizzleAdapter(db, mysqlTable),
-
   providers: [
     ...(env.GOOGLE_CLIENT_ID && env.GOOGLE_CLIENT_SECRET
       ? [
