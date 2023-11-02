@@ -1,16 +1,15 @@
-// middleware.ts
-import { createI18nMiddleware } from "next-international/middleware";
-import { type NextRequest } from "next/server";
+import createMiddleware from "next-intl/middleware";
+import { ALL_LOCALES, DEFAULT_LOCALE } from "~/i18n/shared";
 
-const I18nMiddleware = createI18nMiddleware({
-  locales: ["en"],
-  defaultLocale: "en",
+export default createMiddleware({
+  // A list of all locales that are supported
+  locales: ALL_LOCALES,
+  // If this locale is matched, pathnames work without a prefix (e.g. `/about`)
+  defaultLocale: DEFAULT_LOCALE,
 });
 
-export function middleware(request: NextRequest) {
-  return I18nMiddleware(request);
-}
-
 export const config = {
-  matcher: ["/((?!api|static|.*\\..*|_next|favicon.ico|robots.txt).*)"],
+  // Skip all paths that should not be internationalized. This example skips
+  // certain folders and all pathnames with a dot (e.g. favicon.ico)
+  matcher: ["/((?!api|_next|_vercel|.*\\..*).*)"],
 };

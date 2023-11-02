@@ -3,7 +3,7 @@ import { hash } from "bcrypt";
 import { randomUUID } from "crypto";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
-import { $t } from "~/i18n/dummy";
+import { $t } from "~/tolgee/dummy";
 import { publicProcedure } from "~/server/api/trpc";
 import { usersTable, type UserInsert } from "~/server/db/schema";
 

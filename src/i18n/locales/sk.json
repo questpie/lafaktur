@@ -6,6 +6,7 @@
     }
   },
   "homepage": {
-    "hello-message": "Získajte viac informácií o aplikácii Create T3, knižniciach, ktoré používa, a o tom, ako ju nasadiť."
+    "hello-message": "Získajte viac informácií o aplikácii Create T3, knižniciach, ktoré používa, a o tom, ako ju nasadiť.",
+    "plural-test": "Janko {count, plural, =0 {nemá ovečku} =1 {má jednu ovcu} few {má # ovce} other {má # oviec}}"
   }
 }

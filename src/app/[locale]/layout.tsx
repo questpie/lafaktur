@@ -3,10 +3,17 @@ import "~/styles/globals.css";
 import { Inter } from "next/font/google";
 import { headers } from "next/headers";
 
+import { notFound } from "next/navigation";
 import { ThemeProvider } from "~/app/_components/theme/theme-provider";
 import { cn } from "~/app/_utils/styles-utils";
-import { I18nProviderClient } from "~/i18n/client";
+import { ALL_LOCALES } from "~/i18n/shared";
 import { TRPCReactProvider } from "~/trpc/react";
+import { setRequestLocale } from "~/i18n/server";
+import {
+  type AbstractIntlMessages,
+  NextIntlClientProvider,
+  useMessages,
+} from "next-intl";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -20,7 +27,7 @@ export const metadata = {
 };
 
 export function generateStaticParams() {
-  return [{ locale: "en" }];
+  return ALL_LOCALES.map((locale) => ({ params: { locale } }));
 }
 
 export default function RootLayout({
@@ -30,6 +37,12 @@ export default function RootLayout({
   children: React.ReactNode;
   params: { locale: string };
 }) {
+  const isValidLocale = ALL_LOCALES.some((cur) => cur === locale);
+  if (!isValidLocale) notFound();
+  setRequestLocale(locale);
+
+  const messages = useMessages();
+
   return (
     <html lang={locale}>
       <body
@@ -38,18 +51,18 @@ export default function RootLayout({
           inter.variable,
         )}
       >
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <I18nProviderClient locale={locale}>
+        <NextIntlClientProvider locale={locale} messages={messages}>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
             <TRPCReactProvider headers={headers()}>
               {children}
             </TRPCReactProvider>
-          </I18nProviderClient>
-        </ThemeProvider>
+          </ThemeProvider>
+        </NextIntlClientProvider>
       </body>
     </html>
   );

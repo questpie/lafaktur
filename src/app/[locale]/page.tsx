@@ -1,12 +1,12 @@
 import Link from "next/link";
-import { getI18n } from "~/i18n/server";
 
-import { getServerAuthSession } from "~/server/auth";
+import { getServerSession } from "next-auth";
+import { getTranslations, setRequestLocale } from "~/i18n/server";
 
-export default async function Home() {
-  const session = await getServerAuthSession();
-
-  const t = await getI18n();
+export default async function Home({ params }: { params: { locale: string } }) {
+  setRequestLocale(params.locale);
+  const session = await getServerSession();
+  const t = await getTranslations();
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c] text-white">
@@ -28,6 +28,9 @@ export default async function Home() {
             target="_blank"
           >
             <h3 className="text-2xl font-bold">Documentation →</h3>
+            <h3 className="text-2xl font-bold">
+              {t("homepage.plural-test", { count: -4 })}
+            </h3>
             <div className="text-lg">{t("homepage.hello-message")}</div>
           </Link>
         </div>
@@ -36,14 +39,14 @@ export default async function Home() {
 
           <div className="flex flex-col items-center justify-center gap-4">
             <p className="text-center text-2xl text-white">
-              {session && <span>Logged in as {session.user?.name}</span>}
+              {/* {session && <span>Logged in as {session.user?.name}</span>} */}
             </p>
-            <Link
+            {/* <Link
               href={session ? "/api/auth/signout" : "/api/auth/signin"}
               className="rounded-full bg-white/10 px-10 py-3 font-semibold no-underline transition hover:bg-white/20"
             >
               {session ? "Sign out" : "Sign in"}
-            </Link>
+            </Link> */}
           </div>
         </div>
       </div>

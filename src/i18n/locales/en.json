@@ -6,6 +6,7 @@
     }
   },
   "homepage": {
-    "hello-message": "Learn more about Create T3 App, the libraries it uses, and how to deploy it."
+    "hello-message": "Learn more about Create T3 App, the libraries it uses, and how to deploy it.",
+    "plural-test": "Janko {count, plural, =0 {doesnt have a sheep} =1 {has one sheep} other {has # sheeps}}"
   }
 }
