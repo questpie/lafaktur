@@ -14,6 +14,7 @@ import {
   NextIntlClientProvider,
   useMessages,
 } from "next-intl";
+import { NextAuthProvider } from "~/app/_components/auth/next-auth-provider";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -58,9 +59,11 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            <TRPCReactProvider headers={headers()}>
-              {children}
-            </TRPCReactProvider>
+            <NextAuthProvider>
+              <TRPCReactProvider headers={headers()}>
+                {children}
+              </TRPCReactProvider>
+            </NextAuthProvider>
           </ThemeProvider>
         </NextIntlClientProvider>
       </body>

@@ -4,14 +4,14 @@ import {
   type DefaultSession,
   type NextAuthOptions,
 } from "next-auth";
-import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
+import GoogleProvider from "next-auth/providers/google";
 
+import { compare } from "bcrypt";
+import { eq } from "drizzle-orm";
 import { env } from "~/env.mjs";
 import { db } from "~/server/db";
 import { mysqlTable, usersTable } from "~/server/db/schema";
-import { eq } from "drizzle-orm";
-import { compare } from "bcrypt";
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
  * object and keep type safety.
@@ -43,12 +43,23 @@ export const authOptions: NextAuthOptions = {
     session: ({ session, user }) => ({
       ...session,
       user: {
-        ...session.user,
         id: user.id,
       },
     }),
+    jwt: ({ token, user }) => {
+      if (user) {
+        return {
+          ...token,
+          user: {
+            id: user.id,
+          },
+        };
+      }
+      return token;
+    },
   },
   adapter: DrizzleAdapter(db, mysqlTable),
+
   providers: [
     ...(env.GOOGLE_CLIENT_ID && env.GOOGLE_CLIENT_SECRET
       ? [
