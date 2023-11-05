@@ -24,13 +24,16 @@ const modifiedAuthOptions = (opts: {
     opts.nextauth.includes("callback") &&
     opts.nextauth.includes("credentials");
 
+  const cookiePrefix = authOptions.useSecureCookies ? "__Secure-" : "";
+  const sessionTokenCookieName = `${cookiePrefix}next-auth.session-token`;
+
   return {
     ...authOptions,
     jwt: {
       ...authOptions.jwt,
       encode: async (params) => {
         if (isCredentialsCallback) {
-          const cookie = cookies().get("next-auth.session-token");
+          const cookie = cookies().get(sessionTokenCookieName);
           if (cookie?.value) return cookie.value;
           else return "";
         }
@@ -63,7 +66,7 @@ const modifiedAuthOptions = (opts: {
             });
 
             opts.cookies.push(
-              `next-auth.session-token=${sessionToken}; Path=/; Expires=${sessionExpiry.toUTCString()}; HttpOnly; SameSite=Lax`,
+              `${sessionTokenCookieName}=${sessionToken}; Path=/; Expires=${sessionExpiry.toUTCString()}; HttpOnly; SameSite=Lax`,
             );
           }
         }
