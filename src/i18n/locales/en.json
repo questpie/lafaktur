@@ -6,7 +6,9 @@
       "passwordsDontMatch": "Passwords do not match",
       "nameIsRequired": "Name is required",
       "invalidEmail": "Invalid email address",
-      "passwordTooShort": "Password must be at least 8 characters long"
+      "passwordTooShort": "Password must be at least 8 characters long",
+      "signInFailed": "Sign in failed.",
+      "pleaseCheckYourCredentials": "Please check your credentials."
     },
     "signIn": {
       "title": "Welcome back!",
@@ -59,10 +61,15 @@
       "invoicesAdd": "Add Invoice",
       "customers": "Customers",
       "customersAll": "All Customers",
-      "customersAdd": "Add Customer\",",
+      "customersAdd": "Add Customer",
       "invoiceTemplates": "Invoice Templates",
       "invoiceTemplatesAll": "All Templates",
       "invoiceTemplatesAdd": "Add Template"
     }
+  },
+  "themeToggle": {
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
   }
 }

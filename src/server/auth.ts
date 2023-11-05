@@ -39,29 +39,28 @@ declare module "next-auth" {
  * @see https://next-auth.js.org/configuration/options
  */
 export const authOptions: NextAuthOptions = {
+  secret: env.NEXTAUTH_SECRET,
+  session: {
+    /**
+     * Force db even with credentials provider
+     */
+    strategy: "database",
+  },
+  useSecureCookies: env.NODE_ENV === "production",
   callbacks: {
-    session: ({ session, user }) => ({
-      ...session,
-      user: {
-        id: user.id,
-      },
-    }),
-    jwt: ({ token, user }) => {
+    session: ({ session, user }) => {
+      console.log("session callvack", session, user);
       if (user) {
-        return {
-          ...token,
-          user: {
-            id: user.id,
-          },
-        };
+        session.user.id = user.id;
       }
-      return token;
+
+      return session;
     },
   },
   pages: {
     signIn: "/auth/signin",
     error: "/auth/error",
-    // verifyRequest: "/auth/verify-request",
+    // verifyRequest: "/auth/verify-request",k
   },
   adapter: DrizzleAdapter(db, mysqlTable),
   providers: [

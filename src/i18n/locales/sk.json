@@ -2,17 +2,75 @@
   "auth": {
     "err": {
       "userAlreadyExists": "Používateľ už existuje",
-      "pleaseLoginToContinue": "Prosím prihláste sa pre pokračovanie."
+      "pleaseLoginToContinue": "Prosím prihláste sa pre pokračovanie.",
+      "invalidEmail": "Neplatná emailová adresa",
+      "nameIsRequired": "Meno je povinné",
+      "passwordTooShort": "Heslo musí mať aspoň 8 znakov",
+      "passwordsDontMatch": "Heslá sa nezhodujú",
+      "signInFailed": "Prihlásenie zlyhalo.",
+      "pleaseCheckYourCredentials": "Skontrolujte, či ste zadali správne údaje."
     },
     "signIn": {
-      "orCreateAnAccountHere": "Alebo si vytvorte účet <link>tu</link>."
+      "orCreateAnAccountHere": "Nemáte ešte účet ? <link>Zaregistrujte sa</link> !",
+      "description": "Zadajte svoje prihlasovacie údaje nižšie a pokračujte do aplikácie.",
+      "email": {
+        "label": "Email",
+        "placeholder": "my@email.com"
+      },
+      "forgotPassword": "Zabudli ste heslo?",
+      "password": {
+        "label": "Heslo"
+      },
+      "submit": "Prihlásiť sa",
+      "title": "Vitaj späť!"
     },
     "signUp": {
-      "haveAnAccountLogIn": "Už máte účet? \n<link>Prihláste sa</link>."
+      "haveAnAccountLogIn": "Už máte účet? \n<link>Prihláste sa</link>.",
+      "confirmPassword": {
+        "label": "Potvrďte heslo"
+      },
+      "description": "Zadajte svoje údaje nižšie a vytvorte si účet",
+      "email": {
+        "label": "Email",
+        "placeholder": "janko.mrkvicka@mail.sk"
+      },
+      "name": {
+        "label": "Tvoje meno",
+        "placeholder": "John Doe"
+      },
+      "password": {
+        "label": "Heslo"
+      },
+      "submit": "Vytvoriť účet",
+      "title": "Vytvoriť účet"
+    },
+    "orContinueWith": "Alebo pokračujte s"
+  },
+  "homepage": {},
+  "dashboard": {
+    "header": {
+      "options": "Možnosti"
+    },
+    "searchbar": {
+      "button": "Vyhľadávanie",
+      "placeholder": "Vyhľadávanie"
+    },
+    "sidebar": {
+      "customers": "Zákazníci",
+      "customersAdd": "Pridať zákazníka",
+      "customersAll": "Všetci zákazníci",
+      "invoiceTemplates": "Šablóny faktúr",
+      "invoiceTemplatesAdd": "Pridať šablónu",
+      "invoiceTemplatesAll": "Všetky šablóny",
+      "invoices": "Faktúry",
+      "invoicesAdd": "Pridať faktúru",
+      "invoicesAll": "Všetky faktúry",
+      "overview": "Prehľad"
     }
   },
-  "homepage": {
-    "hello-message": "Získajte viac informácií o aplikácii Create T3, knižniciach, ktoré používa, a o tom, ako ju nasadiť.",
-    "plural-test": "Janko {count, plural, =0 {nemá ovečku} =1 {má jednu ovcu} few {má # ovce} other {má # oviec}}"
+  "themeToggle": {
+    "dark": "Tmavý režim",
+    "light": "Svetlý režim",
+    "system": "Podľa systému"
   }
 }

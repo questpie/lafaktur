@@ -51,12 +51,18 @@ export default function SignUpPage() {
     console.log(data);
     try {
       await signUpMutation.mutateAsync(data);
-      await signIn(
-        "credentials",
-        { redirect: false },
-        { email: data.email, password: data.password },
-      );
-      router.replace("/dashboard");
+      const signInResp = await signIn("credentials", {
+        redirect: false,
+        email: data.email,
+        password: data.password,
+      });
+      if (signInResp?.ok) {
+        return router.replace("/dashboard");
+      }
+      /**
+       * Something failed while signing in, we should redirect to sign in page
+       */
+      router.replace("/auth/sign-in");
     } catch (err) {
       if (!isTrpcError(err)) throw err;
       tryToSetFormError(err, form, t);
@@ -163,7 +169,7 @@ export default function SignUpPage() {
                 <span className="w-full border-t" />
               </div>
               <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-background px-2 text-muted-foreground">
+                <span className="bg-card px-2 text-muted-foreground">
                   {t("auth.orContinueWith")}
                 </span>
               </div>

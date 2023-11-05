@@ -1,8 +1,7 @@
 import { type Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Authentication",
-  description: "Authentication forms built using the components.",
+  title: "Sign In | Lafaktur",
 };
 
 export type AuthLayout = {

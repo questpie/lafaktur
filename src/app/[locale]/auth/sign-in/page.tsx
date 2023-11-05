@@ -6,7 +6,13 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { FaGithub, FaGoogle } from "react-icons/fa";
+import { LuAlertTriangle } from "react-icons/lu";
 import { type z } from "zod";
+import {
+  Alert,
+  AlertDescription,
+  AlertTitle,
+} from "~/app/_components/ui/alert";
 import { Button } from "~/app/_components/ui/button";
 import {
   Card,
@@ -42,16 +48,20 @@ export default function SignInPage() {
   const router = useRouter();
 
   const handleSubmit = form.handleSubmit(async (data) => {
-    try {
-      await signIn("credentials", {
-        redirect: false,
-        email: data.email,
-        password: data.password,
-      });
-      router.replace("/dashboard");
-    } catch (err) {
-      // TODO: handle error
+    const signInResp = await signIn("credentials", {
+      redirect: false,
+      email: data.email,
+      password: data.password,
+    });
+    if (signInResp?.ok) {
+      return router.replace("/dashboard");
     }
+
+    // This error is for CredentialsSignin, TODO: handle other errors
+    form.setError("root", {
+      type: "manual",
+      message: t("auth.err.pleaseCheckYourCredentials"),
+    });
   });
 
   return (
@@ -63,6 +73,16 @@ export default function SignInPage() {
             <CardDescription>{t("auth.signIn.description")}</CardDescription>
           </CardHeader>
           <CardContent className="grid gap-4">
+            {form.formState.errors.root && (
+              <Alert variant="destructive">
+                <LuAlertTriangle className="h-4 w-4" />
+                <AlertTitle>{t("auth.err.signInFailed")}</AlertTitle>
+                <AlertDescription>
+                  {form.formState.errors.root.message}
+                </AlertDescription>
+              </Alert>
+            )}
+
             <div className="grid gap-2">
               <FormField
                 control={form.control}
@@ -112,7 +132,7 @@ export default function SignInPage() {
                 <span className="w-full border-t" />
               </div>
               <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-background px-2 text-muted-foreground">
+                <span className="bg-card px-2 text-muted-foreground">
                   {t("auth.orContinueWith")}
                 </span>
               </div>

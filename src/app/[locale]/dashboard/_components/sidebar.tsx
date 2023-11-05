@@ -4,6 +4,7 @@ import { usePathname } from "next-intl/client";
 import Link from "next/link";
 import { useState } from "react";
 import {
+  LuBookTemplate,
   LuCat,
   LuChevronDown,
   LuChevronUp,
@@ -80,7 +81,7 @@ const sidebarItems: SidebarItem[] = [
   },
   {
     name: $t("dashboard.sidebar.invoiceTemplates"),
-    icon: <LuCat />,
+    icon: <LuBookTemplate />,
     children: [
       {
         name: $t("dashboard.sidebar.invoiceTemplatesAll"),

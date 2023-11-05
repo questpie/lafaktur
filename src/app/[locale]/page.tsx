@@ -1,10 +1,12 @@
-import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { setRequestLocale } from "~/i18n/server";
+import { getServerAuthSession } from "~/server/auth";
 
 export default async function Home({ params }: { params: { locale: string } }) {
   setRequestLocale(params.locale);
-  const session = await getServerSession();
+  const session = await getServerAuthSession();
+
+  console.log("session", session);
 
   if (!session) {
     return redirect("/auth/sign-in");

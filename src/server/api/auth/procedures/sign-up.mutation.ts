@@ -1,38 +1,72 @@
 import { TRPCError } from "@trpc/server";
 import { hash } from "bcrypt";
 import { randomUUID } from "crypto";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { $t } from "~/i18n/dummy";
 import { publicProcedure } from "~/server/api/trpc";
-import { usersTable, type UserInsert } from "~/server/db/schema";
+import { accountsTable, usersTable, type UserInsert } from "~/server/db/schema";
 import { signUpSchema } from "~/shared/auth/auth-schemas";
 
 export const signUpMutation = publicProcedure
   .input(signUpSchema)
   .mutation(async ({ input, ctx }) => {
-    const [existingUser] = await ctx.db
-      .select({ id: usersTable.id })
-      .from(usersTable)
-      .where(eq(usersTable.email, input.email));
+    return ctx.db.transaction(async (trx) => {
+      const [existingUser] = await trx
+        .select({ id: usersTable.id })
+        .from(usersTable)
+        .where(eq(usersTable.email, input.email));
 
-    if (existingUser) {
-      throw new TRPCError({
-        code: "BAD_REQUEST",
-        message: $t("auth.err.userAlreadyExists"),
+      if (existingUser) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: $t("auth.err.userAlreadyExists"),
+        });
+      }
+
+      const hashedPassword = await hash(input.password, 12);
+      const payload: UserInsert = {
+        email: input.email,
+        id: randomUUID(),
+        name: input.name,
+        password: hashedPassword,
+      };
+
+      await trx.insert(usersTable).values(payload);
+      const createdUser = await trx.query.usersTable.findFirst({
+        where: () => eq(usersTable.id, payload.id),
       });
-    }
 
-    const hashedPassword = await hash(input.password, 12);
-    const payload: UserInsert = {
-      email: input.email,
-      id: randomUUID(),
-      name: input.name,
-      password: hashedPassword,
-    };
+      if (!createdUser) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Could not create user",
+        });
+      }
 
-    await ctx.db.insert(usersTable).values(payload);
+      await trx.insert(accountsTable).values({
+        userId: createdUser.id,
+        type: "credentials",
+        provider: "credentials",
+        providerAccountId: createdUser.id,
+      });
 
-    return {
-      id: payload.id,
-    };
+      const createdAccount = await trx.query.accountsTable.findFirst({
+        where: () =>
+          and(
+            eq(accountsTable.userId, createdUser.id),
+            eq(accountsTable.provider, "credentials"),
+          ),
+      });
+
+      if (!createdAccount) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Could not create account",
+        });
+      }
+
+      return {
+        id: payload.id,
+      };
+    });
   });

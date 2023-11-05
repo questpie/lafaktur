@@ -1,10 +1,22 @@
 "use client";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import { type PropsWithChildren } from "react";
 import { Header } from "~/app/[locale]/dashboard/_components/header";
 import Navbar from "~/app/[locale]/dashboard/_components/navbar";
 import { Sidebar } from "~/app/[locale]/dashboard/_components/sidebar";
 
 export default function DashboardLayout(props: PropsWithChildren) {
+  const session = useSession();
+  const router = useRouter();
+
+  if (session.status === "loading") return null;
+
+  if (session.status === "unauthenticated") {
+    router.replace("/auth/sign-in");
+    return null;
+  }
+
   return (
     <div className="mx-auto flex h-full min-h-screen w-full max-w-screen-2xl flex-row border-e border-s">
       <Sidebar />
