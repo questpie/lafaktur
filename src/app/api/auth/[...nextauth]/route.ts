@@ -18,11 +18,6 @@ const modifiedAuthOptions = (
   req: NextRequest,
   cookieStore: string[],
 ): typeof authOptions => {
-  console.log(
-    req.nextUrl?.pathname,
-    req.nextUrl.pathname === "/api/auth/callback/credentials",
-    req.method === "POST",
-  );
   return {
     ...authOptions,
     jwt: {
@@ -33,8 +28,6 @@ const modifiedAuthOptions = (
           req.method === "POST"
         ) {
           const cookie = cookies().get("next-auth.session-token");
-          console.log(cookie?.name);
-
           if (cookie?.value) return cookie.value;
           else return "";
         }
@@ -60,21 +53,17 @@ const modifiedAuthOptions = (
           req.nextUrl?.pathname === "/api/auth/callback/credentials" &&
           req.method === "POST"
         ) {
-          console.log("sign in", user);
           if (user) {
             const sessionToken = generateSessionToken();
             const sessionExpiry = fromDate(
               authOptions.session?.maxAge ?? 2592000 /* 30 days */,
             );
 
-            const createdSession = await authOptions.adapter!.createSession!({
+            await authOptions.adapter!.createSession!({
               sessionToken: sessionToken,
               userId: user.id,
               expires: sessionExpiry,
             });
-
-            console.log("session", createdSession);
-            console.log("sessionToken", sessionToken);
 
             cookieStore.push(
               `next-auth.session-token=${sessionToken}; Path=/; Expires=${sessionExpiry.toUTCString()}; HttpOnly; SameSite=Lax`,

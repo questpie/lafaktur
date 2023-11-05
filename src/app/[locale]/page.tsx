@@ -6,8 +6,6 @@ export default async function Home({ params }: { params: { locale: string } }) {
   setRequestLocale(params.locale);
   const session = await getServerAuthSession();
 
-  console.log("session", session);
-
   if (!session) {
     return redirect("/auth/sign-in");
   }

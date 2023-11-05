@@ -48,7 +48,6 @@ export default function SignUpPage() {
   const signUpMutation = api.auth.signUp.useMutation({});
 
   const handleSubmit = form.handleSubmit(async (data) => {
-    console.log(data);
     try {
       await signUpMutation.mutateAsync(data);
       const signInResp = await signIn("credentials", {

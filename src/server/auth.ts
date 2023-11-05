@@ -49,7 +49,6 @@ export const authOptions: NextAuthOptions = {
   useSecureCookies: env.NODE_ENV === "production",
   callbacks: {
     session: ({ session, user }) => {
-      console.log("session callvack", session, user);
       if (user) {
         session.user.id = user.id;
       }
