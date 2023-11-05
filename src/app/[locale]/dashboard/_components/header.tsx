@@ -65,7 +65,7 @@ export function Header() {
   const t = useTranslations("dashboard.header");
 
   useEffect(() => {
-    document.title = headerData.title;
+    document.title = `${headerData.title} | lafaktur`;
     document
       .querySelector('meta[name="description"]')
       ?.setAttribute("content", headerData.description ?? "");
