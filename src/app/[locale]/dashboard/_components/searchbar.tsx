@@ -12,10 +12,11 @@ export function SearchBar() {
         variant="filled"
         className={{ wrapper: "w-full rounded-e-none  " }}
         before={<LuSearch />}
-        placeholder={t("placeholder")}
+        placeholder={"Search"}
       />
       <Button variant="default" className="rounded-s-none">
-        {t("button")}
+        <LuSearch className="inline md:hidden" />
+        <span className="hidden md:inline">{t("button")}</span>
       </Button>
     </div>
   );

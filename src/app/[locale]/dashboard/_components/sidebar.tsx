@@ -1,12 +1,12 @@
 "use client";
+import { atom, useAtom } from "jotai";
 import { useTranslations } from "next-intl";
 import { usePathname } from "next-intl/client";
-import Link from "next/link";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import {
   LuBookTemplate,
-  LuCat,
   LuChevronDown,
+  LuChevronLeft,
   LuChevronUp,
   LuLayoutDashboard,
   LuList,
@@ -14,7 +14,8 @@ import {
   LuPlus,
   LuUser2,
 } from "react-icons/lu";
-import { Button } from "~/app/_components/ui/button";
+import { SearchBar } from "~/app/[locale]/dashboard/_components/searchbar";
+import { Button, LinkButton } from "~/app/_components/ui/button";
 import {
   Collapsible,
   CollapsibleContent,
@@ -24,6 +25,17 @@ import { cn } from "~/app/_utils/styles-utils";
 import { $t } from "~/i18n/dummy";
 
 type SidebarProps = React.HTMLAttributes<HTMLDivElement>;
+
+const sidebarAtom = atom<boolean>(false);
+
+export function useSidebarControl() {
+  const [isOpen, setIsOpen] = useAtom(sidebarAtom);
+  return {
+    isOpen,
+    setIsOpen,
+    toggle: useCallback(() => setIsOpen((prev) => !prev), [setIsOpen]),
+  };
+}
 
 export type SidebarItem = {
   name: string;
@@ -54,12 +66,12 @@ const sidebarItems: SidebarItem[] = [
       {
         icon: <LuList />,
         name: $t("dashboard.sidebar.invoicesAll"),
-        href: "/dashboard/invoice",
+        href: "/dashboard/invoices",
       },
       {
         icon: <LuPlus />,
         name: $t("dashboard.sidebar.invoicesAdd"),
-        href: "/dashboard/invoice/add",
+        href: "/dashboard/invoices/add",
       },
     ],
   },
@@ -98,17 +110,36 @@ const sidebarItems: SidebarItem[] = [
 ];
 
 export function Sidebar({ className, ...props }: SidebarProps) {
+  const { isOpen, setIsOpen } = useSidebarControl();
+
   return (
     <div
       className={cn(
-        "flex min-h-screen w-[300px] flex-col gap-6 border-e px-2 py-6",
+        "fixed z-50 flex min-h-screen w-screen translate-x-0 flex-col gap-6 overflow-hidden border-e bg-background px-2 py-6 transition-transform md:relative md:w-[300px]",
+        { ["-translate-x-[100%] md:translate-x-0"]: !isOpen },
         className,
       )}
       {...props}
     >
-      <h2 className="px-4 text-xl font-bold tracking-tight">
-        <span className="text-primary">la</span> <span>faktur</span>
-      </h2>
+      <div className="flex flex-row justify-between gap-2">
+        <h2 className="px-4 text-xl font-bold tracking-tight">
+          <span className="text-primary">la</span>
+          <span>faktur</span>
+        </h2>
+        <Button
+          variant="outline"
+          size="iconSm"
+          className="md:hidden"
+          onClick={() => setIsOpen(false)}
+        >
+          <LuChevronLeft />
+        </Button>
+      </div>
+
+      <div className="block md:hidden">
+        <SearchBar />
+      </div>
+
       <div className="flex flex-col gap-3">
         {sidebarItems.map((item, i) => {
           return <SidebarListItem key={i} item={item} />;
@@ -127,22 +158,22 @@ export function SidebarListItem({ item }: SidebarListItemProps) {
   const isChildActive = !!item.children?.some((child) =>
     pathname.startsWith(child.href!),
   );
-  const isActive = !!item.href && pathname.startsWith(item.href);
+  const [isOpen, setIsOpen] = useState<boolean>(isChildActive);
 
-  const [isOpen, setIsOpen] = useState<boolean>(isChildActive || isActive);
+  const { setIsOpen: setSidebarOpen } = useSidebarControl();
 
   const t = useTranslations();
   if (item.href && !item.children) {
+    const isActive = item.href === pathname;
     return (
-      <Button
+      <LinkButton
         variant={isActive ? "secondary" : "ghost"}
         className="w-full justify-start gap-4"
-        asChild
+        href={item.href}
+        onClick={() => setSidebarOpen(false)}
       >
-        <Link href={item.href}>
-          {item.icon} {t(item.name as any)}
-        </Link>
-      </Button>
+        {item.icon} {t(item.name as any)}
+      </LinkButton>
     );
   }
 
@@ -158,14 +189,17 @@ export function SidebarListItem({ item }: SidebarListItemProps) {
       </CollapsibleTrigger>
       <CollapsibleContent className="ml-4 flex flex-col gap-2">
         {item.children?.map((child, i) => {
+          const isActive = child.href === pathname;
           return (
-            <Button
+            <LinkButton
               key={i}
               variant={isActive ? "secondary" : "ghost"}
               className="justify-start gap-4"
+              href={child.href}
+              onClick={() => setSidebarOpen(false)}
             >
               {child.icon} {t(child.name as any)}
-            </Button>
+            </LinkButton>
           );
         })}
       </CollapsibleContent>

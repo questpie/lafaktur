@@ -95,9 +95,11 @@ const LinkButton = React.forwardRef<
     return <Button ref={ref} {...props} />;
   }
 
-  <Button asChild ref={ref} {...props}>
-    <Link href={href}>{props.children}</Link>
-  </Button>;
+  return (
+    <Button asChild ref={ref} {...props}>
+      <Link href={href}>{props.children}</Link>
+    </Button>
+  );
 });
 
 LinkButton.displayName = "LinkButton";

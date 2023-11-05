@@ -30,8 +30,8 @@ export default function DashboardPage() {
   });
 
   return (
-    <div className=" grid h-full w-full  grid-cols-12 grid-rows-6 gap-6">
-      <Card className="col-span-4 row-span-4">
+    <div className=" grid h-full w-full grid-rows-6 gap-6 md:grid-cols-12">
+      <Card className="col-span-12 md:col-span-4 md:row-span-4">
         <CardHeader>
           <CardTitle>Karta</CardTitle>
         </CardHeader>
@@ -54,7 +54,7 @@ export default function DashboardPage() {
           </CardDescription>
         </CardContent>
       </Card>
-      <Card className="col-span-8 row-span-2">
+      <Card className="col-span-12 md:col-span-8 md:row-span-2">
         <CardHeader>
           <CardTitle>Karta</CardTitle>
         </CardHeader>
@@ -77,7 +77,7 @@ export default function DashboardPage() {
           </CardDescription>
         </CardContent>
       </Card>
-      <Card className="col-span-8 row-span-2">
+      <Card className="col-span-12 md:col-span-8 md:row-span-2">
         <CardHeader>
           <CardTitle>Karta</CardTitle>
         </CardHeader>
