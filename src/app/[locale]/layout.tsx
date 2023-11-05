@@ -3,18 +3,14 @@ import "~/styles/globals.css";
 import { Inter } from "next/font/google";
 import { headers } from "next/headers";
 
+import { NextIntlClientProvider, useMessages } from "next-intl";
 import { notFound } from "next/navigation";
+import { NextAuthProvider } from "~/app/_components/auth/next-auth-provider";
 import { ThemeProvider } from "~/app/_components/theme/theme-provider";
 import { cn } from "~/app/_utils/styles-utils";
+import { setRequestLocale } from "~/i18n/server";
 import { ALL_LOCALES } from "~/i18n/shared";
 import { TRPCReactProvider } from "~/trpc/react";
-import { setRequestLocale } from "~/i18n/server";
-import {
-  type AbstractIntlMessages,
-  NextIntlClientProvider,
-  useMessages,
-} from "next-intl";
-import { NextAuthProvider } from "~/app/_components/auth/next-auth-provider";
 
 const inter = Inter({
   subsets: ["latin"],
