@@ -1,5 +1,6 @@
 import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
+import Link from "next/link";
 import * as React from "react";
 
 import { Spinner } from "~/app/_components/ui/spinner";
@@ -86,4 +87,18 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 );
 Button.displayName = "Button";
 
-export { Button, buttonVariants };
+const LinkButton = React.forwardRef<
+  HTMLButtonElement,
+  Omit<ButtonProps, "asChild"> & { href?: string }
+>(({ href, ...props }, ref) => {
+  if (!href) {
+    return <Button ref={ref} {...props} />;
+  }
+
+  <Button asChild ref={ref} {...props}>
+    <Link href={href}>{props.children}</Link>
+  </Button>;
+});
+
+LinkButton.displayName = "LinkButton";
+export { Button, buttonVariants, LinkButton };

@@ -1,14 +1,14 @@
 {
   "auth": {
     "err": {
-      "user-already-exists": "User already exists",
-      "please-login-to-continue": "Please log in to continue.",
-      "passwords-dont-match": "Passwords do not match",
-      "name-is-required": "Name is required",
-      "invalid-email": "Invalid email address",
-      "password-too-short": "Password must be at least 8 characters long"
+      "userAlreadyExists": "User already exists",
+      "pleaseLoginToContinue": "Please log in to continue.",
+      "passwordsDontMatch": "Passwords do not match",
+      "nameIsRequired": "Name is required",
+      "invalidEmail": "Invalid email address",
+      "passwordTooShort": "Password must be at least 8 characters long"
     },
-    "sign-in": {
+    "signIn": {
       "title": "Welcome back!",
       "description": "Enter your email below to sign in to your account!",
       "email": {
@@ -18,12 +18,12 @@
       "password": {
         "label": "Password"
       },
-      "forgot-password": "Forgot password?",
-      "or-create-an-account-here": "Or create an account <link>here</link>.",
+      "forgotPassword": "Forgot password?",
+      "orCreateAnAccountHere": "Or create an account <link>here</link>.",
       "submit": "Sign in"
     },
-    "or-continue-with": "Or continue with",
-    "sign-up": {
+    "orContinueWith": "Or continue with",
+    "signUp": {
       "title": "Create an account",
       "description": "Enter your details below to create your account",
       "name": {
@@ -37,15 +37,32 @@
       "password": {
         "label": "Password"
       },
-      "confirm-password": {
+      "confirmPassword": {
         "label": "Confirm password"
       },
-      "have-an-account-log-in": "Have an account already? <link>Sign in</link>.",
+      "haveAnAccountLogIn": "Have an account already? <link>Sign in</link>.",
       "submit": "Create account"
     }
   },
-  "homepage": {
-    "hello-message": "Learn more about Create T3 App, the libraries it uses, and how to deploy it.",
-    "plural-test": "Janko {count, plural, =0 {doesnt have a sheep} =1 {has one sheep} other {has # sheeps}}"
+  "dashboard": {
+    "searchbar": {
+      "placeholder": "Search",
+      "button": "Search"
+    },
+    "header": {
+      "options": "Options"
+    },
+    "sidebar": {
+      "overview": "Overview",
+      "invoicesAll": "All Invoices",
+      "invoices": "Invoices",
+      "invoicesAdd": "Add Invoice",
+      "customers": "Customers",
+      "customersAll": "All Customers",
+      "customersAdd": "Add Customer\",",
+      "invoiceTemplates": "Invoice Templates",
+      "invoiceTemplatesAll": "All Templates",
+      "invoiceTemplatesAdd": "Add Template"
+    }
   }
 }

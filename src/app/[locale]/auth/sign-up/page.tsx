@@ -72,10 +72,8 @@ export default function SignUpPage() {
       <form onSubmit={handleSubmit}>
         <Card>
           <CardHeader className="space-y-1">
-            <CardTitle className="text-2xl">
-              {t("auth.sign-up.title")}
-            </CardTitle>
-            <CardDescription>{t("auth.sign-up.description")}</CardDescription>
+            <CardTitle className="text-2xl">{t("auth.signUp.title")}</CardTitle>
+            <CardDescription>{t("auth.signUp.description")}</CardDescription>
           </CardHeader>
           <CardContent className="grid gap-4">
             <div className="grid gap-2">
@@ -84,12 +82,12 @@ export default function SignUpPage() {
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{t("auth.sign-up.name.label")}</FormLabel>
+                    <FormLabel>{t("auth.signUp.name.label")}</FormLabel>
                     <FormControl>
                       <Input
                         {...field}
                         type="text"
-                        placeholder={t("auth.sign-up.name.placeholder")}
+                        placeholder={t("auth.signUp.name.placeholder")}
                       />
                     </FormControl>
                     <FormDescription />
@@ -104,12 +102,12 @@ export default function SignUpPage() {
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{t("auth.sign-up.email.label")}</FormLabel>
+                    <FormLabel>{t("auth.signUp.email.label")}</FormLabel>
                     <FormControl>
                       <Input
                         {...field}
                         type="email"
-                        placeholder={t("auth.sign-up.email.placeholder")}
+                        placeholder={t("auth.signUp.email.placeholder")}
                       />
                     </FormControl>
                     <FormDescription />
@@ -124,7 +122,7 @@ export default function SignUpPage() {
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{t("auth.sign-up.password.label")}</FormLabel>
+                    <FormLabel>{t("auth.signUp.password.label")}</FormLabel>
                     <FormControl>
                       <Input
                         {...field}
@@ -145,7 +143,7 @@ export default function SignUpPage() {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>
-                      {t("auth.sign-up.confirm-password.label")}
+                      {t("auth.signUp.confirmPassword.label")}
                     </FormLabel>
                     <FormControl>
                       <Input
@@ -166,7 +164,7 @@ export default function SignUpPage() {
               </div>
               <div className="relative flex justify-center text-xs uppercase">
                 <span className="bg-background px-2 text-muted-foreground">
-                  {t("auth.or-continue-with")}
+                  {t("auth.orContinueWith")}
                 </span>
               </div>
             </div>
@@ -188,10 +186,10 @@ export default function SignUpPage() {
               isLoading={form.formState.isSubmitting}
               disabled={form.formState.isSubmitting}
             >
-              {t("auth.sign-up.submit")}
+              {t("auth.signUp.submit")}
             </Button>
             <span className="text-sm text-muted-foreground">
-              {t.rich("auth.sign-up.have-an-account-log-in", {
+              {t.rich("auth.signUp.haveAnAccountLogIn", {
                 link: (c) => (
                   <Link href="/auth/sign-in" className="text-primary">
                     {c}

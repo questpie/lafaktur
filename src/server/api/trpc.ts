@@ -112,7 +112,7 @@ const enforceUserIsAuthed = t.middleware(({ ctx, next }) => {
   if (!ctx.session || !ctx.session.user) {
     throw new TRPCError({
       code: "UNAUTHORIZED",
-      message: $t("auth.err.please-login-to-continue"),
+      message: $t("auth.err.pleaseLoginToContinue"),
     });
   }
   return next({

@@ -59,10 +59,8 @@ export default function SignInPage() {
       <form onSubmit={handleSubmit}>
         <Card>
           <CardHeader className="space-y-1">
-            <CardTitle className="text-2xl">
-              {t("auth.sign-in.title")}
-            </CardTitle>
-            <CardDescription>{t("auth.sign-in.description")}</CardDescription>
+            <CardTitle className="text-2xl">{t("auth.signIn.title")}</CardTitle>
+            <CardDescription>{t("auth.signIn.description")}</CardDescription>
           </CardHeader>
           <CardContent className="grid gap-4">
             <div className="grid gap-2">
@@ -71,12 +69,12 @@ export default function SignInPage() {
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{t("auth.sign-in.email.label")}</FormLabel>
+                    <FormLabel>{t("auth.signIn.email.label")}</FormLabel>
                     <FormControl>
                       <Input
                         {...field}
                         type="email"
-                        placeholder={t("auth.sign-in.email.placeholder")}
+                        placeholder={t("auth.signIn.email.placeholder")}
                       />
                     </FormControl>
                     <FormDescription />
@@ -91,7 +89,7 @@ export default function SignInPage() {
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{t("auth.sign-in.password.label")}</FormLabel>
+                    <FormLabel>{t("auth.signIn.password.label")}</FormLabel>
                     <FormControl>
                       <Input
                         {...field}
@@ -101,7 +99,7 @@ export default function SignInPage() {
                     </FormControl>
                     <FormDescription className="text-right text-xs text-primary">
                       <Link href="/auth/forgot-password">
-                        {t("auth.sign-in.forgot-password")}
+                        {t("auth.signIn.forgotPassword")}
                       </Link>
                     </FormDescription>
                     <FormMessage />
@@ -115,7 +113,7 @@ export default function SignInPage() {
               </div>
               <div className="relative flex justify-center text-xs uppercase">
                 <span className="bg-background px-2 text-muted-foreground">
-                  {t("auth.or-continue-with")}
+                  {t("auth.orContinueWith")}
                 </span>
               </div>
             </div>
@@ -136,10 +134,10 @@ export default function SignInPage() {
               className="w-full"
               isLoading={form.formState.isSubmitting}
             >
-              {t("auth.sign-in.submit")}
+              {t("auth.signIn.submit")}
             </Button>
             <span className="text-sm text-muted-foreground">
-              {t.rich("auth.sign-in.or-create-an-account-here", {
+              {t.rich("auth.signIn.orCreateAnAccountHere", {
                 link: (c) => (
                   <Link href="/auth/sign-up" className="text-primary">
                     {c}

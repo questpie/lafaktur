@@ -1,54 +1,106 @@
-import { useTranslations } from "next-intl";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import React from "react";
-import { api } from "~/trpc/react";
+"use client";
+
+import { LuPlus } from "react-icons/lu";
+import { useHeader } from "~/app/[locale]/dashboard/_components/header";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "~/app/_components/ui/card";
 
 export default function DashboardPage() {
-  const t = useTranslations();
+  useHeader({
+    title: "Dashboard",
+    description:
+      "This is the dashboard. You can see all your overview details here.",
+    mainAction: {
+      label: "Main action",
+      icon: <LuPlus />,
+    },
+    secondaryAction: {
+      label: "Secondary action",
+    },
+    otherActions: [
+      {
+        label: "Other action",
+      },
+    ],
+  });
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c] text-white">
-      <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16 ">
-        <h1 className="text-5xl font-extrabold tracking-tight sm:text-[5rem]">
-          Create <span className="text-[hsl(280,100%,70%)]">T3</span> App
-        </h1>
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8">
-          <Link
-            className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 hover:bg-white/20"
-            href="https://create.t3.gg/en/usage/first-steps"
-            target="_blank"
-          >
-            <h3 className="text-2xl font-bold">First Steps →</h3>
-          </Link>
-          <Link
-            className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 hover:bg-white/20"
-            href="https://create.t3.gg/en/introduction"
-            target="_blank"
-          >
-            <h3 className="text-2xl font-bold">Documentation →</h3>
-            <h3 className="text-2xl font-bold">
-              {t("homepage.plural-test", { count: -4 })}
-            </h3>
-            <div className="text-lg">{t("homepage.hello-message")}</div>
-          </Link>
-        </div>
-        <div className="flex flex-col items-center gap-2">
-          <p className="text-2xl text-white"></p>
-
-          <div className="flex flex-col items-center justify-center gap-4">
-            <p className="text-center text-2xl text-white">
-              {/* {session && <span>Logged in as {session.user?.name}</span>} */}
-            </p>
-            {/* <Link
-              href={session ? "/api/auth/signout" : "/api/auth/signin"}
-              className="rounded-full bg-white/10 px-10 py-3 font-semibold no-underline transition hover:bg-white/20"
-            >
-              {session ? "Sign out" : "Sign in"}
-            </Link> */}
-          </div>
-        </div>
-      </div>
-    </main>
+    <div className=" grid h-full w-full  grid-cols-12 grid-rows-6 gap-6">
+      <Card className="col-span-4 row-span-4">
+        <CardHeader>
+          <CardTitle>Karta</CardTitle>
+        </CardHeader>
+        <CardContent className="pb-4">
+          <CardDescription>
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga quas,
+            beatae maxime necessitatibus reprehenderit quos optio. Illum
+            nostrum, consequatur facere, atque quo, minus fugit non repudiandae
+            consectetur numquam alias harum autem ut quaerat dolores dolorem
+            reiciendis totam provident? Fuga officia quibusdam quia at minima
+            alias ducimus sapiente eius, molestias porro earum itaque voluptatem
+            eaque doloremque suscipit minus id debitis omnis? Deserunt magnam
+            doloremque sint ad! Voluptate sapiente esse officia illum hic
+            officiis molestias eaque, magni iusto! Officia excepturi quos alias,
+            reiciendis maiores a quisquam id autem laborum natus iusto sapiente,
+            quae facilis nesciunt in doloribus aut cum perspiciatis ullam
+            corrupti at blanditiis. Dolorum accusamus nisi ad enim quibusdam
+            numquam consectetur, repellendus autem pariatur quasi inventore
+            sequi asperiores dolorem mollitia molestiae.
+          </CardDescription>
+        </CardContent>
+      </Card>
+      <Card className="col-span-8 row-span-2">
+        <CardHeader>
+          <CardTitle>Karta</CardTitle>
+        </CardHeader>
+        <CardContent className="pb-4">
+          <CardDescription>
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga quas,
+            beatae maxime necessitatibus reprehenderit quos optio. Illum
+            nostrum, consequatur facere, atque quo, minus fugit non repudiandae
+            consectetur numquam alias harum autem ut quaerat dolores dolorem
+            reiciendis totam provident? Fuga officia quibusdam quia at minima
+            alias ducimus sapiente eius, molestias porro earum itaque voluptatem
+            eaque doloremque suscipit minus id debitis omnis? Deserunt magnam
+            doloremque sint ad! Voluptate sapiente esse officia illum hic
+            officiis molestias eaque, magni iusto! Officia excepturi quos alias,
+            reiciendis maiores a quisquam id autem laborum natus iusto sapiente,
+            quae facilis nesciunt in doloribus aut cum perspiciatis ullam
+            corrupti at blanditiis. Dolorum accusamus nisi ad enim quibusdam
+            numquam consectetur, repellendus autem pariatur quasi inventore
+            sequi asperiores dolorem mollitia molestiae.
+          </CardDescription>
+        </CardContent>
+      </Card>
+      <Card className="col-span-8 row-span-2">
+        <CardHeader>
+          <CardTitle>Karta</CardTitle>
+        </CardHeader>
+        <CardContent className="pb-4">
+          <CardDescription>
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga quas,
+            beatae maxime necessitatibus reprehenderit quos optio. Illum
+            nostrum, consequatur facere, atque quo, minus fugit non repudiandae
+            consectetur numquam alias harum autem ut quaerat dolores dolorem
+            reiciendis totam provident? Fuga officia quibusdam quia at minima
+            alias ducimus sapiente eius, molestias porro earum itaque voluptatem
+            eaque doloremque suscipit minus id debitis omnis? Deserunt magnam
+            doloremque sint ad! Voluptate sapiente esse officia illum hic
+            officiis molestias eaque, magni iusto! Officia excepturi quos alias,
+            reiciendis maiores a quisquam id autem laborum natus iusto sapiente,
+            quae facilis nesciunt in doloribus aut cum perspiciatis ullam
+            corrupti at blanditiis. Dolorum accusamus nisi ad enim quibusdam
+            numquam consectetur, repellendus autem pariatur quasi inventore
+            sequi asperiores dolorem mollitia molestiae.
+          </CardDescription>
+        </CardContent>
+      </Card>
+    </div>
   );
 }

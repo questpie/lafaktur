@@ -18,7 +18,7 @@ export const signUpMutation = publicProcedure
     if (existingUser) {
       throw new TRPCError({
         code: "BAD_REQUEST",
-        message: $t("auth.err.user-already-exists"),
+        message: $t("auth.err.userAlreadyExists"),
       });
     }
 

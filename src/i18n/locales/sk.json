@@ -1,14 +1,14 @@
 {
   "auth": {
     "err": {
-      "user-already-exists": "Používateľ už existuje",
-      "please-login-to-continue": "Prosím prihláste sa pre pokračovanie."
+      "userAlreadyExists": "Používateľ už existuje",
+      "pleaseLoginToContinue": "Prosím prihláste sa pre pokračovanie."
     },
-    "sign-in": {
-      "or-create-an-account-here": "Alebo si vytvorte účet <link>tu</link>."
+    "signIn": {
+      "orCreateAnAccountHere": "Alebo si vytvorte účet <link>tu</link>."
     },
-    "sign-up": {
-      "have-an-account-log-in": "Už máte účet? \n<link>Prihláste sa</link>."
+    "signUp": {
+      "haveAnAccountLogIn": "Už máte účet? \n<link>Prihláste sa</link>."
     }
   },
   "homepage": {
