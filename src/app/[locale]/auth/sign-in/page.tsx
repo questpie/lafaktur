@@ -117,12 +117,12 @@ export default function SignInPage() {
                         placeholder="********"
                       />
                     </FormControl>
+                    <FormMessage />
                     <FormDescription className="text-right text-xs text-primary">
                       <Link href="/auth/forgot-password">
                         {t("auth.signIn.forgotPassword")}
                       </Link>
                     </FormDescription>
-                    <FormMessage />
                   </FormItem>
                 )}
               />
