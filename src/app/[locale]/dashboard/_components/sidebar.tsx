@@ -194,7 +194,7 @@ export function SidebarListItem({ item }: SidebarListItemProps) {
             <LinkButton
               key={i}
               variant={isActive ? "secondary" : "ghost"}
-              className="justify-start gap-4"
+              className={cn("justify-start gap-4", i == 0 && "mt-2")}
               href={child.href}
               onClick={() => setSidebarOpen(false)}
             >
