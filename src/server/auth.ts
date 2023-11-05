@@ -46,7 +46,6 @@ export const authOptions: NextAuthOptions = {
      */
     strategy: "database",
   },
-  useSecureCookies: env.NODE_ENV === "production",
   callbacks: {
     session: ({ session, user }) => {
       if (user) {

@@ -14,19 +14,22 @@ function fromDate(time: number, date = Date.now()) {
   return new Date(date + time * 1000);
 }
 
-const modifiedAuthOptions = (
-  req: NextRequest,
-  cookieStore: string[],
-): typeof authOptions => {
+const modifiedAuthOptions = (opts: {
+  method: string;
+  nextauth: string[];
+  cookies: string[];
+}): typeof authOptions => {
+  const isCredentialsCallback =
+    opts.method === "POST" &&
+    opts.nextauth.includes("callback") &&
+    opts.nextauth.includes("credentials");
+
   return {
     ...authOptions,
     jwt: {
       ...authOptions.jwt,
       encode: async (params) => {
-        if (
-          req.nextUrl?.pathname === "/api/auth/callback/credentials" &&
-          req.method === "POST"
-        ) {
+        if (isCredentialsCallback) {
           const cookie = cookies().get("next-auth.session-token");
           if (cookie?.value) return cookie.value;
           else return "";
@@ -35,10 +38,7 @@ const modifiedAuthOptions = (
         return encode(params);
       },
       decode: async (params) => {
-        if (
-          req.nextUrl?.pathname === "/api/auth/callback/credentials" &&
-          req.method === "POST"
-        ) {
+        if (isCredentialsCallback) {
           return null;
         }
 
@@ -49,10 +49,7 @@ const modifiedAuthOptions = (
     callbacks: {
       ...authOptions.callbacks,
       signIn: async ({ user }) => {
-        if (
-          req.nextUrl?.pathname === "/api/auth/callback/credentials" &&
-          req.method === "POST"
-        ) {
+        if (isCredentialsCallback) {
           if (user) {
             const sessionToken = generateSessionToken();
             const sessionExpiry = fromDate(
@@ -65,7 +62,7 @@ const modifiedAuthOptions = (
               expires: sessionExpiry,
             });
 
-            cookieStore.push(
+            opts.cookies.push(
               `next-auth.session-token=${sessionToken}; Path=/; Expires=${sessionExpiry.toUTCString()}; HttpOnly; SameSite=Lax`,
             );
           }
@@ -76,14 +73,20 @@ const modifiedAuthOptions = (
   };
 };
 
-async function handler(req: NextRequest, tmpRes: any) {
-  const cookieStore: string[] = [];
-
+async function handler(
+  req: NextRequest,
+  props: { params: { nextauth: string[] } },
+) {
+  const opts = {
+    method: req.method,
+    nextauth: props.params.nextauth,
+    cookies: [],
+  };
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-assignment
-  const nextAuthHandler = await NextAuth(modifiedAuthOptions(req, cookieStore));
+  const nextAuthHandler = await NextAuth(modifiedAuthOptions(opts));
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
-  const res: NextResponse = await nextAuthHandler(req, tmpRes);
-  for (const [name, value] of Object.entries(cookieStore)) {
+  const res: NextResponse = await nextAuthHandler(req, props);
+  for (const value of opts.cookies) {
     res.headers.set("Set-Cookie", value);
   }
 
