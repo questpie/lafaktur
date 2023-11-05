@@ -106,8 +106,8 @@ export function Sidebar({ className, ...props }: SidebarProps) {
       )}
       {...props}
     >
-      <h2 className="flex flex-col gap-2 px-4 text-xl font-bold tracking-tight">
-        Pet Guide
+      <h2 className="px-4 text-xl font-bold tracking-tight">
+        <span className="text-primary">la</span> <span>faktur</span>
       </h2>
       <div className="flex flex-col gap-3">
         {sidebarItems.map((item, i) => {
