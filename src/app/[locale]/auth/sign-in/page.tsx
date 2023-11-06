@@ -138,11 +138,11 @@ export default function SignInPage() {
               </div>
             </div>
             <div className="grid grid-cols-2 gap-6">
-              <Button variant="outline">
+              <Button variant="outline" type="button">
                 <FaGoogle className="mr-2 h-4 w-4" />
                 Google
               </Button>
-              <Button variant="outline">
+              <Button variant="outline" type="button">
                 <FaGithub className="mr-2 h-4 w-4" />
                 Github
               </Button>
