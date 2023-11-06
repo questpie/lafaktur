@@ -26,7 +26,7 @@ export function tryToSetFormError(
     const fieldErrors = zodError.fieldErrors[field];
 
     !!fieldErrors &&
-      form.setError(`root.${field}`, {
+      form.setError(`${field}`, {
         type: "manual",
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         message: t(fieldErrors.join("\n") as any),

@@ -2,6 +2,7 @@ import { TRPCError } from "@trpc/server";
 import { hash } from "bcrypt";
 import { randomUUID } from "crypto";
 import { and, eq } from "drizzle-orm";
+import { ZodError } from "zod";
 import { $t } from "~/i18n/dummy";
 import { publicProcedure } from "~/server/api/trpc";
 import { accountsTable, usersTable, type UserInsert } from "~/server/db/schema";
@@ -17,10 +18,13 @@ export const signUpMutation = publicProcedure
         .where(eq(usersTable.email, input.email));
 
       if (existingUser) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: $t("auth.err.userAlreadyExists"),
-        });
+        throw new ZodError([
+          {
+            code: "custom",
+            path: ["email"],
+            message: $t("auth.err.userAlreadyExists"),
+          },
+        ]);
       }
 
       const hashedPassword = await hash(input.password, 12);

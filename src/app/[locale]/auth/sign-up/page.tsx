@@ -65,10 +65,6 @@ export default function SignUpPage() {
     } catch (err) {
       if (!isTrpcError(err)) throw err;
       tryToSetFormError(err, form, t);
-      form.setError("email", {
-        type: "manual",
-        message: err.message,
-      });
     }
   });
 
