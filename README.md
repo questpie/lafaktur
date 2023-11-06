@@ -1,6 +1,6 @@
 # Welcome to Lafaktur: The Ultimate Invoice Management Platform
 
-![Powered by T3 Stack](https://create.t3.gg/)
+[Powered by T3 Stack](https://create.t3.gg/)
 
 ## What's Lafaktur?
 
