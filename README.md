@@ -1,7 +1,5 @@
 # Welcome to Lafaktur: The Ultimate Invoice Management Platform
 
-[Powered by T3 Stack](https://create.t3.gg/)
-
 ## What's Lafaktur?
 
 Lafaktur is more than just an invoice management solution—it's a game-changer. Powered by the incredible [T3 Stack](https://create.t3.gg/), it's designed to simplify and enhance your invoicing process like never before.
