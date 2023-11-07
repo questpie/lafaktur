@@ -1,6 +1,6 @@
 ##### DEPENDENCIES
 
-FROM --platform=linux/amd64 node:16-alpine3.17 AS deps
+FROM node:lts-alpine3.17 AS deps
 RUN apk add --no-cache libc6-compat openssl1.1-compat
 WORKDIR /app
 
@@ -12,7 +12,7 @@ RUN yarn global add pnpm && pnpm i
 
 ##### BUILDER
 
-FROM --platform=linux/amd64 node:16-alpine3.17 AS builder
+FROM node:lts-alpine3.17 AS builder
 ARG DATABASE_URL
 # ARG NEXT_PUBLIC_CLIENTVAR
 WORKDIR /app
@@ -26,7 +26,7 @@ RUN yarn global add pnpm && SKIP_ENV_VALIDATION=1 pnpm run build
 
 ##### RUNNER
 
-FROM --platform=linux/amd64 node:16-alpine3.17 AS runner
+FROM node:lts-alpine3.17 AS runner
 WORKDIR /app
 
 ENV NODE_ENV production
