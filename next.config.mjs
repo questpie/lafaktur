@@ -14,6 +14,7 @@ const withBundleAnalyzer = (await import("@next/bundle-analyzer")).default({
 /** @type {import("next").NextConfig} */
 const config = {
   experimental: {},
+  output: "standalone",
 };
 
 export default withBundleAnalyzer(withNextIntl(config));
