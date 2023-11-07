@@ -1,20 +1,18 @@
 ##### DEPENDENCIES
 
-# Use an ARM-based Node image
-FROM --platform=linux/arm64 node:16-alpine3.17 AS deps
+FROM --platform=linux/amd64 node:16-alpine3.17 AS deps
 RUN apk add --no-cache libc6-compat openssl1.1-compat
 WORKDIR /app
 
 # Install dependencies based on the preferred package manager
 
-COPY package.json pnpm-lock.yaml* ./
+COPY package.json pnpm-lock.yaml\* ./
 
 RUN yarn global add pnpm && pnpm i
 
 ##### BUILDER
 
-# Use an ARM-based Node image
-FROM --platform=linux/arm64 node:16-alpine3.17 AS builder
+FROM --platform=linux/amd64 node:16-alpine3.17 AS builder
 ARG DATABASE_URL
 # ARG NEXT_PUBLIC_CLIENTVAR
 WORKDIR /app
@@ -23,12 +21,12 @@ COPY . .
 
 # ENV NEXT_TELEMETRY_DISABLED 1
 
-RUN yarn global add pnpm && SKIP_ENV_VALIDATION=1 pnpm run build
+RUN yarn global add pnpm && SKIP_ENV_VALIDATION=1 pnpm run build;
+
 
 ##### RUNNER
 
-# Use an ARM-based Node image
-FROM --platform=linux/arm64 node:16-alpine3.17 AS runner
+FROM --platform=linux/amd64 node:16-alpine3.17 AS runner
 WORKDIR /app
 
 ENV NODE_ENV production
