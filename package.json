@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "build": "ANALYZE=true SKIP_ENV_VALIDATION=1 next build",
+    "build": "next build",
     "db:push": "dotenv drizzle-kit push:mysql",
     "db:studio": "dotenv drizzle-kit studio",
     "dev": "next dev",

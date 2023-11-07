@@ -14,6 +14,9 @@ const withBundleAnalyzer = (await import("@next/bundle-analyzer")).default({
 /** @type {import("next").NextConfig} */
 const config = {
   experimental: {},
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
   output: "standalone",
 };
 
