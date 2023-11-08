@@ -3,7 +3,7 @@ import React from "react";
 import {
   useBreadcrumbSegment,
   useHeader,
-} from "~/app/[locale]/dashboard/_components/header";
+} from "~/app/[locale]/(main)/dashboard/_components/header";
 
 export default function AddInvoicePage() {
   useHeader({

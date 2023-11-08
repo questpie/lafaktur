@@ -14,7 +14,7 @@ import {
   LuPlus,
   LuUser2,
 } from "react-icons/lu";
-import { SearchBar } from "~/app/[locale]/dashboard/_components/searchbar";
+import { SearchBar } from "~/app/[locale]/(main)/dashboard/_components/searchbar";
 import { Button, LinkButton } from "~/app/_components/ui/button";
 import {
   Collapsible,

@@ -11,6 +11,11 @@ const inputVariants = cva(
         outlined: "border border-input bg-transparent",
         filled: "bg-input",
       },
+      size: {
+        default: "h-9",
+        sm: "h-8 text-xs",
+        lg: "h-10",
+      },
     },
     defaultVariants: {
       variant: "outlined",
@@ -18,7 +23,10 @@ const inputVariants = cva(
   },
 );
 export interface InputProps
-  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "className">,
+  extends Omit<
+      React.InputHTMLAttributes<HTMLInputElement>,
+      "className" | "size"
+    >,
     VariantProps<typeof inputVariants> {
   before?: React.ReactNode;
   after?: React.ReactNode;
@@ -34,7 +42,17 @@ export interface InputProps
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
   (
-    { className, type, before, after, afterOuter, beforeOuter, ...props },
+    {
+      className,
+      type,
+      before,
+      after,
+      afterOuter,
+      beforeOuter,
+      size,
+      variant,
+      ...props
+    },
     ref,
   ) => {
     return (
@@ -43,7 +61,8 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         <div
           className={cn(
             inputVariants({
-              variant: props.variant,
+              variant,
+              size,
               className: cn(
                 props["aria-invalid"] && "border-destructive text-destructive",
                 className?.wrapper,
@@ -59,7 +78,12 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             className={cn(
               "h-full w-full flex-1 bg-transparent px-3 py-1 hover:outline-none focus:outline-none",
               "file:h-full file:cursor-pointer file:rounded-md file:border-none file:border-input file:bg-secondary file:outline-none file:hover:bg-secondary/90",
-              !!before && "pl-9 ",
+              {
+                ["px-3 py-1"]: size === "default",
+                ["px-2 py-1"]: size === "sm",
+                ["px-4 py-2"]: size === "lg",
+              },
+              !!before && "pl-9",
               !!after && "pr-9",
               className?.main,
             )}

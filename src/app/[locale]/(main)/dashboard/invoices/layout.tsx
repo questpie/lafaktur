@@ -1,5 +1,5 @@
 "use client";
-import { useBreadcrumbSegment } from "~/app/[locale]/dashboard/_components/header";
+import { useBreadcrumbSegment } from "~/app/[locale]/(main)/dashboard/_components/header";
 
 export default function InvoiceLayout({
   children,

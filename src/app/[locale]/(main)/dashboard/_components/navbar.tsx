@@ -6,9 +6,9 @@ import {
   HeaderAction,
   useBreadcrumbsData,
   useHeaderData,
-} from "~/app/[locale]/dashboard/_components/header";
-import { SearchBar } from "~/app/[locale]/dashboard/_components/searchbar";
-import { useSidebarControl } from "~/app/[locale]/dashboard/_components/sidebar";
+} from "~/app/[locale]/(main)/dashboard/_components/header";
+import { SearchBar } from "~/app/[locale]/(main)/dashboard/_components/searchbar";
+import { useSidebarControl } from "~/app/[locale]/(main)/dashboard/_components/sidebar";
 import { ThemeToggle } from "~/app/_components/theme/theme-toggle";
 import {
   Avatar,

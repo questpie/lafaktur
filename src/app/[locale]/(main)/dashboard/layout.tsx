@@ -5,9 +5,10 @@ import { type PropsWithChildren } from "react";
 import {
   Header,
   useBreadcrumbSegment,
-} from "~/app/[locale]/dashboard/_components/header";
-import Navbar from "~/app/[locale]/dashboard/_components/navbar";
-import { Sidebar } from "~/app/[locale]/dashboard/_components/sidebar";
+} from "~/app/[locale]/(main)/dashboard/_components/header";
+import Navbar from "~/app/[locale]/(main)/dashboard/_components/navbar";
+import { OrganizationGuard } from "~/app/[locale]/(main)/dashboard/_components/organization-guard";
+import { Sidebar } from "~/app/[locale]/(main)/dashboard/_components/sidebar";
 
 export default function DashboardLayout(props: PropsWithChildren) {
   const session = useSession();
@@ -28,14 +29,16 @@ export default function DashboardLayout(props: PropsWithChildren) {
 
   return (
     <div className="mx-auto flex h-full min-h-screen w-full max-w-screen-2xl flex-row border-e border-s">
-      <Sidebar />
-      <div className="flex w-full flex-col">
-        <Navbar />
-        <div className="flex w-full flex-col gap-6 px-4 py-2 md:px-8 md:py-3">
-          <Header />
-          {props.children}
+      <OrganizationGuard>
+        <Sidebar />
+        <div className="flex w-full flex-col">
+          <Navbar />
+          <div className="flex w-full flex-col gap-6 px-4 py-2 md:px-8 md:py-3">
+            <Header />
+            {props.children}
+          </div>
         </div>
-      </div>
+      </OrganizationGuard>
     </div>
   );
 }
