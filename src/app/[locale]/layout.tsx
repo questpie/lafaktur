@@ -13,11 +13,7 @@ import { cn } from "~/app/_utils/styles-utils";
 import { setRequestLocale } from "~/i18n/server";
 import { ALL_LOCALES } from "~/i18n/shared";
 import { TRPCReactProvider } from "~/trpc/react";
-
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-sans",
-});
+import { GeistSans } from "geist/font/sans";
 
 export const metadata = {
   title: "lafaktur",
@@ -56,7 +52,7 @@ export default async function RootLayout({
       <body
         className={cn(
           `min-h-screen bg-background font-sans antialiased`,
-          inter.variable,
+          GeistSans.variable,
         )}
       >
         <NextIntlClientProvider locale={locale} messages={messages}>
