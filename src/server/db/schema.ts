@@ -16,7 +16,9 @@ import { createInsertSchema } from "drizzle-zod";
 import { type AdapterAccount } from "next-auth/adapters";
 import { typedJson } from "~/server/db/types/typed-json";
 import {
-  INVOICE_STATUS,
+  DEFAULT_TEMPLATE,
+  invoiceStatusSchema,
+  invoiceTemplateDataSchema,
   type InvoiceTemplateData,
 } from "~/shared/invoice-template/invoice-template-types";
 
@@ -84,7 +86,9 @@ export const invoicesTable = mysqlTable(
     constantSymbol: varchar("constantSymbol", { length: 255 }),
     specificSymbol: varchar("specificSymbol", { length: 255 }),
 
-    status: mysqlEnum("status", INVOICE_STATUS).notNull().default("draft"),
+    status: mysqlEnum("status", invoiceStatusSchema._def.values)
+      .notNull()
+      .default("draft"),
 
     issueDate: timestamp("issueDate").notNull(),
     dueDate: timestamp("dueDate").notNull(),
@@ -133,9 +137,9 @@ export const invoiceTemplatesTable = mysqlTable(
     id: bigint("id").notNull().primaryKey().autoincrement(),
     organizationId: bigint("organizationId").notNull(),
     name: varchar("name", { length: 255 }).notNull(),
-    template: typedJson<InvoiceTemplateData[]>("template")
+    template: typedJson<InvoiceTemplateData>("template")
       .notNull()
-      .default([]),
+      .default(DEFAULT_TEMPLATE),
   },
   (it) => ({
     compoundKey: uniqueIndex("organizationIdNameIdx").on(
@@ -158,7 +162,9 @@ export const invoiceTemplatesRelations = relations(
 export type InvoiceTemplate = typeof invoiceTemplatesTable.$inferSelect;
 export type InvoiceTemplateInsert = typeof invoiceTemplatesTable.$inferInsert;
 
-export const insertInvoiceTemplate = createInsertSchema(invoiceTemplatesTable);
+export const insertInvoiceTemplate = createInsertSchema(invoiceTemplatesTable, {
+  template: invoiceTemplateDataSchema,
+});
 
 export const customersTable = mysqlTable(
   "customer",

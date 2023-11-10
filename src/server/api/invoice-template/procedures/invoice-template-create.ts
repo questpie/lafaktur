@@ -1,10 +1,12 @@
 import { nanoid } from "nanoid";
-import { z } from "zod";
 import { protectedProcedure } from "~/server/api/trpc";
-import { invoiceTemplatesTable } from "~/server/db/schema";
+import {
+  insertInvoiceTemplate,
+  invoiceTemplatesTable,
+} from "~/server/db/schema";
 
 export const invoiceTemplateCreate = protectedProcedure
-  .input(z.object({}))
+  .input(insertInvoiceTemplate)
   .mutation(async ({ ctx, input }) => {
     return ctx.db.transaction(async (trx) => {
       const newInvoiceTemplate = await trx

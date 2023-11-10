@@ -1,6 +1,6 @@
-import { type StringWithAutocomplete } from "~/types/misc-types";
+import { z } from "zod";
 
-export const INVOICE_CURRENCIES = [
+export const invoiceCurrencySchema = z.enum([
   "EUR",
   "USD",
   "GBP",
@@ -35,9 +35,8 @@ export const INVOICE_CURRENCIES = [
   "SAR",
   "MYR",
   "RON",
-] as const;
-
-export const INVOICE_DATE_FORMATS = [
+] as const);
+export const invoiceDateFormatSchema = z.enum([
   "DD.MM.YYYY",
   "DD/MM/YYYY",
   "MM/DD/YYYY",
@@ -45,32 +44,122 @@ export const INVOICE_DATE_FORMATS = [
   "YYYY-MM-DD",
   "YYYY/MM/DD",
   "YYYY.MM.DD",
-] as const;
+] as const);
 
-export type InvoiceCurrency = (typeof INVOICE_CURRENCIES)[number];
-export type InvoiceDateFormat = (typeof INVOICE_DATE_FORMATS)[number];
+export type InvoiceCurrency = z.infer<typeof invoiceCurrencySchema>;
+export type InvoiceDateFormat = z.infer<typeof invoiceDateFormatSchema>;
 
-export type InvoiceTemplateData = {
-  heading?: StringWithAutocomplete<InvoiceValue>;
-  subheading?: StringWithAutocomplete<InvoiceValue>;
-  logo?: string;
+export const unitTypeSchema = z.enum(["hour", "day", "month", "year", "item"]);
+export type UnitType = z.infer<typeof unitTypeSchema>;
 
-  header: SectionDataItem[];
-  customer: SectionDataItem[];
-  seller: SectionDataItem[];
-  legal: SectionDataItem[];
-  items: SectionDataItem[];
-  totals: SectionDataItem[];
+export const invoiceStatusSchema = z.enum([
+  "draft",
+  "sent",
+  "paid",
+  "overdue",
+] as const);
+export type InvoiceStatus = z.infer<typeof invoiceStatusSchema>;
 
-  currency: InvoiceCurrency;
-  dateFormat: InvoiceDateFormat;
-  unitLabels?: Record<UnitType, string>;
-  paymentTypeLabels?: Record<InvoicePaymentType, string>;
+export const invoicePaymentTypeSchema = z.enum([
+  "bank_transfer",
+  "cash",
+  "credit_card",
+  "paypal",
+  "stripe",
+  "other",
+] as const);
+export type InvoicePaymentType = z.infer<typeof invoicePaymentTypeSchema>;
+
+export const invoiceVariableSchema = z.enum([
+  "{{invoice_issue_date}}",
+  "{{invoice_supply_date}}",
+  "{{invoice_date_of_payment}}",
+  "{{invoice_due_date}}",
+  "{{invoice_status}}",
+  "{{invoice_payment_type}}",
+  "{{invoice_number}}",
+  "{{invoice_reference}}",
+  "{{invoice_variable_symbol}}",
+  "{{invoice_constant_symbol}}",
+  "{{invoice_specific_symbol}}",
+  "{{invoice_item_name}}",
+  "{{invoice_item_quantity}}",
+  "{{invoice_item_unit}}",
+  "{{invoice_item_unit_price}}",
+  "{{invoice_item_unit_price_without_vat}}",
+  "{{invoice_item_total}}",
+  "{{invoice_item_total_without_vat}}",
+  "{{invoice_total}}",
+  "{{invoice_total_without_vat}}",
+  "{{invoice_vat}}",
+  "{{invoice_vat_rate}}",
+  "{{invoice_currency}}",
+  "{{invoice_customer_name}}",
+  "{{invoice_customer_address}}",
+  "{{invoice_customer_city}}",
+  "{{invoice_customer_zip}}",
+  "{{invoice_customer_country}}",
+  "{{invoice_customer_phone}}",
+  "{{invoice_customer_email}}",
+  "{{invoice_customer_business_id}}",
+  "{{invoice_customer_tax_id}}",
+  "{{invoice_customer_vat_id}}",
+  "{{invoice_customer_bank_account}}",
+  "{{invoice_customer_bank_code}}",
+  "{{invoice_seller_name}}",
+  "{{invoice_seller_address}}",
+  "{{invoice_seller_city}}",
+  "{{invoice_seller_zip}}",
+  "{{invoice_seller_country}}",
+  "{{invoice_seller_phone}}",
+  "{{invoice_seller_email}}",
+  "{{invoice_seller_business_id}}",
+  "{{invoice_seller_tax_id}}",
+  "{{invoice_seller_vat_id}}",
+  "{{invoice_seller_bank_account}}",
+  "{{invoice_seller_bank_code}}",
+] as const);
+
+export type InvoiceVariable = z.infer<typeof invoiceVariableSchema>;
+
+export const invoiceValueSchema = z
+  .string()
+  .or(invoiceVariableSchema)
+  .or(z.number())
+  .or(z.date());
+
+export type InvoiceValue = z.infer<typeof invoiceValueSchema>;
+
+export const invoiceTemplateSectionSchema = z.object({
+  id: z.string(),
+  label: invoiceValueSchema.optional(),
+  value: invoiceValueSchema.or(z.array(invoiceValueSchema)),
+});
+export type InvoiceTemplateSection = z.infer<
+  typeof invoiceTemplateSectionSchema
+>;
+
+export const invoiceTemplateDataSchema = z.object({
+  heading: invoiceValueSchema.optional(),
+  subheading: invoiceValueSchema.optional(),
+  logo: z.string().optional(),
+  header: z.array(invoiceTemplateSectionSchema),
+  customer: z.array(invoiceTemplateSectionSchema),
+  seller: z.array(invoiceTemplateSectionSchema),
+  legal: z.array(invoiceTemplateSectionSchema),
+  items: z.array(invoiceTemplateSectionSchema),
+  totals: z.array(invoiceTemplateSectionSchema),
+  currency: invoiceCurrencySchema.default("EUR"),
+  dateFormat: invoiceDateFormatSchema.default("DD.MM.YYYY"),
+  // unitLabels?: { [key in UnitType]: string };
+  // paymentTypeLabels?: { [key in InvoicePaymentType]: string };
+  unitLabels: z.record(unitTypeSchema, z.string()).optional(),
+  paymentTypeLabels: z.record(invoicePaymentTypeSchema, z.string()).optional(),
 
   /**
    * integer value in range 0 - 100
    */
-  vatRate?: number;
+  vatRate: z.number().int().min(0).max(100).optional(),
   /**
    * If true, we will calculate VAT from price
    * so total = price_with_vat + price_with_vat * vatRate
@@ -80,86 +169,10 @@ export type InvoiceTemplateData = {
    * so total = price
    * @default false
    */
-  vatIncluded?: boolean;
-};
+  vatIncluded: z.boolean().default(false),
+});
 
-export type UnitType = StringWithAutocomplete<
-  "hour" | "day" | "month" | "year" | "item"
->;
-
-export const INVOICE_STATUS = ["draft", "sent", "paid", "overdue"] as const;
-export type InvoiceStatus = (typeof INVOICE_STATUS)[number];
-export type InvoicePaymentType =
-  | "bank_transfer"
-  | "cash"
-  | "credit_card"
-  | "paypal"
-  | "stripe"
-  | "other";
-
-export const INVOICE_VARIABLES = [
-  "invoice_issue_date",
-  "invoice_supply_date",
-  "invoice_date_of_payment",
-  "invoice_due_date",
-  "invoice_status",
-  "invoice_payment_type",
-  "invoice_number",
-  "invoice_reference",
-  "invoice_variable_symbol",
-  "invoice_constant_symbol",
-  "invoice_specific_symbol",
-  "invoice_item_name",
-  "invoice_item_quantity",
-  "invoice_item_unit",
-  "invoice_item_unit_price",
-  "invoice_item_unit_price_without_vat",
-  "invoice_item_total",
-  "invoice_item_total_without_vat",
-  "invoice_total",
-  "invoice_total_without_vat",
-  "invoice_vat",
-  "invoice_vat_rate",
-  "invoice_currency",
-  "invoice_customer_name",
-  "invoice_customer_address",
-  "invoice_customer_city",
-  "invoice_customer_zip",
-  "invoice_customer_country",
-  "invoice_customer_phone",
-  "invoice_customer_email",
-  "invoice_customer_business_id",
-  "invoice_customer_tax_id",
-  "invoice_customer_vat_id",
-  "invoice_customer_bank_account",
-  "invoice_customer_bank_code",
-  "invoice_seller_name",
-  "invoice_seller_address",
-  "invoice_seller_city",
-  "invoice_seller_zip",
-  "invoice_seller_country",
-  "invoice_seller_phone",
-  "invoice_seller_email",
-  "invoice_seller_business_id",
-  "invoice_seller_tax_id",
-  "invoice_seller_vat_id",
-  "invoice_seller_bank_account",
-  "invoice_seller_bank_code",
-] as const;
-
-export type InvoiceVariable = (typeof INVOICE_VARIABLES)[number];
-export type FormatType = "text" | "number" | "date" | "price";
-export type InvoiceValue =
-  | StringWithAutocomplete<`{{${InvoiceVariable}}}`>
-  | number
-  | Date;
-
-export type SectionDataItem = {
-  id: string;
-  format?: FormatType;
-  label?: string;
-  value?: InvoiceValue | InvoiceValue[];
-};
+export type InvoiceTemplateData = z.infer<typeof invoiceTemplateDataSchema>;
 
 export const DEFAULT_TEMPLATE: InvoiceTemplateData = {
   currency: "EUR",
@@ -170,13 +183,11 @@ export const DEFAULT_TEMPLATE: InvoiceTemplateData = {
     {
       id: "invoice_issue_date",
       label: "Date of issue",
-      format: "date",
       value: "{{invoice_issue_date}}",
     },
     {
       id: "invoice_due_date",
       label: "Due date",
-      format: "date",
       value: "{{invoice_due_date}}",
     },
     {
@@ -283,6 +294,7 @@ export const DEFAULT_TEMPLATE: InvoiceTemplateData = {
     {
       id: "invoice_item_total",
       label: "Total",
+      value: "",
     },
   ],
   totals: [
@@ -298,4 +310,5 @@ export const DEFAULT_TEMPLATE: InvoiceTemplateData = {
       value: "Legal",
     },
   ],
+  vatIncluded: false,
 };
