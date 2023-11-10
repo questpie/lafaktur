@@ -9,9 +9,7 @@ import {
   LuChevronLeft,
   LuChevronUp,
   LuLayoutDashboard,
-  LuList,
   LuNewspaper,
-  LuPlus,
   LuUser2,
 } from "react-icons/lu";
 import { SearchBar } from "~/app/[locale]/(main)/dashboard/_components/searchbar";
@@ -62,50 +60,17 @@ const sidebarItems: SidebarItem[] = [
   {
     name: $t("dashboard.sidebar.invoices"),
     icon: <LuNewspaper />,
-    children: [
-      {
-        icon: <LuList />,
-        name: $t("dashboard.sidebar.invoicesAll"),
-        href: "/dashboard/invoices",
-      },
-      {
-        icon: <LuPlus />,
-        name: $t("dashboard.sidebar.invoicesAdd"),
-        href: "/dashboard/invoices/add",
-      },
-    ],
+    href: "/dashboard/invoices",
   },
   {
     name: $t("dashboard.sidebar.customers"),
     icon: <LuUser2 />,
-    children: [
-      {
-        icon: <LuList />,
-        name: $t("dashboard.sidebar.customersAll"),
-        href: "/dashboard/customers",
-      },
-      {
-        icon: <LuPlus />,
-        name: $t("dashboard.sidebar.customersAdd"),
-        href: "/dashboard/customers/add",
-      },
-    ],
+    href: "/dashboard/customers",
   },
   {
     name: $t("dashboard.sidebar.invoiceTemplates"),
     icon: <LuBookTemplate />,
-    children: [
-      {
-        name: $t("dashboard.sidebar.invoiceTemplatesAll"),
-        icon: <LuList />,
-        href: "/dashboard/templates",
-      },
-      {
-        name: $t("dashboard.sidebar.invoiceTemplatesAdd"),
-        icon: <LuPlus />,
-        href: "/dashboard/templates/add",
-      },
-    ],
+    href: "/dashboard/templates",
   },
 ];
 

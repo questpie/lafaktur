@@ -71,5 +71,11 @@
     "light": "Light",
     "dark": "Dark",
     "system": "System"
+  },
+  "invoiceTemplate": {
+    "err": {
+      "notFound": "Invoice Template not found"
+    },
+    "newTemplate": "New Template"
   }
 }

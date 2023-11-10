@@ -12,6 +12,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
 } from "~/app/_components/ui/dropdown-menu";
+import { Spinner } from "~/app/_components/ui/spinner";
 import { cn } from "~/app/_utils/styles-utils";
 
 export type HeaderActionItem<TForceIcon extends boolean = false> = {
@@ -19,6 +20,7 @@ export type HeaderActionItem<TForceIcon extends boolean = false> = {
   icon?: React.ReactNode;
   onClick?: () => void;
   href?: string;
+  isLoading?: boolean;
 } & (TForceIcon extends true
   ? {
       icon: React.ReactNode;
@@ -207,8 +209,9 @@ export const HeaderAction = ({
                 key={i}
                 className="flex flex-row items-center gap-2"
                 onSelect={action.onClick}
+                disabled={action.isLoading}
               >
-                {action.icon}
+                {action.isLoading ? <Spinner /> : action.icon}
 
                 {action.label}
               </DropdownMenuItem>
@@ -225,6 +228,7 @@ export const HeaderAction = ({
         onClick={headerData.secondaryAction.onClick}
         className="flex-1 flex-row items-center gap-2 md:flex-none"
         href={headerData.secondaryAction.href}
+        isLoading={headerData.secondaryAction.isLoading}
       >
         {headerData.secondaryAction.icon}
         {headerData.secondaryAction.label}
@@ -238,6 +242,7 @@ export const HeaderAction = ({
         onClick={headerData.mainAction.onClick}
         className="flex-1 flex-row items-center gap-2 md:flex-none"
         href={headerData.mainAction.href}
+        isLoading={headerData.mainAction.isLoading}
       >
         {headerData.mainAction.icon}
         {headerData.mainAction.label}

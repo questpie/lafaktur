@@ -53,6 +53,9 @@ dependencies:
   '@tanstack/react-query':
     specifier: ^4.32.6
     version: 4.36.1(react-dom@18.2.0)(react@18.2.0)
+  '@tanstack/react-table':
+    specifier: ^8.10.7
+    version: 8.10.7(react-dom@18.2.0)(react@18.2.0)
   '@trpc/client':
     specifier: ^10.43.1
     version: 10.43.1(@trpc/server@10.43.1)
@@ -68,9 +71,6 @@ dependencies:
   '@types/bcrypt':
     specifier: ^5.0.2
     version: 5.0.2
-  '@types/lodash':
-    specifier: ^4.14.201
-    version: 4.14.201
   '@types/pdfkit':
     specifier: ^0.13.1
     version: 0.13.1
@@ -98,9 +98,9 @@ dependencies:
   jotai:
     specifier: ^2.5.1
     version: 2.5.1(@types/react@18.2.33)(react@18.2.0)
-  lodash:
-    specifier: ^4.17.21
-    version: 4.17.21
+  jotai-scope:
+    specifier: ^0.4.1
+    version: 0.4.1(jotai@2.5.1)(react@18.2.0)
   nanoid:
     specifier: ^5.0.3
     version: 5.0.3
@@ -1661,6 +1661,23 @@ packages:
       use-sync-external-store: 1.2.0(react@18.2.0)
     dev: false
 
+  /@tanstack/react-table@8.10.7(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-bXhjA7xsTcsW8JPTTYlUg/FuBpn8MNjiEPhkNhIGCUR6iRQM2+WEco4OBpvDeVcR9SE+bmWLzdfiY7bCbCSVuA==}
+    engines: {node: '>=12'}
+    peerDependencies:
+      react: '>=16'
+      react-dom: '>=16'
+    dependencies:
+      '@tanstack/table-core': 8.10.7
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+    dev: false
+
+  /@tanstack/table-core@8.10.7:
+    resolution: {integrity: sha512-KQk5OMg5OH6rmbHZxuNROvdI+hKDIUxANaHlV+dPlNN7ED3qYQ/WkpY2qlXww1SIdeMlkIhpN/2L00rof0fXFw==}
+    engines: {node: '>=12'}
+    dev: false
+
   /@trpc/client@10.43.1(@trpc/server@10.43.1):
     resolution: {integrity: sha512-pkPtbDS0ck/2WZo2cWaPV11NFMII2I/nzse1Ggs5Cr0YczsZk3Z0DM77Sfb9FTSjmccYfkEtumHqxfTj6fRbbg==}
     peerDependencies:
@@ -1735,10 +1752,6 @@ packages:
   /@types/json5@0.0.29:
     resolution: {integrity: sha512-dRLjCWHYg4oaA77cxO64oO+7JwCwnIzkZPdrrC71jQmQtlhM556pwKo5bUzqvZndkVbeFLIIi+9TC40JNF5hNQ==}
     dev: true
-
-  /@types/lodash@4.14.201:
-    resolution: {integrity: sha512-y9euML0cim1JrykNxADLfaG0FgD1g/yTHwUs/Jg9ZIU7WKj2/4IW9Lbb1WZbvck78W/lfGXFfe+u2EGfIJXdLQ==}
-    dev: false
 
   /@types/node@18.18.8:
     resolution: {integrity: sha512-OLGBaaK5V3VRBS1bAkMVP2/W9B+H8meUfl866OrMNQqt7wDgdpWPp5o6gmIc9pB+lIQHSq4ZL8ypeH1vPxcPaQ==}
@@ -3765,6 +3778,16 @@ packages:
 
   /jose@4.15.4:
     resolution: {integrity: sha512-W+oqK4H+r5sITxfxpSU+MMdr/YSWGvgZMQDIsNoBDGGy4i7GBPTtvFKibQzW06n3U3TqHjhvBJsirShsEJ6eeQ==}
+    dev: false
+
+  /jotai-scope@0.4.1(jotai@2.5.1)(react@18.2.0):
+    resolution: {integrity: sha512-HGH3QdSmBo5XHtLrGE1Wc9cvZ9RbHyzOdIq2kS82PxoWPlh+UkJUmINOj9Z4/qIAYcwofnhOwF5H3h5QuM7uqw==}
+    peerDependencies:
+      jotai: '>=2.5.0'
+      react: '>=17.0.0'
+    dependencies:
+      jotai: 2.5.1(@types/react@18.2.33)(react@18.2.0)
+      react: 18.2.0
     dev: false
 
   /jotai@2.5.1(@types/react@18.2.33)(react@18.2.0):

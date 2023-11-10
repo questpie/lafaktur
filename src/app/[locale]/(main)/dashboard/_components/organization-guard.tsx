@@ -45,12 +45,12 @@ export function useSelectedOrganization() {
   );
 
   /** If there are no organizations to choose from just return null */
-  if (!organizations.length) return null;
+  if (!organizations.length) throw new Error("You have bo organization");
 
   /** If we have organizations but there is no stored selected organization id we will just choose the first org */
   if (selectedOrganizationId === null) {
     setSelectedOrganizationId(organizations[0]!.id);
-    return organizations[0];
+    return organizations[0]!;
   }
 
   /**
@@ -65,25 +65,30 @@ export function useSelectedOrganization() {
    */
   if (selectedOrganizationIndex === -1) {
     setSelectedOrganizationId(organizations[0]!.id);
-    return organizations[0];
+    return organizations[0]!;
   }
 
   /**
    * return found organization
    */
-  return organizations[selectedOrganizationIndex];
+  return organizations[selectedOrganizationIndex]!;
 }
 
 /**
  * If there is no selected organization, this component will redirect user to /onboarding/organization
  */
 export function OrganizationGuard({ children }: PropsWithChildren) {
-  const organization = useSelectedOrganization();
   const router = useRouter();
 
-  if (!organization) {
-    router.replace("/onboarding/organization");
-    return null;
+  try {
+    useSelectedOrganization();
+  } catch (err) {
+    // if the err is our instance of error replace with router
+    if (err instanceof Error) {
+      router.replace("/onboarding/organization");
+      return null;
+      // else just rethrow the suspended promise
+    } else throw err;
   }
 
   return <>{children}</>;

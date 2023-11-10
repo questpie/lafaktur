@@ -5,13 +5,13 @@ import {
   useHeader,
 } from "~/app/[locale]/(main)/dashboard/_components/header";
 
-export default function AddInvoiceTemplatePage() {
+export default function InvoicePage() {
   useHeader({
-    title: "Add invoice template",
+    title: "Invoice",
   });
   useBreadcrumbSegment({
-    label: "Add invoice template",
-    href: "/dashboard/templates/add",
+    label: "Invoice",
+    href: "/dashboard/invoices/add",
     level: 2,
   });
 

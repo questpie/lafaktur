@@ -13,6 +13,10 @@ export const typedJson = <TData, TName extends string = string>(name: TName) =>
         return null as TData;
       }
 
+      if (typeof value === "object") {
+        return value as TData;
+      }
+
       if (typeof value !== "string") {
         throw new Error(
           `Typed JSON type expected a string, but received ${typeof value}`,

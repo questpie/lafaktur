@@ -1,7 +1,6 @@
 "use strict";
 
 import fs, { type WriteStream } from "fs";
-import _merge from "lodash/merge";
 import path from "path";
 import PDFDocument from "pdfkit";
 
@@ -238,7 +237,7 @@ export class InvoiceBuilder {
   document!: typeof PDFDocument;
 
   constructor(private readonly _options: InvoiceBuilderOptions) {
-    this.options = _merge(InvoiceBuilder.defaultOptions, _options);
+    this.options = InvoiceBuilder.defaultOptions;
 
     this.store = {
       header: {

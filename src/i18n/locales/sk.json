@@ -72,5 +72,11 @@
     "dark": "Tmavý režim",
     "light": "Svetlý režim",
     "system": "Podľa systému"
+  },
+  "invoiceTemplate": {
+    "err": {
+      "notFound": "Šablóna faktúry sa nenašla"
+    },
+    "newTemplate": "Nová šablóna"
   }
 }
