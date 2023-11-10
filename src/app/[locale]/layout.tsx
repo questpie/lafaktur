@@ -12,6 +12,7 @@ import { setRequestLocale } from "~/i18n/server";
 import { ALL_LOCALES } from "~/i18n/shared";
 import { TRPCReactProvider } from "~/trpc/react";
 import { getMessages } from "next-intl/server";
+import { type Viewport } from "next";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -22,6 +23,15 @@ export const metadata = {
   title: "lafaktur",
   description: "The next-gen invoicing platform",
   icons: [{ rel: "icon", url: "/favicon.ico" }],
+};
+
+export const viewport: Viewport = {
+  height: "device-height",
+  width: "device-width",
+  maximumScale: 1,
+  minimumScale: 1,
+  initialScale: 1,
+  userScalable: false,
 };
 
 export function generateStaticParams() {
