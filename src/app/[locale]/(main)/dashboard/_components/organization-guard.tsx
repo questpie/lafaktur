@@ -25,31 +25,58 @@ const selectedOrganizationAtom = atom(
   },
 );
 
+/**
+ * This functions suspends if organizations are not fetched yet.
+ * @returns user-selected active organization
+ */
 export function useSelectedOrganization() {
+  /**
+   * Get stored organization id
+   */
   const [selectedOrganizationId, setSelectedOrganizationId] = useAtom(
     selectedOrganizationAtom,
   );
-  const [organizations] = api.organization.getByUser.useSuspenseQuery();
+  /**
+   * Fetch all-of users organizations
+   */
+  const [organizations] = api.organization.getByUser.useSuspenseQuery(
+    undefined,
+    { refetchInterval: false, refetchOnMount: false },
+  );
 
+  /** If there are no organizations to choose from just return null */
   if (!organizations.length) return null;
 
+  /** If we have organizations but there is no stored selected organization id we will just choose the first org */
   if (selectedOrganizationId === null) {
     setSelectedOrganizationId(organizations[0]!.id);
     return organizations[0];
   }
 
+  /**
+   * If we have an organization id selected we will lookup for given org
+   */
   const selectedOrganizationIndex = organizations.findIndex(
     (org) => org.id === selectedOrganizationId,
   );
 
+  /**
+   * if we haven't found any organization just correct the selection by selecting the first one
+   */
   if (selectedOrganizationIndex === -1) {
     setSelectedOrganizationId(organizations[0]!.id);
     return organizations[0];
   }
 
+  /**
+   * return found organization
+   */
   return organizations[selectedOrganizationIndex];
 }
 
+/**
+ * If there is no selected organization, this component will redirect user to /onboarding/organization
+ */
 export function OrganizationGuard({ children }: PropsWithChildren) {
   const organization = useSelectedOrganization();
   const router = useRouter();
