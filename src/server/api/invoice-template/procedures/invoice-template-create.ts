@@ -1,4 +1,3 @@
-import { nanoid } from "nanoid";
 import { protectedProcedure } from "~/server/api/trpc";
 import {
   insertInvoiceTemplate,
@@ -11,11 +10,8 @@ export const invoiceTemplateCreate = protectedProcedure
     return ctx.db.transaction(async (trx) => {
       const newInvoiceTemplate = await trx
         .insert(invoiceTemplatesTable)
-        .values({
-          name: `New invoice template #${nanoid(6)}`,
-          organizationId: 1,
-        });
+        .values(input);
 
-      return { ok: true };
+      return { id: newInvoiceTemplate.insertId };
     });
   });
