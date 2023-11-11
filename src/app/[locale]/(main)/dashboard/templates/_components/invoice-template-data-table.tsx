@@ -25,7 +25,6 @@ export default function InvoiceTemplateDataTable() {
       { organizationId: selectedOrganization.id },
       { getNextPageParam: (lastPage) => lastPage.nextCursor },
     );
-  console.log("invoiceTemplates", invoiceTemplates);
 
   return (
     <div className="flex flex-col gap-6">
