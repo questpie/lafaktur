@@ -63,12 +63,13 @@ const DeleteAction: ColumnDef<InvoiceTemplate>["cell"] = (props) => {
       size="iconSm"
       variant="ghost"
       // TODO: display alert dialog
-      onClick={() =>
+      onClick={(e) => {
+        e.stopPropagation();
         deleteMutation.mutate({
           id: props.row.original.id,
           organizationId: organization.id,
-        })
-      }
+        });
+      }}
       isLoading={deleteMutation.isLoading}
     >
       <LuTrash />
