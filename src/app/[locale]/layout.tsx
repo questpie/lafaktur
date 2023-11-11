@@ -14,6 +14,7 @@ import { cn } from "~/app/_utils/styles-utils";
 import { setRequestLocale } from "~/i18n/server";
 import { ALL_LOCALES } from "~/i18n/shared";
 import { TRPCReactProvider } from "~/trpc/react";
+import { ConfirmDialogProvider } from "~/app/_components/ui/alert-dialog";
 
 export const metadata = {
   title: "lafaktur",
@@ -64,7 +65,9 @@ export default async function RootLayout({
           >
             <NextAuthProvider>
               <TRPCReactProvider headers={headers()}>
-                <DialogProvider>{children}</DialogProvider>
+                <DialogProvider>
+                  <ConfirmDialogProvider>{children}</ConfirmDialogProvider>
+                </DialogProvider>
               </TRPCReactProvider>
             </NextAuthProvider>
           </ThemeProvider>

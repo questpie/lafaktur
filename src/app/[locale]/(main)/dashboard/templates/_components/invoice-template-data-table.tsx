@@ -3,8 +3,10 @@ import { useQueryClient } from "@tanstack/react-query";
 import { type ColumnDef } from "@tanstack/react-table";
 import { getQueryKey } from "@trpc/react-query";
 import { useRouter, useSearchParams } from "next/navigation";
+import { type SyntheticEvent } from "react";
 import { LuBookTemplate, LuTrash } from "react-icons/lu";
 import { useSelectedOrganization } from "~/app/[locale]/(main)/dashboard/_components/organization-guard";
+import { useConfirmDialog } from "~/app/_components/ui/alert-dialog";
 import { Button } from "~/app/_components/ui/button";
 import { DataTable } from "~/app/_components/ui/data-table";
 import { api } from "~/trpc/react";
@@ -45,6 +47,8 @@ const DeleteAction: ColumnDef<InvoiceTemplate>["cell"] = (props) => {
   const queryClient = useQueryClient();
   const organization = useSelectedOrganization();
 
+  const { open } = useConfirmDialog();
+
   const deleteMutation = api.invoiceTemplate.deleteById.useMutation({
     onSettled: async () => {
       const key = getQueryKey(
@@ -58,18 +62,28 @@ const DeleteAction: ColumnDef<InvoiceTemplate>["cell"] = (props) => {
     },
   });
 
+  const handleDelete = (e: SyntheticEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+    open({
+      title: "Delete invoice template",
+      content: "Are you sure you want to delete this invoice template?",
+      confirmLabel: "Delete",
+      cancelLabel: "Cancel",
+      onConfirm: () => {
+        deleteMutation.mutate({
+          id: props.row.original.id,
+          organizationId: organization.id,
+        });
+      },
+    });
+  };
+
   return (
     <Button
       size="iconSm"
       variant="ghost"
       // TODO: display alert dialog
-      onClick={(e) => {
-        e.stopPropagation();
-        deleteMutation.mutate({
-          id: props.row.original.id,
-          organizationId: organization.id,
-        });
-      }}
+      onClick={handleDelete}
       isLoading={deleteMutation.isLoading}
     >
       <LuTrash />
