@@ -13,6 +13,12 @@ import { api } from "~/trpc/react";
 export default function OrganizationOnboardingPage() {
   const router = useRouter();
   const queryClient = useQueryClient();
+
+  const [organizations] = api.organization.getByUser.useSuspenseQuery(
+    undefined,
+    { refetchInterval: false, refetchOnMount: false },
+  );
+
   const createOrganization = api.organization.create.useMutation({
     onSettled(_, error) {
       if (error) return;
@@ -36,6 +42,12 @@ export default function OrganizationOnboardingPage() {
       slug,
     });
   };
+
+  if (organizations.length) {
+    // we already have an organization redirect to dashboard
+    router.push("/dashboard");
+    return null;
+  }
 
   return (
     <div className="mx-auto flex h-screen w-full max-w-xl items-center">

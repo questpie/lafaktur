@@ -28,8 +28,8 @@ export default function DashboardLayout(props: PropsWithChildren) {
   }
 
   return (
-    <div className="mx-auto flex h-full min-h-screen w-full max-w-screen-2xl flex-row border-e border-s">
-      <OrganizationGuard>
+    <OrganizationGuard>
+      <div className="mx-auto flex h-full min-h-screen w-full max-w-screen-2xl flex-row border-e border-s">
         <Sidebar />
         <div className="flex w-full flex-col">
           <Navbar />
@@ -38,7 +38,7 @@ export default function DashboardLayout(props: PropsWithChildren) {
             {props.children}
           </div>
         </div>
-      </OrganizationGuard>
-    </div>
+      </div>
+    </OrganizationGuard>
   );
 }
