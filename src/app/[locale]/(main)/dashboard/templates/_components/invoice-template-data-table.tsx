@@ -60,7 +60,6 @@ const DeleteAction: ColumnDef<InvoiceTemplate>["cell"] = (props) => {
         { organizationId: organization.id },
         "infinite",
       );
-      // TODO: optimistic update
 
       await queryClient.invalidateQueries(key);
     },
@@ -86,7 +85,6 @@ const DeleteAction: ColumnDef<InvoiceTemplate>["cell"] = (props) => {
     <Button
       size="iconSm"
       variant="ghost"
-      // TODO: display alert dialog
       onClick={handleDelete}
       isLoading={deleteMutation.isLoading}
     >
