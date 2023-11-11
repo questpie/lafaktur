@@ -8,6 +8,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
+  useDialogControl,
 } from "~/app/_components/ui/dialog";
 import { Input } from "~/app/_components/ui/input";
 import { Label } from "~/app/_components/ui/label";
@@ -23,8 +24,10 @@ export function CreateTemplateDialog() {
   const createTemplateMutation = api.invoiceTemplate.create.useMutation({
     onSuccess(data) {
       router.push(`/dashboard/templates/${data.id}`);
+      close(CreateTemplateDialog.id);
     },
   });
+  const { close } = useDialogControl();
   const org = useSelectedOrganization();
 
   const createTemplate = () => {
