@@ -42,6 +42,6 @@ export const invoiceTemplateGetAll = protectedProcedure
     return {
       data,
       nextCursor:
-        data.length > input.limit ? input.cursor + input.limit : undefined,
+        data.length >= input.limit ? input.cursor + input.limit : undefined,
     };
   });

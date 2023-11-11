@@ -77,5 +77,8 @@
       "notFound": "Invoice Template not found"
     },
     "newTemplate": "New Template"
+  },
+  "dataTable": {
+    "noResults": "No results."
   }
 }

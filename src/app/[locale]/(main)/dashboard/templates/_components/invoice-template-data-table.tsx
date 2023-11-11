@@ -2,7 +2,7 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { type ColumnDef } from "@tanstack/react-table";
 import { getQueryKey } from "@trpc/react-query";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { type SyntheticEvent } from "react";
 import { LuBookTemplate, LuTrash } from "react-icons/lu";
 import { useSelectedOrganization } from "~/app/[locale]/(main)/dashboard/_components/organization-guard";
@@ -16,29 +16,33 @@ type InvoiceTemplate =
   RouterOutputs["invoiceTemplate"]["getAll"]["data"][number];
 
 export default function InvoiceTemplateDataTable() {
-  const searchParams = useSearchParams();
   const router = useRouter();
-
-  let page = searchParams.get("page") ?? 0;
-  page = Number(page);
 
   const selectedOrganization = useSelectedOrganization();
 
-  const [invoiceTemplates] =
+  const [invoiceTemplates, { fetchNextPage, hasNextPage }] =
     api.invoiceTemplate.getAll.useSuspenseInfiniteQuery(
       { organizationId: selectedOrganization.id },
       { getNextPageParam: (lastPage) => lastPage.nextCursor },
     );
+  console.log("invoiceTemplates", invoiceTemplates);
 
   return (
     <div className="flex flex-col gap-6">
       <DataTable
         columns={columns}
-        data={invoiceTemplates.pages[page]!.data}
+        data={invoiceTemplates.pages.flatMap((page) => page.data)}
         onRowClick={(row) =>
           router.push(`/dashboard/templates/${row.original.id}`)
         }
       />
+      {hasNextPage && (
+        <div className="flex flex-row justify-center">
+          <Button variant="outline" onClick={() => fetchNextPage()}>
+            Load more
+          </Button>
+        </div>
+      )}
     </div>
   );
 }

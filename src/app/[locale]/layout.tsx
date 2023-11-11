@@ -8,13 +8,12 @@ import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { NextAuthProvider } from "~/app/[locale]/auth/_components/next-auth-provider";
+import { StoreProvider } from "~/app/[locale]/store-provider";
 import { ThemeProvider } from "~/app/_components/theme/theme-provider";
-import { DialogProvider } from "~/app/_components/ui/dialog";
 import { cn } from "~/app/_utils/styles-utils";
 import { setRequestLocale } from "~/i18n/server";
 import { ALL_LOCALES } from "~/i18n/shared";
 import { TRPCReactProvider } from "~/trpc/react";
-import { ConfirmDialogProvider } from "~/app/_components/ui/alert-dialog";
 
 export const metadata = {
   title: "lafaktur",
@@ -65,9 +64,7 @@ export default async function RootLayout({
           >
             <NextAuthProvider>
               <TRPCReactProvider headers={headers()}>
-                <DialogProvider>
-                  <ConfirmDialogProvider>{children}</ConfirmDialogProvider>
-                </DialogProvider>
+                <StoreProvider>{children}</StoreProvider>
               </TRPCReactProvider>
             </NextAuthProvider>
           </ThemeProvider>
