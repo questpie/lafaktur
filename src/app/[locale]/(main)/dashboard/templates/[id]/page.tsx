@@ -5,8 +5,8 @@ import {
   useHeader,
 } from "~/app/[locale]/(main)/dashboard/_components/header";
 import { useSelectedOrganization } from "~/app/[locale]/(main)/dashboard/_components/organization-guard";
-import { PDF_RENDER_MAP } from "~/app/[locale]/(main)/dashboard/templates/[id]/_components/invoice-template-renderer/pdf-render-map";
-import { TemplateRenderer } from "~/app/[locale]/(main)/dashboard/templates/[id]/_components/invoice-template-renderer/template-renderer";
+import { PDF_RENDER_MAP } from "~/shared/invoice-template/render/pdf-render-map";
+import { TemplateRenderer } from "~/shared/invoice-template/render/template-renderer";
 import { DEFAULT_TEMPLATE } from "~/shared/invoice-template/invoice-template-types";
 import { api } from "~/trpc/react";
 

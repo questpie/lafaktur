@@ -2,7 +2,7 @@ import { Document, Page, Text, View } from "@react-pdf/renderer";
 import {
   TemplateComponentRenderer,
   type TemplateRenderMap,
-} from "~/app/[locale]/(main)/dashboard/templates/[id]/_components/invoice-template-renderer/component-renderer";
+} from "~/shared/invoice-template/render/component-renderer";
 
 export const PDF_RENDER_MAP: TemplateRenderMap = {
   page: ({ cmp, resolver, context }) => {
