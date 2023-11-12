@@ -1,9 +1,11 @@
 "use client";
+import { PDFViewer } from "@react-pdf/renderer";
 import {
   useBreadcrumbSegment,
   useHeader,
 } from "~/app/[locale]/(main)/dashboard/_components/header";
 import { useSelectedOrganization } from "~/app/[locale]/(main)/dashboard/_components/organization-guard";
+import { TemplateRenderer } from "~/app/[locale]/(main)/dashboard/templates/[id]/_components/invoice-template-renderer";
 import InvoiceTemplateDataTable from "~/app/[locale]/(main)/dashboard/templates/_components/invoice-template-data-table";
 import { api } from "~/trpc/react";
 
@@ -28,5 +30,15 @@ export default function InvoiceTemplatePage(props: InvoiceTemplatePageProps) {
     level: 2,
   });
 
-  return <div className="flex flex-col gap-6"></div>;
+  return (
+    <div className="grid grid-cols-2">
+      <div></div>
+      <div>
+        <h2 className="text-2xl font-bold">Preview</h2>
+        <PDFViewer className="h-full min-h-[500px] w-full">
+          <TemplateRenderer invoiceTemplate={invoiceTemplate} />
+        </PDFViewer>
+      </div>
+    </div>
+  );
 }
