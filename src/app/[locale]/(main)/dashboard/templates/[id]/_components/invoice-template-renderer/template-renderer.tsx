@@ -1,6 +1,8 @@
 "use client";
-import { type TemplateVariableResolver } from "~/app/[locale]/(main)/dashboard/templates/[id]/_components/invoice-template-renderer/component-renderer";
-import { type TemplateRenderMap } from "~/app/[locale]/(main)/dashboard/templates/[id]/_components/invoice-template-renderer/render-maps";
+import {
+  type TemplateRenderMap,
+  type TemplateVariableResolver,
+} from "~/app/[locale]/(main)/dashboard/templates/[id]/_components/invoice-template-renderer/component-renderer";
 import { type InvoiceTemplate } from "~/server/db/schema";
 
 type InvoiceTemplateRenderer = {

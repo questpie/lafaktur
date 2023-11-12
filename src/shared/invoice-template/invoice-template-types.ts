@@ -617,50 +617,5 @@ export const DEFAULT_TEMPLATE: InvoiceTemplateData = {
       },
     ],
   },
-
-  // items: {
-  //   id: "items",
-  //   items: [
-  //     {
-  //       id: "invoice_item_quantity",
-  //       label: "Quantity",
-  //       value: "{{invoice_item_quantity}} {{invoice_item_unit}}",
-  //     },
-  //     {
-  //       id: "invoice_item_name",
-  //       label: "Item",
-  //       value: "{{invoice_item_name}}",
-  //     },
-  //     {
-  //       id: "invoice_item_unit_price",
-  //       label: "Unit price",
-  //       value: "{{invoice_item_unit_price}}",
-  //     },
-  //     {
-  //       id: "invoice_item_total",
-  //       label: "Total",
-  //       value: "",
-  //     },
-  //   ],
-  // },
-  // totals: {
-  //   id: "totals",
-  //   items: [
-  //     {
-  //       id: "invoice_total",
-  //       label: "Total amount to pay",
-  //       value: "{{invoice_total}}",
-  //     },
-  //   ],
-  // },
-  // legal: {
-  //   id: "legal",
-  //   items: [
-  //     {
-  //       id: "legal",
-  //       value: "Legal",
-  //     },
-  //   ],
-  // },
   vatIncluded: false,
 };

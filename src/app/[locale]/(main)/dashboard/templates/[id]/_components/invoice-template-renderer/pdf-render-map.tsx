@@ -1,21 +1,8 @@
 import { Document, Page, Text, View } from "@react-pdf/renderer";
 import {
   TemplateComponentRenderer,
-  type TemplateVariableResolver,
+  type TemplateRenderMap,
 } from "~/app/[locale]/(main)/dashboard/templates/[id]/_components/invoice-template-renderer/component-renderer";
-import { type InvoiceTemplateComponent } from "~/shared/invoice-template/invoice-template-types";
-import { type FromUnion } from "~/types/misc-types";
-
-export type InvoiceRenderFn<T extends InvoiceTemplateComponent["type"]> =
-  (props: {
-    cmp: FromUnion<InvoiceTemplateComponent, "type", T>;
-    resolver: TemplateVariableResolver;
-    context?: any;
-  }) => React.ReactNode;
-
-export type TemplateRenderMap = {
-  [T in InvoiceTemplateComponent["type"]]: InvoiceRenderFn<T>;
-};
 
 export const PDF_RENDER_MAP: TemplateRenderMap = {
   page: ({ cmp, resolver, context }) => {
@@ -61,12 +48,13 @@ export const PDF_RENDER_MAP: TemplateRenderMap = {
     );
   },
   text: ({ cmp, resolver }) => {
-    const resolvedText = resolver(cmp.value ?? "");
+    const resolvedText = resolver(cmp.value ?? "", "node");
 
-    return <Text style={cmp.style}>{resolvedText ?? ""}</Text>;
+    return <Text style={cmp.style}>{resolvedText}</Text>;
   },
   list: ({ cmp, resolver }) => {
-    const list = resolver(cmp.for) ?? [];
+    const list = resolver(cmp.for, "value");
+
     if (!Array.isArray(list)) {
       throw new Error("Invalid value for list component");
     }

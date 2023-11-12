@@ -1,5 +1,5 @@
-import { type TemplateRenderMap } from "~/app/[locale]/(main)/dashboard/templates/[id]/_components/invoice-template-renderer/render-maps";
 import { type InvoiceTemplateComponent } from "~/shared/invoice-template/invoice-template-types";
+import { type FromUnion } from "~/types/misc-types";
 
 type TemplateComponentRendererProps = {
   component: InvoiceTemplateComponent;
@@ -11,10 +11,22 @@ type TemplateComponentRendererProps = {
   renderMap: TemplateRenderMap;
 };
 
-export type TemplateVariableResolver = (
+export type InvoiceRenderFn<T extends InvoiceTemplateComponent["type"]> =
+  (props: {
+    cmp: FromUnion<InvoiceTemplateComponent, "type", T>;
+    resolver: TemplateVariableResolver;
+    context?: any;
+  }) => React.ReactNode;
+
+export type TemplateRenderMap = {
+  [T in InvoiceTemplateComponent["type"]]: InvoiceRenderFn<T>;
+};
+
+export type TemplateVariableResolver = <TReturnAs extends "value" | "node">(
   textWithVariable: string,
+  returnAs: TReturnAs,
   context?: any,
-) => string | React.ReactNode;
+) => TReturnAs extends "value" ? unknown : React.ReactNode;
 
 export function TemplateComponentRenderer({
   component,
