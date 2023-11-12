@@ -1,54 +1,41 @@
-"use client";
 import { Document, Page, Text, View } from "@react-pdf/renderer";
-import { type InvoiceTemplate } from "~/server/db/schema";
+import {
+  TemplateComponentRenderer,
+  type TemplateVariableResolver,
+} from "~/app/[locale]/(main)/dashboard/templates/[id]/_components/invoice-template-renderer/component-renderer";
 import { type InvoiceTemplateComponent } from "~/shared/invoice-template/invoice-template-types";
 import { type FromUnion } from "~/types/misc-types";
 
-type InvoiceTemplateRenderer = {
-  invoiceTemplate: InvoiceTemplate;
-};
-
-export function TemplateRenderer(props: InvoiceTemplateRenderer) {
-  console.log(props.invoiceTemplate);
-
-  return (
-    <Document>
-      <Page size="A4" style={props.invoiceTemplate.template.style}>
-        {props.invoiceTemplate.template.children?.map((child) => (
-          <TemplateComponentRenderer component={child} key={child.id} />
-        ))}
-      </Page>
-    </Document>
-  );
-}
-
-type TemplateComponentRendererProps = {
-  component: InvoiceTemplateComponent;
-  /**
-   * pass here logic to resolve text content of the component (fe. variables)
-   */
-  resolver?: TemplateVariableResolver;
-  context?: any;
-};
-
-const defaultResolver: TemplateVariableResolver = (variable: string) =>
-  variable;
-
-type TemplateVariableResolver = (
-  textWithVariable: string,
-  context?: any,
-) => string;
 export type InvoiceRenderFn<T extends InvoiceTemplateComponent["type"]> =
   (props: {
     cmp: FromUnion<InvoiceTemplateComponent, "type", T>;
     resolver: TemplateVariableResolver;
     context?: any;
   }) => React.ReactNode;
-export type RenderMap = {
+
+export type TemplateRenderMap = {
   [T in InvoiceTemplateComponent["type"]]: InvoiceRenderFn<T>;
 };
 
-const rendererMap: RenderMap = {
+export const PDF_RENDER_MAP: TemplateRenderMap = {
+  page: ({ cmp, resolver, context }) => {
+    return (
+      <Document>
+        <Page size="A4" style={cmp.style}>
+          {cmp.children?.map((child) => (
+            <TemplateComponentRenderer
+              component={child}
+              key={child.id}
+              renderMap={PDF_RENDER_MAP}
+              // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+              context={context}
+              resolver={resolver}
+            />
+          ))}
+        </Page>
+      </Document>
+    );
+  },
   view: ({ cmp, resolver, context }) => {
     return (
       <View style={cmp.style}>
@@ -59,6 +46,7 @@ const rendererMap: RenderMap = {
             resolver={resolver}
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             context={context}
+            renderMap={PDF_RENDER_MAP}
           />
         ))}
       </View>
@@ -92,28 +80,10 @@ const rendererMap: RenderMap = {
             resolver={resolver}
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             context={item}
+            renderMap={PDF_RENDER_MAP}
           />
         ))}
       </View>
     );
   },
 };
-
-function TemplateComponentRenderer({
-  component,
-  resolver: variableResolver = defaultResolver,
-}: TemplateComponentRendererProps) {
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  const renderer = rendererMap[component.type] as any;
-
-  if (!renderer) {
-    throw new Error(`Invalid component type: ${component.type}`);
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call
-  return renderer({
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    cmp: component as unknown as any,
-    resolver: variableResolver,
-  });
-}

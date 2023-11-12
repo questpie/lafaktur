@@ -5,7 +5,8 @@ import {
   useHeader,
 } from "~/app/[locale]/(main)/dashboard/_components/header";
 import { useSelectedOrganization } from "~/app/[locale]/(main)/dashboard/_components/organization-guard";
-import { TemplateRenderer } from "~/app/[locale]/(main)/dashboard/templates/[id]/_components/invoice-template-renderer";
+import { PDF_RENDER_MAP } from "~/app/[locale]/(main)/dashboard/templates/[id]/_components/invoice-template-renderer/render-maps";
+import { TemplateRenderer } from "~/app/[locale]/(main)/dashboard/templates/[id]/_components/invoice-template-renderer/template-renderer";
 import { DEFAULT_TEMPLATE } from "~/shared/invoice-template/invoice-template-types";
 import { api } from "~/trpc/react";
 
@@ -43,6 +44,8 @@ export default function InvoiceTemplatePage(props: InvoiceTemplatePageProps) {
               organizationId: 6,
               template: DEFAULT_TEMPLATE,
             }}
+            renderMap={PDF_RENDER_MAP}
+            resolver={(text) => text}
           />
         </PDFViewer>
       </div>

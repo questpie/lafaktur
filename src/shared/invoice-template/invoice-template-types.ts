@@ -1,12 +1,11 @@
-import {
-  type Image,
-  type Page,
-  type Text,
-  type View,
-} from "@react-pdf/renderer";
+import { type Image, type Page, type View } from "@react-pdf/renderer";
 import { type ComponentProps } from "react";
 import { z } from "zod";
-import { type StringWithAutocomplete } from "~/types/misc-types";
+import {
+  type FromUnion,
+  type StringWithAutocomplete,
+  type UnionWithout,
+} from "~/types/misc-types";
 
 export const invoiceCurrencySchema = z.enum([
   "EUR",
@@ -146,7 +145,7 @@ export type InvoiceTemplateComponent =
       id: string;
       type: "view";
       style?: ComponentProps<typeof View>["style"];
-      children?: InvoiceTemplateComponent[];
+      children?: UnionWithout<InvoiceTemplateComponent, "type", "page">[];
       if?: InvoiceVariable;
     }
   | {
@@ -161,13 +160,18 @@ export type InvoiceTemplateComponent =
       type: "list";
       for: "invoice_items";
       style?: ComponentProps<typeof View>["style"];
-      item: InvoiceTemplateComponent;
+      item: UnionWithout<InvoiceTemplateComponent, "type", "page">;
       if?: InvoiceVariable;
+    }
+  | {
+      id: string;
+      type: "page";
+      style: ComponentProps<typeof Page>["style"];
+      children: UnionWithout<InvoiceTemplateComponent, "type", "page">[];
     };
 
 export const invoiceTemplateDataSchema = z.object({
-  style: z.custom<ComponentProps<typeof Page>["style"]>(),
-  children: z.custom<InvoiceTemplateComponent[]>(),
+  content: z.custom<FromUnion<InvoiceTemplateComponent, "type", "page">>(),
 
   currency: invoiceCurrencySchema.default("EUR"),
   dateFormat: invoiceDateFormatSchema.default("DD.MM.YYYY"),
@@ -197,418 +201,422 @@ export type InvoiceTemplateData = z.infer<typeof invoiceTemplateDataSchema>;
 export const DEFAULT_TEMPLATE: InvoiceTemplateData = {
   currency: "EUR",
   dateFormat: "DD.MM.YYYY",
-  style: {
-    fontFamily: "Helvetica",
-    position: "relative",
-    flexDirection: "column",
-    backgroundColor: "#fff",
-    fontSize: "11px",
-    gap: "32px",
-  },
-  children: [
-    {
-      id: "top-section",
-      type: "view",
-      style: {
-        marginTop: "1cm",
-        flexDirection: "row",
-        gap: "16px",
-        marginHorizontal: "1.5cm",
-      },
-      children: [
-        {
-          id: "logo-container",
-          type: "view",
-          style: { flex: 1 },
-          children: [{ id: "logo-text", type: "text", value: "logo" }],
+  content: {
+    id: "page",
+    type: "page",
+    style: {
+      fontFamily: "Helvetica",
+      position: "relative",
+      flexDirection: "column",
+      backgroundColor: "#fff",
+      fontSize: "11px",
+      gap: "32px",
+    },
+    children: [
+      {
+        id: "top-section",
+        type: "view",
+        style: {
+          marginTop: "1cm",
+          flexDirection: "row",
+          gap: "16px",
+          marginHorizontal: "1.5cm",
         },
-        {
-          id: "header-wrapper",
-          type: "view",
-          style: { flex: 1, flexDirection: "column", gap: "2px" },
-          children: [
-            {
-              id: "heading",
-              type: "text",
-              value: "Invoice #{{invoice_number}}",
-              style: { fontFamily: "Helvetica-Bold" },
-            },
-            {
-              id: "subheading",
-              type: "text",
-              value: "Reference: {{invoice_reference}}",
-              style: { marginBottom: "8px", fontFamily: "Helvetica-Bold" },
-            },
-            {
-              id: "header",
-              type: "view",
-              style: {
-                flexDirection: "column",
-                fontSize: "8px",
-                gap: "4px",
+        children: [
+          {
+            id: "logo-container",
+            type: "view",
+            style: { flex: 1 },
+            children: [{ id: "logo-text", type: "text", value: "logo" }],
+          },
+          {
+            id: "header-wrapper",
+            type: "view",
+            style: { flex: 1, flexDirection: "column", gap: "2px" },
+            children: [
+              {
+                id: "heading",
+                type: "text",
+                value: "Invoice #{{invoice_number}}",
+                style: { fontFamily: "Helvetica-Bold" },
               },
-              children: [
-                {
-                  id: "invoice-issue-date",
-                  type: "view",
-                  style: { flexDirection: "row", gap: "4px" },
-                  children: [
-                    {
-                      id: "invoice-issue-date-label",
-                      type: "text",
-                      value: "Date of issue",
-                      style: { flex: 1 },
-                    },
-                    {
-                      id: "invoice-issue-date-value",
-                      type: "text",
-                      value: "{{invoice_issue_date}}",
-                      style: { flex: 1 },
-                    },
-                  ],
+              {
+                id: "subheading",
+                type: "text",
+                value: "Reference: {{invoice_reference}}",
+                style: { marginBottom: "8px", fontFamily: "Helvetica-Bold" },
+              },
+              {
+                id: "header",
+                type: "view",
+                style: {
+                  flexDirection: "column",
+                  fontSize: "8px",
+                  gap: "4px",
                 },
-                {
-                  id: "invoice-due-date",
-                  type: "view",
-                  style: {
-                    flexDirection: "row",
-                    gap: "4px",
-                    marginBottom: "8px",
+                children: [
+                  {
+                    id: "invoice-issue-date",
+                    type: "view",
+                    style: { flexDirection: "row", gap: "4px" },
+                    children: [
+                      {
+                        id: "invoice-issue-date-label",
+                        type: "text",
+                        value: "Date of issue",
+                        style: { flex: 1 },
+                      },
+                      {
+                        id: "invoice-issue-date-value",
+                        type: "text",
+                        value: "{{invoice_issue_date}}",
+                        style: { flex: 1 },
+                      },
+                    ],
                   },
-                  children: [
-                    {
-                      id: "invoice-due-date-label",
-                      type: "text",
-                      value: "Due date",
-                      style: { flex: 1 },
+                  {
+                    id: "invoice-due-date",
+                    type: "view",
+                    style: {
+                      flexDirection: "row",
+                      gap: "4px",
+                      marginBottom: "8px",
                     },
-                    {
-                      id: "invoice-due-date-value",
-                      type: "text",
-                      value: "{{invoice_due_date}}",
-                      style: { flex: 1 },
-                    },
-                  ],
-                },
-                {
-                  id: "invoice-payment-type",
-                  type: "view",
-                  style: { flexDirection: "row", gap: "4px" },
-                  children: [
-                    {
-                      id: "invoice-payment-type-label",
-                      type: "text",
-                      value: "Date of issue",
-                      style: { flex: 1 },
-                    },
-                    {
-                      id: "invoice-payment-type-value",
-                      type: "text",
-                      value: "{{invoice_payment_type}}",
-                      style: { flex: 1 },
-                    },
-                  ],
-                },
-                {
-                  id: "invoice-variable-symbol",
-                  type: "view",
-                  style: { flexDirection: "row", gap: "4px" },
-                  children: [
-                    {
-                      id: "invoice-variable-symbol-label",
-                      type: "text",
-                      value: "Variable symbol",
-                      style: { flex: 1 },
-                    },
-                    {
-                      id: "invoice-variable-symbol-label",
-                      type: "text",
-                      value: "{{invoice_variable_symbol}}",
-                      style: { flex: 1 },
-                    },
-                  ],
-                },
-                {
-                  id: "invoice-constant-symbol",
-                  type: "view",
-                  style: { flexDirection: "row", gap: "4px" },
-                  children: [
-                    {
-                      id: "invoice-constant-symbol-label",
-                      type: "text",
-                      value: "Constant symbol",
-                      style: { flex: 1 },
-                    },
-                    {
-                      id: "invoice-constant-symbol-label",
-                      type: "text",
-                      value: "{{invoice_constant_symbol}}",
-                      style: { flex: 1 },
-                    },
-                  ],
-                },
-                {
-                  id: "invoice-seller-bank-account",
-                  type: "view",
-                  style: { flexDirection: "row", gap: "4px" },
-                  children: [
-                    {
-                      id: "invoice-seller-bank-account-label",
-                      type: "text",
-                      value: "Bank account",
-                      style: { flex: 1 },
-                    },
-                    {
-                      id: "invoice-seller-bank-account-label",
-                      type: "text",
-                      value: "{{invoice_seller_bank_account}}",
-                      style: { flex: 1 },
-                    },
-                  ],
-                },
-                {
-                  id: "invoice-seller-bank-code",
-                  type: "view",
-                  style: { flexDirection: "row", gap: "4px" },
-                  children: [
-                    {
-                      id: "invoice-seller-bank-code-label",
-                      type: "text",
-                      value: "Bank Code",
-                      style: { flex: 1 },
-                    },
-                    {
-                      id: "invoice-seller-bank-code-label",
-                      type: "text",
-                      value: "{{invoice_seller_bank_code}}",
-                      style: { flex: 1 },
-                    },
-                  ],
-                },
-              ],
-            },
-          ],
-        },
-      ],
-    },
-    {
-      id: "customer-seller-section",
-      type: "view",
-      style: {
-        flexDirection: "row",
-        gap: "16px",
-        marginHorizontal: "1.5cm",
+                    children: [
+                      {
+                        id: "invoice-due-date-label",
+                        type: "text",
+                        value: "Due date",
+                        style: { flex: 1 },
+                      },
+                      {
+                        id: "invoice-due-date-value",
+                        type: "text",
+                        value: "{{invoice_due_date}}",
+                        style: { flex: 1 },
+                      },
+                    ],
+                  },
+                  {
+                    id: "invoice-payment-type",
+                    type: "view",
+                    style: { flexDirection: "row", gap: "4px" },
+                    children: [
+                      {
+                        id: "invoice-payment-type-label",
+                        type: "text",
+                        value: "Date of issue",
+                        style: { flex: 1 },
+                      },
+                      {
+                        id: "invoice-payment-type-value",
+                        type: "text",
+                        value: "{{invoice_payment_type}}",
+                        style: { flex: 1 },
+                      },
+                    ],
+                  },
+                  {
+                    id: "invoice-variable-symbol",
+                    type: "view",
+                    style: { flexDirection: "row", gap: "4px" },
+                    children: [
+                      {
+                        id: "invoice-variable-symbol-label",
+                        type: "text",
+                        value: "Variable symbol",
+                        style: { flex: 1 },
+                      },
+                      {
+                        id: "invoice-variable-symbol-label",
+                        type: "text",
+                        value: "{{invoice_variable_symbol}}",
+                        style: { flex: 1 },
+                      },
+                    ],
+                  },
+                  {
+                    id: "invoice-constant-symbol",
+                    type: "view",
+                    style: { flexDirection: "row", gap: "4px" },
+                    children: [
+                      {
+                        id: "invoice-constant-symbol-label",
+                        type: "text",
+                        value: "Constant symbol",
+                        style: { flex: 1 },
+                      },
+                      {
+                        id: "invoice-constant-symbol-label",
+                        type: "text",
+                        value: "{{invoice_constant_symbol}}",
+                        style: { flex: 1 },
+                      },
+                    ],
+                  },
+                  {
+                    id: "invoice-seller-bank-account",
+                    type: "view",
+                    style: { flexDirection: "row", gap: "4px" },
+                    children: [
+                      {
+                        id: "invoice-seller-bank-account-label",
+                        type: "text",
+                        value: "Bank account",
+                        style: { flex: 1 },
+                      },
+                      {
+                        id: "invoice-seller-bank-account-label",
+                        type: "text",
+                        value: "{{invoice_seller_bank_account}}",
+                        style: { flex: 1 },
+                      },
+                    ],
+                  },
+                  {
+                    id: "invoice-seller-bank-code",
+                    type: "view",
+                    style: { flexDirection: "row", gap: "4px" },
+                    children: [
+                      {
+                        id: "invoice-seller-bank-code-label",
+                        type: "text",
+                        value: "Bank Code",
+                        style: { flex: 1 },
+                      },
+                      {
+                        id: "invoice-seller-bank-code-label",
+                        type: "text",
+                        value: "{{invoice_seller_bank_code}}",
+                        style: { flex: 1 },
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
       },
-      children: [
-        {
-          id: "customer",
-          type: "view",
-          style: {
-            flex: 1,
-            flexDirection: "column",
-            fontSize: "8px",
-            gap: "4px",
-          },
-          children: [
-            {
-              id: "bill-to-container",
-              type: "view",
-              style: { flexDirection: "column", gap: "2px" },
-              children: [
-                {
-                  id: "bill-to",
-                  type: "text",
-                  value: "Bill To",
-                  style: { fontFamily: "Helvetica-Bold" },
-                },
-                {
-                  id: "customer-name",
-                  type: "text",
-                  value: "{{invoice_customer_name}}",
-                },
-                {
-                  id: "customer-address",
-                  type: "text",
-                  value: "{{invoice_customer_address}}",
-                },
-                {
-                  id: "customer-address-1",
-                  type: "text",
-                  value: `{{invoice_customer_zip}}, {{invoice_customer_city}}`,
-                },
-                {
-                  id: "customer-country",
-                  type: "text",
-                  value: `{{invoice_customer_country}}`,
-                },
-                {
-                  id: "bill-to-business-id",
-                  type: "view",
-                  style: { flexDirection: "row", gap: "4px" },
-                  children: [
-                    {
-                      id: "bill-to-business-id-label",
-                      type: "text",
-                      value: "Business ID",
-                      style: { flex: 1 },
-                    },
-                    {
-                      id: "bill-to-business-id-label",
-                      type: "text",
-                      value: "{{invoice_customer_business_id}}",
-                      style: { flex: 1 },
-                    },
-                  ],
-                },
-                {
-                  id: "bill-to-tax-id",
-                  type: "view",
-                  style: { flexDirection: "row", gap: "4px" },
-                  children: [
-                    {
-                      id: "bill-to-tax-id-label",
-                      type: "text",
-                      value: "Tax ID",
-                      style: { flex: 1 },
-                    },
-                    {
-                      id: "bill-to-tax-id-value",
-                      type: "text",
-                      value: "{{invoice_customer_tax_id}}",
-                      style: { flex: 1 },
-                    },
-                  ],
-                },
-                {
-                  id: "bill-to-vat-id",
-                  type: "view",
-                  style: { flexDirection: "row", gap: "4px" },
-                  if: "{{invoice_customer_vat_id}}",
-                  children: [
-                    {
-                      id: "bill-to-vat-id-label",
-                      type: "text",
-                      value: "VAT ID",
-                      style: { flex: 1 },
-                    },
-                    {
-                      id: "bill-to-vat-id-value",
-                      type: "text",
-                      value: "{{invoice_customer_vat_id}}",
-                      style: { flex: 1 },
-                    },
-                  ],
-                },
-              ],
-            },
-          ],
+      {
+        id: "customer-seller-section",
+        type: "view",
+        style: {
+          flexDirection: "row",
+          gap: "16px",
+          marginHorizontal: "1.5cm",
         },
-        {
-          id: "seller",
-          type: "view",
-          style: {
-            flex: 1,
-            flexDirection: "column",
-            fontSize: "8px",
-            gap: "4px",
-          },
-          children: [
-            {
-              id: "seller-container",
-              type: "view",
-              style: { flexDirection: "column", gap: "2px" },
-              children: [
-                {
-                  id: "seller-label",
-                  type: "text",
-                  value: "Seller",
-                  style: { fontFamily: "Helvetica-Bold" },
-                },
-                {
-                  id: "seller-name",
-                  type: "text",
-                  value: "{{invoice_seller_name}}",
-                },
-                {
-                  id: "seller-address",
-                  type: "text",
-                  value: "{{invoice_seller_address}}",
-                },
-                {
-                  id: "seller-address-1",
-                  type: "text",
-                  value: `{{invoice_seller_zip}}, {{invoice_seller_city}}`,
-                },
-                {
-                  id: "seller-country",
-                  type: "text",
-                  value: `{{invoice_seller_country}}`,
-                },
-                {
-                  id: "seller-business-id",
-                  type: "view",
-                  style: { flexDirection: "row", gap: "4px" },
-                  children: [
-                    {
-                      id: "seller-business-id-label",
-                      type: "text",
-                      value: "Business ID",
-                      style: { flex: 1 },
-                    },
-                    {
-                      id: "seller-business-id-label",
-                      type: "text",
-                      value: "{{invoice_seller_business_id}}",
-                      style: { flex: 1 },
-                    },
-                  ],
-                },
-                {
-                  id: "seller-tax-id",
-                  type: "view",
-                  style: { flexDirection: "row", gap: "4px" },
-                  children: [
-                    {
-                      id: "seller-tax-id-label",
-                      type: "text",
-                      value: "Tax ID",
-                      style: { flex: 1 },
-                    },
-                    {
-                      id: "seller-tax-id-value",
-                      type: "text",
-                      value: "{{invoice_seller_tax_id}}",
-                      style: { flex: 1 },
-                    },
-                  ],
-                },
-                {
-                  id: "seller-vat-id",
-                  type: "view",
-                  style: { flexDirection: "row", gap: "4px" },
-                  if: "{{invoice_seller_vat_id}}",
-                  children: [
-                    {
-                      id: "seller-vat-id-label",
-                      type: "text",
-                      value: "VAT ID",
-                      style: { flex: 1 },
-                    },
-                    {
-                      id: "seller-vat-id-value",
-                      type: "text",
-                      value: "{{invoice_seller_vat_id}}",
-                      style: { flex: 1 },
-                    },
-                  ],
-                },
-              ],
+        children: [
+          {
+            id: "customer",
+            type: "view",
+            style: {
+              flex: 1,
+              flexDirection: "column",
+              fontSize: "8px",
+              gap: "4px",
             },
-          ],
-        },
-      ],
-    },
-  ],
+            children: [
+              {
+                id: "bill-to-container",
+                type: "view",
+                style: { flexDirection: "column", gap: "2px" },
+                children: [
+                  {
+                    id: "bill-to",
+                    type: "text",
+                    value: "Bill To",
+                    style: { fontFamily: "Helvetica-Bold" },
+                  },
+                  {
+                    id: "customer-name",
+                    type: "text",
+                    value: "{{invoice_customer_name}}",
+                  },
+                  {
+                    id: "customer-address",
+                    type: "text",
+                    value: "{{invoice_customer_address}}",
+                  },
+                  {
+                    id: "customer-address-1",
+                    type: "text",
+                    value: `{{invoice_customer_zip}}, {{invoice_customer_city}}`,
+                  },
+                  {
+                    id: "customer-country",
+                    type: "text",
+                    value: `{{invoice_customer_country}}`,
+                  },
+                  {
+                    id: "bill-to-business-id",
+                    type: "view",
+                    style: { flexDirection: "row", gap: "4px" },
+                    children: [
+                      {
+                        id: "bill-to-business-id-label",
+                        type: "text",
+                        value: "Business ID",
+                        style: { flex: 1 },
+                      },
+                      {
+                        id: "bill-to-business-id-label",
+                        type: "text",
+                        value: "{{invoice_customer_business_id}}",
+                        style: { flex: 1 },
+                      },
+                    ],
+                  },
+                  {
+                    id: "bill-to-tax-id",
+                    type: "view",
+                    style: { flexDirection: "row", gap: "4px" },
+                    children: [
+                      {
+                        id: "bill-to-tax-id-label",
+                        type: "text",
+                        value: "Tax ID",
+                        style: { flex: 1 },
+                      },
+                      {
+                        id: "bill-to-tax-id-value",
+                        type: "text",
+                        value: "{{invoice_customer_tax_id}}",
+                        style: { flex: 1 },
+                      },
+                    ],
+                  },
+                  {
+                    id: "bill-to-vat-id",
+                    type: "view",
+                    style: { flexDirection: "row", gap: "4px" },
+                    if: "{{invoice_customer_vat_id}}",
+                    children: [
+                      {
+                        id: "bill-to-vat-id-label",
+                        type: "text",
+                        value: "VAT ID",
+                        style: { flex: 1 },
+                      },
+                      {
+                        id: "bill-to-vat-id-value",
+                        type: "text",
+                        value: "{{invoice_customer_vat_id}}",
+                        style: { flex: 1 },
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+          {
+            id: "seller",
+            type: "view",
+            style: {
+              flex: 1,
+              flexDirection: "column",
+              fontSize: "8px",
+              gap: "4px",
+            },
+            children: [
+              {
+                id: "seller-container",
+                type: "view",
+                style: { flexDirection: "column", gap: "2px" },
+                children: [
+                  {
+                    id: "seller-label",
+                    type: "text",
+                    value: "Seller",
+                    style: { fontFamily: "Helvetica-Bold" },
+                  },
+                  {
+                    id: "seller-name",
+                    type: "text",
+                    value: "{{invoice_seller_name}}",
+                  },
+                  {
+                    id: "seller-address",
+                    type: "text",
+                    value: "{{invoice_seller_address}}",
+                  },
+                  {
+                    id: "seller-address-1",
+                    type: "text",
+                    value: `{{invoice_seller_zip}}, {{invoice_seller_city}}`,
+                  },
+                  {
+                    id: "seller-country",
+                    type: "text",
+                    value: `{{invoice_seller_country}}`,
+                  },
+                  {
+                    id: "seller-business-id",
+                    type: "view",
+                    style: { flexDirection: "row", gap: "4px" },
+                    children: [
+                      {
+                        id: "seller-business-id-label",
+                        type: "text",
+                        value: "Business ID",
+                        style: { flex: 1 },
+                      },
+                      {
+                        id: "seller-business-id-label",
+                        type: "text",
+                        value: "{{invoice_seller_business_id}}",
+                        style: { flex: 1 },
+                      },
+                    ],
+                  },
+                  {
+                    id: "seller-tax-id",
+                    type: "view",
+                    style: { flexDirection: "row", gap: "4px" },
+                    children: [
+                      {
+                        id: "seller-tax-id-label",
+                        type: "text",
+                        value: "Tax ID",
+                        style: { flex: 1 },
+                      },
+                      {
+                        id: "seller-tax-id-value",
+                        type: "text",
+                        value: "{{invoice_seller_tax_id}}",
+                        style: { flex: 1 },
+                      },
+                    ],
+                  },
+                  {
+                    id: "seller-vat-id",
+                    type: "view",
+                    style: { flexDirection: "row", gap: "4px" },
+                    if: "{{invoice_seller_vat_id}}",
+                    children: [
+                      {
+                        id: "seller-vat-id-label",
+                        type: "text",
+                        value: "VAT ID",
+                        style: { flex: 1 },
+                      },
+                      {
+                        id: "seller-vat-id-value",
+                        type: "text",
+                        value: "{{invoice_seller_vat_id}}",
+                        style: { flex: 1 },
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  },
 
   // items: {
   //   id: "items",

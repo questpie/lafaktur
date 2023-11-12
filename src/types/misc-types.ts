@@ -7,3 +7,10 @@ export type FromUnion<
   TDiscriminant extends keyof TUnion,
   TDiscriminantValue extends TUnion[TDiscriminant],
 > = Extract<TUnion, Record<TDiscriminant, TDiscriminantValue>>;
+
+// returns discriminated union without the variant with the given discriminant value
+export type UnionWithout<
+  TUnion,
+  TDiscriminant extends keyof TUnion,
+  TDiscriminantValue extends TUnion[TDiscriminant],
+> = Exclude<TUnion, Record<TDiscriminant, TDiscriminantValue>>;
