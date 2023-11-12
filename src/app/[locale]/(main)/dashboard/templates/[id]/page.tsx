@@ -1,13 +1,20 @@
 "use client";
-import { PDFViewer } from "@react-pdf/renderer";
+import { type CSSProperties } from "react";
 import {
   useBreadcrumbSegment,
   useHeader,
 } from "~/app/[locale]/(main)/dashboard/_components/header";
 import { useSelectedOrganization } from "~/app/[locale]/(main)/dashboard/_components/organization-guard";
-import { PDF_RENDER_MAP } from "~/shared/invoice-template/render/pdf-render-map";
+import { InvoiceTemplateEditor } from "~/app/[locale]/(main)/dashboard/templates/[id]/_components/invoice-template-editor";
+import {
+  DEFAULT_TEMPLATE,
+  type InvoiceTemplateStyle,
+} from "~/shared/invoice-template/invoice-template-types";
+import {
+  TemplateComponentRenderer,
+  type TemplateRenderMap,
+} from "~/shared/invoice-template/render/component-renderer";
 import { TemplateRenderer } from "~/shared/invoice-template/render/template-renderer";
-import { DEFAULT_TEMPLATE } from "~/shared/invoice-template/invoice-template-types";
 import { api } from "~/trpc/react";
 
 type InvoiceTemplatePageProps = {
@@ -32,22 +39,11 @@ export default function InvoiceTemplatePage(props: InvoiceTemplatePageProps) {
   });
 
   return (
-    <div className="grid grid-cols-2">
+    <div className="grid grid-cols-1 md:grid-cols-2">
       <div></div>
       <div>
         <h2 className="text-2xl font-bold">Preview</h2>
-        <PDFViewer className="h-full min-h-[500px] w-full">
-          <TemplateRenderer
-            invoiceTemplate={{
-              id: 1,
-              name: "test",
-              organizationId: 6,
-              template: DEFAULT_TEMPLATE,
-            }}
-            renderMap={PDF_RENDER_MAP}
-            resolver={(text) => text}
-          />
-        </PDFViewer>
+        <InvoiceTemplateEditor invoiceTemplate={invoiceTemplate} />
       </div>
     </div>
   );
