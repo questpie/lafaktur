@@ -1,39 +1,11 @@
 "use client";
-import { Document, Page, StyleSheet, Text, View } from "@react-pdf/renderer";
+import { Document, Page, Text, View } from "@react-pdf/renderer";
 import { type InvoiceTemplate } from "~/server/db/schema";
-import {
-  type InvoiceTemplateSectionItem,
-  type InvoiceValue,
-} from "~/shared/invoice-template/invoice-template-types";
+import { type InvoiceTemplateComponent } from "~/shared/invoice-template/invoice-template-types";
+import { type FromUnion } from "~/types/misc-types";
 
 type InvoiceTemplateRenderer = {
   invoiceTemplate: InvoiceTemplate;
-};
-
-// Register font
-const styles = StyleSheet.create({
-  page: {
-    fontFamily: "Helvetica",
-    position: "relative",
-    flexDirection: "column",
-    backgroundColor: "#fff",
-    fontSize: "11px",
-    gap: "16px",
-  },
-  section: {
-    marginHorizontal: "1.5cm",
-  },
-});
-
-export const renderInvoiceValue = (
-  value: InvoiceValue,
-  template: InvoiceTemplate,
-) => {
-  if (value instanceof Date) {
-    return value.toLocaleString(undefined, { dateStyle: "short" });
-  }
-
-  return String(value);
 };
 
 export function TemplateRenderer(props: InvoiceTemplateRenderer) {
@@ -41,106 +13,107 @@ export function TemplateRenderer(props: InvoiceTemplateRenderer) {
 
   return (
     <Document>
-      <Page size="A4" style={styles.page}>
-        {/* top */}
-        <View
-          style={[
-            styles.section,
-            { marginTop: "1cm", flexDirection: "row", gap: "16px" },
-          ]}
-        >
-          <View style={{ flex: 1 }}>
-            <Text>Logo</Text>
-          </View>
-          <View style={{ flex: 1, flexDirection: "column", gap: "16px" }}>
-            {props.invoiceTemplate.template.heading && (
-              <Text style={{ fontSize: "12px" }}>
-                {renderInvoiceValue(
-                  props.invoiceTemplate.template.heading,
-                  props.invoiceTemplate,
-                )}
-              </Text>
-            )}
-            {props.invoiceTemplate.template.subheading && (
-              <Text style={{ fontSize: "12px" }}>
-                {renderInvoiceValue(
-                  props.invoiceTemplate.template.subheading,
-                  props.invoiceTemplate,
-                )}
-              </Text>
-            )}
-            <View style={props.invoiceTemplate.template.header?.style}>
-              {props.invoiceTemplate.template.header?.items.map((section) => (
-                <InvoiceTemplateSection
-                  section={section}
-                  invoiceTemplate={props.invoiceTemplate}
-                  key={section.id}
-                />
-              ))}
-            </View>
-          </View>
-        </View>
-        <View style={[styles.section, { flexDirection: "row", gap: "16px" }]}>
-          <View style={props.invoiceTemplate.template.customer?.style}>
-            {props.invoiceTemplate.template.customer?.items.map((section) => (
-              <InvoiceTemplateSection
-                section={section}
-                invoiceTemplate={props.invoiceTemplate}
-                key={section.id}
-              />
-            ))}
-          </View>
-          <View style={props.invoiceTemplate.template.seller?.style}>
-            {props.invoiceTemplate.template.seller?.items.map((section) => (
-              <InvoiceTemplateSection
-                section={section}
-                invoiceTemplate={props.invoiceTemplate}
-                key={section.id}
-              />
-            ))}
-          </View>
-        </View>
-        {/* center */}
-        <View style={[styles.section, { flex: 1 }]}>
-          <Text>Section #1</Text>
-        </View>
-        {/* footer */}
-        <View
-          style={[
-            styles.section,
-            { marginBottom: "1cm", borderBottom: "1px solid black" },
-          ]}
-        >
-          <Text>Section #2</Text>
-        </View>
+      <Page size="A4" style={props.invoiceTemplate.template.style}>
+        {props.invoiceTemplate.template.children?.map((child) => (
+          <TemplateComponentRenderer component={child} key={child.id} />
+        ))}
       </Page>
     </Document>
   );
 }
 
-type InvoiceTemplateSectionProps = {
-  section: InvoiceTemplateSectionItem;
-  invoiceTemplate: InvoiceTemplate;
+type TemplateComponentRendererProps = {
+  component: InvoiceTemplateComponent;
+  /**
+   * pass here logic to resolve text content of the component (fe. variables)
+   */
+  resolver?: TemplateVariableResolver;
+  context?: any;
 };
 
-function InvoiceTemplateSection(props: InvoiceTemplateSectionProps) {
-  const values = Array.isArray(props.section.value)
-    ? props.section.value
-    : [props.section.value];
-  return (
-    <View style={props.section.wrapperStyle}>
-      {props.section.label && (
-        <Text style={props.section.labelStyle}>
-          {renderInvoiceValue(props.section.label, props.invoiceTemplate)}
-        </Text>
-      )}
-      <View style={props.section.valueStyle}>
-        {values.map((v, i) => {
-          return (
-            <Text key={i}>{renderInvoiceValue(v, props.invoiceTemplate)}</Text>
-          );
-        })}
+const defaultResolver: TemplateVariableResolver = (variable: string) =>
+  variable;
+
+type TemplateVariableResolver = (
+  textWithVariable: string,
+  context?: any,
+) => string;
+export type InvoiceRenderFn<T extends InvoiceTemplateComponent["type"]> =
+  (props: {
+    cmp: FromUnion<InvoiceTemplateComponent, "type", T>;
+    resolver: TemplateVariableResolver;
+    context?: any;
+  }) => React.ReactNode;
+export type RenderMap = {
+  [T in InvoiceTemplateComponent["type"]]: InvoiceRenderFn<T>;
+};
+
+const rendererMap: RenderMap = {
+  view: ({ cmp, resolver, context }) => {
+    return (
+      <View style={cmp.style}>
+        {cmp.children?.map((child) => (
+          <TemplateComponentRenderer
+            component={child}
+            key={child.id}
+            resolver={resolver}
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+            context={context}
+          />
+        ))}
       </View>
-    </View>
-  );
+    );
+  },
+
+  image: ({ cmp }) => {
+    return (
+      <View style={cmp.style}>
+        <Text>TODO IMAGE RESOLUTION</Text>
+      </View>
+    );
+  },
+  text: ({ cmp, resolver }) => {
+    const resolvedText = resolver(cmp.value ?? "");
+
+    return <Text style={cmp.style}>{resolvedText ?? ""}</Text>;
+  },
+  list: ({ cmp, resolver }) => {
+    const list = resolver(cmp.for) ?? [];
+    if (!Array.isArray(list)) {
+      throw new Error("Invalid value for list component");
+    }
+
+    return (
+      <View style={cmp.style}>
+        {list.map((item, i) => (
+          <TemplateComponentRenderer
+            component={cmp.item}
+            key={`${cmp.id}-${i}`}
+            resolver={resolver}
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+            context={item}
+          />
+        ))}
+      </View>
+    );
+  },
+};
+
+function TemplateComponentRenderer({
+  component,
+  resolver: variableResolver = defaultResolver,
+}: TemplateComponentRendererProps) {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  const renderer = rendererMap[component.type] as any;
+
+  if (!renderer) {
+    throw new Error(`Invalid component type: ${component.type}`);
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call
+  return renderer({
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    cmp: component as unknown as any,
+    resolver: variableResolver,
+  });
 }
