@@ -139,7 +139,7 @@ export const invoiceTemplatesTable = mysqlTable(
     name: varchar("name", { length: 255 }).notNull(),
     template: typedJson<InvoiceTemplateData>("template")
       .notNull()
-      .default(DEFAULT_TEMPLATE),
+      .$default(() => DEFAULT_TEMPLATE),
   },
   (it) => ({
     compoundKey: uniqueIndex("organizationIdNameIdx").on(

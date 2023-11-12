@@ -6,7 +6,7 @@ import {
 } from "~/app/[locale]/(main)/dashboard/_components/header";
 import { useSelectedOrganization } from "~/app/[locale]/(main)/dashboard/_components/organization-guard";
 import { TemplateRenderer } from "~/app/[locale]/(main)/dashboard/templates/[id]/_components/invoice-template-renderer";
-import InvoiceTemplateDataTable from "~/app/[locale]/(main)/dashboard/templates/_components/invoice-template-data-table";
+import { DEFAULT_TEMPLATE } from "~/shared/invoice-template/invoice-template-types";
 import { api } from "~/trpc/react";
 
 type InvoiceTemplatePageProps = {
@@ -36,7 +36,14 @@ export default function InvoiceTemplatePage(props: InvoiceTemplatePageProps) {
       <div>
         <h2 className="text-2xl font-bold">Preview</h2>
         <PDFViewer className="h-full min-h-[500px] w-full">
-          <TemplateRenderer invoiceTemplate={invoiceTemplate} />
+          <TemplateRenderer
+            invoiceTemplate={{
+              id: 1,
+              name: "test",
+              organizationId: 6,
+              template: DEFAULT_TEMPLATE,
+            }}
+          />
         </PDFViewer>
       </div>
     </div>

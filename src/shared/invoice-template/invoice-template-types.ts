@@ -1,3 +1,5 @@
+import { type View } from "@react-pdf/renderer";
+import { type ComponentProps } from "react";
 import { z } from "zod";
 
 export const invoiceCurrencySchema = z.enum([
@@ -130,11 +132,24 @@ export const invoiceValueSchema = z
 
 export type InvoiceValue = z.infer<typeof invoiceValueSchema>;
 
-export const invoiceTemplateSectionSchema = z.object({
+export const invoiceTemplateSectionItemSchema = z.object({
   id: z.string(),
   label: invoiceValueSchema.optional(),
   value: invoiceValueSchema.or(z.array(invoiceValueSchema)),
+  labelStyle: z.custom<ComponentProps<typeof View>["style"]>(),
+  valueStyle: z.custom<ComponentProps<typeof View>["style"]>(),
+  wrapperStyle: z.custom<ComponentProps<typeof View>["style"]>(),
 });
+export type InvoiceTemplateSectionItem = z.infer<
+  typeof invoiceTemplateSectionItemSchema
+>;
+
+export const invoiceTemplateSectionSchema = z.object({
+  id: z.string(),
+  style: z.custom<ComponentProps<typeof View>["style"]>(),
+  items: z.array(invoiceTemplateSectionItemSchema),
+});
+
 export type InvoiceTemplateSection = z.infer<
   typeof invoiceTemplateSectionSchema
 >;
@@ -143,12 +158,12 @@ export const invoiceTemplateDataSchema = z.object({
   heading: invoiceValueSchema.optional(),
   subheading: invoiceValueSchema.optional(),
   logo: z.string().optional(),
-  header: z.array(invoiceTemplateSectionSchema),
-  customer: z.array(invoiceTemplateSectionSchema),
-  seller: z.array(invoiceTemplateSectionSchema),
-  legal: z.array(invoiceTemplateSectionSchema),
-  items: z.array(invoiceTemplateSectionSchema),
-  totals: z.array(invoiceTemplateSectionSchema),
+  header: invoiceTemplateSectionSchema,
+  customer: invoiceTemplateSectionSchema,
+  seller: invoiceTemplateSectionSchema,
+  legal: invoiceTemplateSectionSchema,
+  items: invoiceTemplateSectionSchema,
+  totals: invoiceTemplateSectionSchema,
   currency: invoiceCurrencySchema.default("EUR"),
   dateFormat: invoiceDateFormatSchema.default("DD.MM.YYYY"),
   // unitLabels?: { [key in UnitType]: string };
@@ -179,136 +194,225 @@ export const DEFAULT_TEMPLATE: InvoiceTemplateData = {
   dateFormat: "DD.MM.YYYY",
   heading: "Invoice #{{invoice_number}}",
   subheading: "Reference: {{invoice_reference}}",
-  header: [
-    {
-      id: "invoice_issue_date",
-      label: "Date of issue",
-      value: "{{invoice_issue_date}}",
+  header: {
+    id: "header",
+    style: {
+      flexDirection: "column",
+      fontSize: "8px",
+      gap: "4px",
     },
-    {
-      id: "invoice_due_date",
-      label: "Due date",
-      value: "{{invoice_due_date}}",
+    items: [
+      {
+        id: "invoice_issue_date",
+        label: "Date of issue",
+        value: "{{invoice_issue_date}}",
+        wrapperStyle: { flexDirection: "row", gap: "4px" },
+        labelStyle: { flex: 1 },
+        valueStyle: { flex: 1 },
+      },
+      {
+        id: "invoice_due_date",
+        label: "Due date",
+        value: "{{invoice_due_date}}",
+        wrapperStyle: { flexDirection: "row", gap: "4px" },
+        labelStyle: { flex: 1 },
+        valueStyle: { flex: 1 },
+      },
+      {
+        id: "header_space",
+        label: "",
+        value: "",
+        wrapperStyle: { marginTop: "8px" },
+      },
+      {
+        id: "invoice_payment_type",
+        label: "Payment type",
+        value: "{{invoice_payment_type}}",
+        wrapperStyle: { flexDirection: "row", gap: "4px" },
+        labelStyle: { flex: 1 },
+        valueStyle: { flex: 1 },
+      },
+      {
+        id: "invoice_variable_symbol",
+        label: "Variable symbol",
+        value: "{{invoice_variable_symbol}}",
+        wrapperStyle: { flexDirection: "row", gap: "4px" },
+        labelStyle: { flex: 1 },
+        valueStyle: { flex: 1 },
+      },
+      {
+        id: "invoice_constant_symbol",
+        label: "Constant symbol",
+        value: "{{invoice_constant_symbol}}",
+        wrapperStyle: { flexDirection: "row", gap: "4px" },
+        labelStyle: { flex: 1 },
+        valueStyle: { flex: 1 },
+      },
+      {
+        id: "invoice_seller_bank_account",
+        label: "Bank account",
+        value: "{{invoice_seller_bank_account}}",
+        wrapperStyle: { flexDirection: "row", gap: "4px" },
+        labelStyle: { flex: 1 },
+        valueStyle: { flex: 1 },
+      },
+      {
+        id: "invoice_seller_bank_code",
+        label: "Bank code",
+        value: "{{invoice_seller_bank_code}}",
+        wrapperStyle: { flexDirection: "row", gap: "4px" },
+        labelStyle: { flex: 1 },
+        valueStyle: { flex: 1 },
+      },
+    ],
+  },
+  customer: {
+    id: "customer",
+    style: {
+      flex: 1,
+      flexDirection: "column",
+      fontSize: "8px",
+      gap: "4px",
     },
-    {
-      id: "header_space",
-      label: "",
-      value: "",
+    items: [
+      {
+        id: "bill_to",
+        label: "Bill to",
+        wrapperStyle: {
+          flexDirection: "column",
+        },
+        labelStyle: {
+          fontFamily: "Helvetica-Bold",
+        },
+        value: [
+          "{{invoice_customer_name}}",
+          "{{invoice_customer_address}}",
+          `{{invoice_customer_zip}}, {{invoice_customer_city}}`,
+          "{{invoice_customer_country}}",
+        ],
+      },
+      {
+        id: "bill_to_business_id",
+        label: "Business ID",
+        value: "{{invoice_customer_business_id}}",
+        wrapperStyle: { flexDirection: "row", gap: "4px" },
+        labelStyle: { flex: 1 },
+        valueStyle: { flex: 1 },
+      },
+      {
+        id: "bill_to_tax_id",
+        label: "Tax ID",
+        value: "{{invoice_customer_tax_id}}",
+        wrapperStyle: { flexDirection: "row", gap: "4px" },
+        labelStyle: { flex: 1 },
+        valueStyle: { flex: 1 },
+      },
+      {
+        id: "bill_to_vat_id",
+        label: "VAT ID",
+        value: "{{invoice_customer_vat_id}}",
+        wrapperStyle: { flexDirection: "row", gap: "4px" },
+        labelStyle: { flex: 1 },
+        valueStyle: { flex: 1 },
+      },
+    ],
+  },
+  seller: {
+    id: "seller",
+    style: {
+      flex: 1,
+      flexDirection: "column",
+      fontSize: "8px",
+      gap: "4px",
     },
-    {
-      id: "invoice_payment_type",
-      label: "Payment type",
-      value: "{{invoice_payment_type}}",
-    },
-    {
-      id: "invoice_variable_symbol",
-      label: "Variable symbol",
-      value: "{{invoice_variable_symbol}}",
-    },
-    {
-      id: "invoice_constant_symbol",
-      label: "Constant symbol",
-      value: "{{invoice_constant_symbol}}",
-    },
-    {
-      id: "invoice_seller_bank_account",
-      label: "Bank account",
-      value: "{{invoice_seller_bank_account}}",
-    },
-    {
-      id: "invoice_seller_bank_code",
-      label: "Bank code",
-      value: "{{invoice_seller_bank_code}}",
-    },
-  ],
-  customer: [
-    {
-      id: "bill_to",
-      label: "Bill to",
-      value: [
-        "{{invoice_customer_name}}",
-        "{{invoice_customer_address}}",
-        `{{invoice_customer_zip}}, {{invoice_customer_city}}`,
-        "{{invoice_customer_country}}",
-      ],
-    },
-    {
-      id: "bill_to_business_id",
-      label: "Business ID",
-      value: "{{invoice_customer_business_id}}",
-    },
-    {
-      id: "bill_to_tax_id",
-      label: "Tax ID",
-      value: "{{invoice_customer_tax_id}}",
-    },
-    {
-      id: "bill_to_vat_id",
-      label: "VAT ID",
-      value: "{{invoice_customer_vat_id}}",
-    },
-  ],
-  seller: [
-    {
-      id: "seller",
-      label: "Seller",
-      value: [
-        "{{invoice_seller_name}}",
-        "{{invoice_seller_address}}",
-        `{{invoice_seller_zip}}, {{invoice_seller_city}}`,
-        "{{invoice_seller_country}}",
-      ],
-    },
-    {
-      id: "seller_business_id",
-      label: "Business ID",
-      value: "{{invoice_seller_business_id}}",
-    },
-    {
-      id: "seller_tax_id",
-      label: "Tax ID",
-      value: "{{invoice_seller_tax_id}}",
-    },
-    {
-      id: "seller_vat_id",
-      label: "VAT ID",
-      value: "{{invoice_seller_vat_id}}",
-    },
-  ],
-  items: [
-    {
-      id: "invoice_item_quantity",
-      label: "Quantity",
-      value: "{{invoice_item_quantity}} {{invoice_item_unit}}",
-    },
-    {
-      id: "invoice_item_name",
-      label: "Item",
-      value: "{{invoice_item_name}}",
-    },
-    {
-      id: "invoice_item_unit_price",
-      label: "Unit price",
-      value: "{{invoice_item_unit_price}}",
-    },
-    {
-      id: "invoice_item_total",
-      label: "Total",
-      value: "",
-    },
-  ],
-  totals: [
-    {
-      id: "invoice_total",
-      label: "Total amount to pay",
-      value: "{{invoice_total}}",
-    },
-  ],
-  legal: [
-    {
-      id: "legal",
-      value: "Legal",
-    },
-  ],
+    items: [
+      {
+        id: "seller",
+        label: "Seller",
+        wrapperStyle: {
+          flex: 1,
+          flexDirection: "column",
+          gap: "2px",
+        },
+        labelStyle: {
+          fontFamily: "Helvetica-Bold",
+        },
+        value: [
+          "{{invoice_seller_name}}",
+          "{{invoice_seller_address}}",
+          `{{invoice_seller_zip}}, {{invoice_seller_city}}`,
+          "{{invoice_seller_country}}",
+        ],
+      },
+      {
+        id: "seller_business_id",
+        label: "Business ID",
+        value: "{{invoice_seller_business_id}}",
+        wrapperStyle: { flexDirection: "row", gap: "4px" },
+        labelStyle: { flex: 1 },
+        valueStyle: { flex: 1 },
+      },
+      {
+        id: "seller_tax_id",
+        label: "Tax ID",
+        value: "{{invoice_seller_tax_id}}",
+        wrapperStyle: { flexDirection: "row", gap: "4px" },
+        labelStyle: { flex: 1 },
+        valueStyle: { flex: 1 },
+      },
+      {
+        id: "seller_vat_id",
+        label: "VAT ID",
+        value: "{{invoice_seller_vat_id}}",
+        wrapperStyle: { flexDirection: "row", gap: "4px" },
+        labelStyle: { flex: 1 },
+        valueStyle: { flex: 1 },
+      },
+    ],
+  },
+  items: {
+    id: "items",
+    items: [
+      {
+        id: "invoice_item_quantity",
+        label: "Quantity",
+        value: "{{invoice_item_quantity}} {{invoice_item_unit}}",
+      },
+      {
+        id: "invoice_item_name",
+        label: "Item",
+        value: "{{invoice_item_name}}",
+      },
+      {
+        id: "invoice_item_unit_price",
+        label: "Unit price",
+        value: "{{invoice_item_unit_price}}",
+      },
+      {
+        id: "invoice_item_total",
+        label: "Total",
+        value: "",
+      },
+    ],
+  },
+  totals: {
+    id: "totals",
+    items: [
+      {
+        id: "invoice_total",
+        label: "Total amount to pay",
+        value: "{{invoice_total}}",
+      },
+    ],
+  },
+  legal: {
+    id: "legal",
+    items: [
+      {
+        id: "legal",
+        value: "Legal",
+      },
+    ],
+  },
   vatIncluded: false,
 };

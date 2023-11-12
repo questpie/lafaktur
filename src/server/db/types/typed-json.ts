@@ -6,6 +6,7 @@ export const typedJson = <TData, TName extends string = string>(name: TName) =>
       return "json";
     },
     toDriver(value: TData) {
+      if (!value) return null;
       return JSON.stringify(value);
     },
     fromDriver(value: unknown) {
