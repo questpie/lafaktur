@@ -1,16 +1,6 @@
 import { type InvoiceTemplateComponent } from "~/shared/invoice-template/invoice-template-types";
 import { type FromUnion } from "~/types/misc-types";
 
-type TemplateComponentRendererProps = {
-  component: InvoiceTemplateComponent;
-  /**
-   * pass here logic to resolve text content of the component (fe. variables)
-   */
-  resolver: TemplateVariableResolver;
-  context?: any;
-  renderMap: TemplateRenderMap;
-};
-
 export type InvoiceRenderFn<T extends InvoiceTemplateComponent["type"]> =
   (props: {
     cmp: FromUnion<InvoiceTemplateComponent, "type", T>;
@@ -22,11 +12,21 @@ export type TemplateRenderMap = {
   [T in InvoiceTemplateComponent["type"]]: InvoiceRenderFn<T>;
 };
 
-export type TemplateVariableResolver = <TReturnAs extends "value" | "node">(
+export type TemplateVariableResolver = <TResolveAs extends "value" | "node">(
   textWithVariable: string,
-  returnAs: TReturnAs,
+  resolveAs: TResolveAs,
   context?: any,
-) => TReturnAs extends "value" ? unknown : React.ReactNode;
+) => TResolveAs extends "value" ? unknown : React.ReactNode;
+
+type TemplateComponentRendererProps = {
+  component: InvoiceTemplateComponent;
+  /**
+   * pass here the logic to resolve variables from the template
+   */
+  resolver: TemplateVariableResolver;
+  context?: any;
+  renderMap: TemplateRenderMap;
+};
 
 export function TemplateComponentRenderer({
   component,
