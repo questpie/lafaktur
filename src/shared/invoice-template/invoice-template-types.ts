@@ -1,4 +1,5 @@
 import type ReactPDF from "@react-pdf/renderer";
+import { nanoid } from "nanoid";
 import { z } from "zod";
 import {
   type FromUnion,
@@ -202,7 +203,7 @@ export const DEFAULT_TEMPLATE: InvoiceTemplateData = {
   currency: "EUR",
   dateFormat: "DD.MM.YYYY",
   content: {
-    id: "page",
+    id: nanoid(),
     type: "page",
     style: {
       display: "flex",
@@ -214,7 +215,7 @@ export const DEFAULT_TEMPLATE: InvoiceTemplateData = {
     },
     children: [
       {
-        id: "top-section",
+        id: nanoid(),
         type: "view",
         style: {
           display: "flex",
@@ -225,13 +226,13 @@ export const DEFAULT_TEMPLATE: InvoiceTemplateData = {
         },
         children: [
           {
-            id: "logo-container",
+            id: nanoid(),
             type: "view",
             style: { display: "flex", flex: 1 },
-            children: [{ id: "logo-text", type: "text", value: "logo" }],
+            children: [{ id: nanoid(), type: "text", value: "logo" }],
           },
           {
-            id: "header-wrapper",
+            id: nanoid(),
             type: "view",
             style: {
               display: "flex",
@@ -241,13 +242,13 @@ export const DEFAULT_TEMPLATE: InvoiceTemplateData = {
             },
             children: [
               {
-                id: "heading",
+                id: nanoid(),
                 type: "text",
                 value: "Invoice #{{invoice_number}}",
                 style: { display: "flex", fontFamily: "Helvetica-Bold" },
               },
               {
-                id: "subheading",
+                id: nanoid(),
                 type: "text",
                 value: "Reference: {{invoice_reference}}",
                 style: {
@@ -257,7 +258,7 @@ export const DEFAULT_TEMPLATE: InvoiceTemplateData = {
                 },
               },
               {
-                id: "header",
+                id: nanoid(),
                 type: "view",
                 style: {
                   display: "flex",
@@ -267,7 +268,7 @@ export const DEFAULT_TEMPLATE: InvoiceTemplateData = {
                 },
                 children: [
                   {
-                    id: "invoice-issue-date",
+                    id: nanoid(),
                     type: "view",
                     style: {
                       display: "flex",
@@ -276,13 +277,13 @@ export const DEFAULT_TEMPLATE: InvoiceTemplateData = {
                     },
                     children: [
                       {
-                        id: "invoice-issue-date-label",
+                        id: nanoid(),
                         type: "text",
                         value: "Date of issue",
                         style: { display: "flex", flex: 1 },
                       },
                       {
-                        id: "invoice-issue-date-value",
+                        id: nanoid(),
                         type: "text",
                         value: "{{invoice_issue_date}}",
                         style: { display: "flex", flex: 1 },
@@ -290,7 +291,7 @@ export const DEFAULT_TEMPLATE: InvoiceTemplateData = {
                     ],
                   },
                   {
-                    id: "invoice-due-date",
+                    id: nanoid(),
                     type: "view",
                     style: {
                       display: "flex",
@@ -300,13 +301,13 @@ export const DEFAULT_TEMPLATE: InvoiceTemplateData = {
                     },
                     children: [
                       {
-                        id: "invoice-due-date-label",
+                        id: nanoid(),
                         type: "text",
                         value: "Due date",
                         style: { display: "flex", flex: 1 },
                       },
                       {
-                        id: "invoice-due-date-value",
+                        id: nanoid(),
                         type: "text",
                         value: "{{invoice_due_date}}",
                         style: { display: "flex", flex: 1 },
@@ -314,7 +315,7 @@ export const DEFAULT_TEMPLATE: InvoiceTemplateData = {
                     ],
                   },
                   {
-                    id: "invoice-payment-type",
+                    id: nanoid(),
                     type: "view",
                     style: {
                       display: "flex",
@@ -323,13 +324,13 @@ export const DEFAULT_TEMPLATE: InvoiceTemplateData = {
                     },
                     children: [
                       {
-                        id: "invoice-payment-type-label",
+                        id: nanoid(),
                         type: "text",
                         value: "Date of issue",
                         style: { display: "flex", flex: 1 },
                       },
                       {
-                        id: "invoice-payment-type-value",
+                        id: nanoid(),
                         type: "text",
                         value: "{{invoice_payment_type}}",
                         style: { display: "flex", flex: 1 },
@@ -337,7 +338,7 @@ export const DEFAULT_TEMPLATE: InvoiceTemplateData = {
                     ],
                   },
                   {
-                    id: "invoice-variable-symbol",
+                    id: nanoid(),
                     type: "view",
                     style: {
                       display: "flex",
@@ -346,13 +347,13 @@ export const DEFAULT_TEMPLATE: InvoiceTemplateData = {
                     },
                     children: [
                       {
-                        id: "invoice-variable-symbol-label",
+                        id: nanoid(),
                         type: "text",
                         value: "Variable symbol",
                         style: { display: "flex", flex: 1 },
                       },
                       {
-                        id: "invoice-variable-symbol-value",
+                        id: nanoid(),
                         type: "text",
                         value: "{{invoice_variable_symbol}}",
                         style: { display: "flex", flex: 1 },
@@ -360,7 +361,7 @@ export const DEFAULT_TEMPLATE: InvoiceTemplateData = {
                     ],
                   },
                   {
-                    id: "invoice-constant-symbol",
+                    id: nanoid(),
                     type: "view",
                     style: {
                       display: "flex",
@@ -369,13 +370,13 @@ export const DEFAULT_TEMPLATE: InvoiceTemplateData = {
                     },
                     children: [
                       {
-                        id: "invoice-constant-symbol-label",
+                        id: nanoid(),
                         type: "text",
                         value: "Constant symbol",
                         style: { display: "flex", flex: 1 },
                       },
                       {
-                        id: "invoice-constant-symbol-value",
+                        id: nanoid(),
                         type: "text",
                         value: "{{invoice_constant_symbol}}",
                         style: { display: "flex", flex: 1 },
@@ -383,7 +384,7 @@ export const DEFAULT_TEMPLATE: InvoiceTemplateData = {
                     ],
                   },
                   {
-                    id: "invoice-seller-bank-account",
+                    id: nanoid(),
                     type: "view",
                     style: {
                       display: "flex",
@@ -392,13 +393,13 @@ export const DEFAULT_TEMPLATE: InvoiceTemplateData = {
                     },
                     children: [
                       {
-                        id: "invoice-seller-bank-account-label",
+                        id: nanoid(),
                         type: "text",
                         value: "Bank account",
                         style: { display: "flex", flex: 1 },
                       },
                       {
-                        id: "invoice-seller-bank-account-value",
+                        id: nanoid(),
                         type: "text",
                         value: "{{invoice_seller_bank_account}}",
                         style: { display: "flex", flex: 1 },
@@ -406,7 +407,7 @@ export const DEFAULT_TEMPLATE: InvoiceTemplateData = {
                     ],
                   },
                   {
-                    id: "invoice-seller-bank-code",
+                    id: nanoid(),
                     type: "view",
                     style: {
                       display: "flex",
@@ -415,13 +416,13 @@ export const DEFAULT_TEMPLATE: InvoiceTemplateData = {
                     },
                     children: [
                       {
-                        id: "invoice-seller-bank-code-label",
+                        id: nanoid(),
                         type: "text",
                         value: "Bank Code",
                         style: { display: "flex", flex: 1 },
                       },
                       {
-                        id: "invoice-seller-bank-code-value",
+                        id: nanoid(),
                         type: "text",
                         value: "{{invoice_seller_bank_code}}",
                         style: { display: "flex", flex: 1 },
@@ -435,7 +436,7 @@ export const DEFAULT_TEMPLATE: InvoiceTemplateData = {
         ],
       },
       {
-        id: "customer-seller-section",
+        id: nanoid(),
         type: "view",
         style: {
           display: "flex",
@@ -445,7 +446,7 @@ export const DEFAULT_TEMPLATE: InvoiceTemplateData = {
         },
         children: [
           {
-            id: "customer",
+            id: nanoid(),
             type: "view",
             style: {
               display: "flex",
@@ -456,38 +457,38 @@ export const DEFAULT_TEMPLATE: InvoiceTemplateData = {
             },
             children: [
               {
-                id: "bill-to-container",
+                id: nanoid(),
                 type: "view",
                 style: { display: "flex", flexDirection: "column", gap: "2px" },
                 children: [
                   {
-                    id: "bill-to",
+                    id: nanoid(),
                     type: "text",
                     value: "Bill To",
                     style: { display: "flex", fontFamily: "Helvetica-Bold" },
                   },
                   {
-                    id: "customer-name",
+                    id: nanoid(),
                     type: "text",
                     value: "{{invoice_customer_name}}",
                   },
                   {
-                    id: "customer-address",
+                    id: nanoid(),
                     type: "text",
                     value: "{{invoice_customer_address}}",
                   },
                   {
-                    id: "customer-address-1",
+                    id: nanoid(),
                     type: "text",
                     value: `{{invoice_customer_zip}}, {{invoice_customer_city}}`,
                   },
                   {
-                    id: "customer-country",
+                    id: nanoid(),
                     type: "text",
                     value: `{{invoice_customer_country}}`,
                   },
                   {
-                    id: "bill-to-business-id",
+                    id: nanoid(),
                     type: "view",
                     style: {
                       display: "flex",
@@ -496,13 +497,13 @@ export const DEFAULT_TEMPLATE: InvoiceTemplateData = {
                     },
                     children: [
                       {
-                        id: "bill-to-business-id-label",
+                        id: nanoid(),
                         type: "text",
                         value: "Business ID",
                         style: { display: "flex", flex: 1 },
                       },
                       {
-                        id: "bill-to-business-id-value",
+                        id: nanoid(),
                         type: "text",
                         value: "{{invoice_customer_business_id}}",
                         style: { display: "flex", flex: 1 },
@@ -510,7 +511,7 @@ export const DEFAULT_TEMPLATE: InvoiceTemplateData = {
                     ],
                   },
                   {
-                    id: "bill-to-tax-id",
+                    id: nanoid(),
                     type: "view",
                     style: {
                       display: "flex",
@@ -519,13 +520,13 @@ export const DEFAULT_TEMPLATE: InvoiceTemplateData = {
                     },
                     children: [
                       {
-                        id: "bill-to-tax-id-label",
+                        id: nanoid(),
                         type: "text",
                         value: "Tax ID",
                         style: { display: "flex", flex: 1 },
                       },
                       {
-                        id: "bill-to-tax-id-value",
+                        id: nanoid(),
                         type: "text",
                         value: "{{invoice_customer_tax_id}}",
                         style: { display: "flex", flex: 1 },
@@ -533,7 +534,7 @@ export const DEFAULT_TEMPLATE: InvoiceTemplateData = {
                     ],
                   },
                   {
-                    id: "bill-to-vat-id",
+                    id: nanoid(),
                     type: "view",
                     style: {
                       display: "flex",
@@ -543,13 +544,13 @@ export const DEFAULT_TEMPLATE: InvoiceTemplateData = {
                     if: "{{invoice_customer_vat_id}}",
                     children: [
                       {
-                        id: "bill-to-vat-id-label",
+                        id: nanoid(),
                         type: "text",
                         value: "VAT ID",
                         style: { display: "flex", flex: 1 },
                       },
                       {
-                        id: "bill-to-vat-id-value",
+                        id: nanoid(),
                         type: "text",
                         value: "{{invoice_customer_vat_id}}",
                         style: { display: "flex", flex: 1 },
@@ -561,7 +562,7 @@ export const DEFAULT_TEMPLATE: InvoiceTemplateData = {
             ],
           },
           {
-            id: "seller",
+            id: nanoid(),
             type: "view",
             style: {
               display: "flex",
@@ -572,38 +573,38 @@ export const DEFAULT_TEMPLATE: InvoiceTemplateData = {
             },
             children: [
               {
-                id: "seller-container",
+                id: nanoid(),
                 type: "view",
                 style: { display: "flex", flexDirection: "column", gap: "2px" },
                 children: [
                   {
-                    id: "seller-label",
+                    id: nanoid(),
                     type: "text",
                     value: "Seller",
                     style: { display: "flex", fontFamily: "Helvetica-Bold" },
                   },
                   {
-                    id: "seller-name",
+                    id: nanoid(),
                     type: "text",
                     value: "{{invoice_seller_name}}",
                   },
                   {
-                    id: "seller-address",
+                    id: nanoid(),
                     type: "text",
                     value: "{{invoice_seller_address}}",
                   },
                   {
-                    id: "seller-address-1",
+                    id: nanoid(),
                     type: "text",
                     value: `{{invoice_seller_zip}}, {{invoice_seller_city}}`,
                   },
                   {
-                    id: "seller-country",
+                    id: nanoid(),
                     type: "text",
                     value: `{{invoice_seller_country}}`,
                   },
                   {
-                    id: "seller-business-id",
+                    id: nanoid(),
                     type: "view",
                     style: {
                       display: "flex",
@@ -612,13 +613,13 @@ export const DEFAULT_TEMPLATE: InvoiceTemplateData = {
                     },
                     children: [
                       {
-                        id: "seller-business-id-label",
+                        id: nanoid(),
                         type: "text",
                         value: "Business ID",
                         style: { display: "flex", flex: 1 },
                       },
                       {
-                        id: "seller-business-id-value",
+                        id: nanoid(),
                         type: "text",
                         value: "{{invoice_seller_business_id}}",
                         style: { display: "flex", flex: 1 },
@@ -626,7 +627,7 @@ export const DEFAULT_TEMPLATE: InvoiceTemplateData = {
                     ],
                   },
                   {
-                    id: "seller-tax-id",
+                    id: nanoid(),
                     type: "view",
                     style: {
                       display: "flex",
@@ -635,13 +636,13 @@ export const DEFAULT_TEMPLATE: InvoiceTemplateData = {
                     },
                     children: [
                       {
-                        id: "seller-tax-id-label",
+                        id: nanoid(),
                         type: "text",
                         value: "Tax ID",
                         style: { display: "flex", flex: 1 },
                       },
                       {
-                        id: "seller-tax-id-value",
+                        id: nanoid(),
                         type: "text",
                         value: "{{invoice_seller_tax_id}}",
                         style: { display: "flex", flex: 1 },
@@ -649,7 +650,7 @@ export const DEFAULT_TEMPLATE: InvoiceTemplateData = {
                     ],
                   },
                   {
-                    id: "seller-vat-id",
+                    id: nanoid(),
                     type: "view",
                     style: {
                       display: "flex",
@@ -659,13 +660,13 @@ export const DEFAULT_TEMPLATE: InvoiceTemplateData = {
                     if: "{{invoice_seller_vat_id}}",
                     children: [
                       {
-                        id: "seller-vat-id-label",
+                        id: nanoid(),
                         type: "text",
                         value: "VAT ID",
                         style: { display: "flex", flex: 1 },
                       },
                       {
-                        id: "seller-vat-id-value",
+                        id: nanoid(),
                         type: "text",
                         value: "{{invoice_seller_vat_id}}",
                         style: { display: "flex", flex: 1 },

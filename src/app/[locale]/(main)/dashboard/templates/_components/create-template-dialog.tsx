@@ -12,7 +12,7 @@ import {
 } from "~/app/_components/ui/dialog";
 import { Input } from "~/app/_components/ui/input";
 import { Label } from "~/app/_components/ui/label";
-import { generateInvoiceHash } from "~/shared/invoice-template/invoice-template-utils";
+import { generateInvoiceHash } from "~/shared/invoice-template/invoice-template-helpers";
 import { api } from "~/trpc/react";
 
 export function CreateTemplateDialog() {
