@@ -4,7 +4,6 @@ import {
   type InvoiceTemplateComponent,
   type InvoiceTemplateStyle,
 } from "~/shared/invoice-template/invoice-template-types";
-import { type UnionWithout } from "~/types/misc-types";
 
 export const generateInvoiceHash = customAlphabet(
   "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",

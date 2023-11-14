@@ -1,5 +1,7 @@
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
-import { LuBox, LuImage, LuList, LuText, LuView } from "react-icons/lu";
+import { Fragment, type ReactNode } from "react";
+import { LuBoxSelect, LuImage, LuList, LuType } from "react-icons/lu";
+import { SpacingEditor } from "~/app/[locale]/(main)/dashboard/templates/[id]/_components/template-editor/editors/spacing-editor";
 import {
   invoiceTemplateAtom,
   selectedComponentAtom,
@@ -11,10 +13,23 @@ import { Input } from "~/app/_components/ui/input";
 import { Label } from "~/app/_components/ui/label";
 import { Separator } from "~/app/_components/ui/separator";
 import {
+  SizeInput,
+  sizeValueToString,
+  stringToSizeValue,
+} from "~/app/_components/ui/size-input";
+import {
   ToggleGroup,
   ToggleGroupItem,
 } from "~/app/_components/ui/toggle-group";
 import { type InvoiceTemplateComponent } from "~/shared/invoice-template/invoice-template-types";
+
+const TYPE_TO_ICON: Record<InvoiceTemplateComponent["type"], ReactNode> = {
+  image: <LuImage />,
+  list: <LuList />,
+  page: <LuBoxSelect />,
+  text: <LuType />,
+  view: <LuBoxSelect />,
+};
 
 export function TemplateEditorSidebar() {
   const [invoiceTemplate, setInvoiceTemplate] = useAtom(invoiceTemplateAtom);
@@ -23,7 +38,7 @@ export function TemplateEditorSidebar() {
   const updateComponent = useSetAtom(updateComponentAtom);
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4 overflow-y-scroll">
       <h3 className="text-xs font-semibold text-muted-foreground">Template</h3>
       <div className="flex flex-col gap-2">
         <Label>Name</Label>
@@ -39,7 +54,7 @@ export function TemplateEditorSidebar() {
       </div>
       <Separator />
       {selectedComponent && (
-        <>
+        <Fragment key={selectedComponent.id}>
           <h3 className="text-xs font-semibold text-muted-foreground">
             Component
           </h3>
@@ -109,15 +124,7 @@ export function TemplateEditorSidebar() {
                       variant="secondary"
                       className="cursor-pointer gap-2"
                     >
-                      {child.type === "text" ? (
-                        <LuText />
-                      ) : child.type === "view" ? (
-                        <LuBox />
-                      ) : child.type === "image" ? (
-                        <LuImage />
-                      ) : (
-                        <LuList />
-                      )}
+                      {TYPE_TO_ICON[child.type]}
                       {child.id}
                     </Badge>
                   );
@@ -127,171 +134,36 @@ export function TemplateEditorSidebar() {
           )}
 
           <Separator />
-          <h3 className="text-xs font-semibold text-muted-foreground">Style</h3>
+          <h3 className="text-xs font-semibold text-muted-foreground">Font</h3>
           <div className="flex flex-col gap-2">
             <Label>Font size</Label>
-            <Input
+            <SizeInput
               placeholder={"Inherit"}
-              value={selectedComponent.style?.fontSize}
-              onChange={(e) =>
+              value={
+                selectedComponent.style?.fontSize
+                  ? stringToSizeValue(selectedComponent.style?.fontSize)
+                  : undefined
+              }
+              onValueChange={(val) =>
                 updateComponent({
                   id: selectedComponent.id,
                   component: {
                     ...selectedComponent,
                     style: {
                       ...selectedComponent.style,
-                      fontSize: e.target.value,
+                      fontSize: val ? sizeValueToString(val) : undefined,
                     },
                   } as InvoiceTemplateComponent,
                 })
               }
             />
           </div>
-          <div className="flex flex-col gap-2">
-            <Label>Margin</Label>
-            <div className="flex gap-2">
-              <Input
-                placeholder={"0px"}
-                value={selectedComponent.style?.marginTop}
-                onChange={(e) =>
-                  updateComponent({
-                    id: selectedComponent.id,
-                    component: {
-                      ...selectedComponent,
-                      style: {
-                        ...selectedComponent.style,
-                        marginTop: e.target.value,
-                      },
-                    } as InvoiceTemplateComponent,
-                  })
-                }
-              />
+          <Separator />
+          <h3 className="text-xs font-semibold text-muted-foreground">Style</h3>
 
-              <Input
-                placeholder={"0px"}
-                value={selectedComponent.style?.marginRight}
-                onChange={(e) =>
-                  updateComponent({
-                    id: selectedComponent.id,
-                    component: {
-                      ...selectedComponent,
-                      style: {
-                        ...selectedComponent.style,
-                        marginRight: e.target.value,
-                      },
-                    } as InvoiceTemplateComponent,
-                  })
-                }
-              />
-
-              <Input
-                placeholder={"0px"}
-                value={selectedComponent.style?.marginBottom}
-                onChange={(e) =>
-                  updateComponent({
-                    id: selectedComponent.id,
-                    component: {
-                      ...selectedComponent,
-                      style: {
-                        ...selectedComponent.style,
-                        marginBottom: e.target.value,
-                      },
-                    } as InvoiceTemplateComponent,
-                  })
-                }
-              />
-
-              <Input
-                placeholder={"0px"}
-                value={selectedComponent.style?.marginLeft}
-                onChange={(e) =>
-                  updateComponent({
-                    id: selectedComponent.id,
-                    component: {
-                      ...selectedComponent,
-                      style: {
-                        ...selectedComponent.style,
-                        marginLeft: e.target.value,
-                      },
-                    } as InvoiceTemplateComponent,
-                  })
-                }
-              />
-            </div>
-          </div>
-          <div className="flex flex-col gap-2">
-            <Label>Padding</Label>
-            <div className="flex gap-2">
-              <Input
-                placeholder={"0px"}
-                value={selectedComponent.style?.paddingTop}
-                onChange={(e) =>
-                  updateComponent({
-                    id: selectedComponent.id,
-                    component: {
-                      ...selectedComponent,
-                      style: {
-                        ...selectedComponent.style,
-                        paddingTop: e.target.value,
-                      },
-                    } as InvoiceTemplateComponent,
-                  })
-                }
-              />
-
-              <Input
-                placeholder={"0px"}
-                value={selectedComponent.style?.paddingRight}
-                onChange={(e) =>
-                  updateComponent({
-                    id: selectedComponent.id,
-                    component: {
-                      ...selectedComponent,
-                      style: {
-                        ...selectedComponent.style,
-                        paddingRight: e.target.value,
-                      },
-                    } as InvoiceTemplateComponent,
-                  })
-                }
-              />
-
-              <Input
-                placeholder={"0px"}
-                value={selectedComponent.style?.paddingBottom}
-                onChange={(e) =>
-                  updateComponent({
-                    id: selectedComponent.id,
-                    component: {
-                      ...selectedComponent,
-                      style: {
-                        ...selectedComponent.style,
-                        paddingBottom: e.target.value,
-                      },
-                    } as InvoiceTemplateComponent,
-                  })
-                }
-              />
-
-              <Input
-                placeholder={"0px"}
-                value={selectedComponent.style?.paddingLeft}
-                onChange={(e) =>
-                  updateComponent({
-                    id: selectedComponent.id,
-                    component: {
-                      ...selectedComponent,
-                      style: {
-                        ...selectedComponent.style,
-                        paddingLeft: e.target.value,
-                      },
-                    } as InvoiceTemplateComponent,
-                  })
-                }
-              />
-            </div>
-          </div>
-        </>
+          <SpacingEditor type="margin" />
+          <SpacingEditor type="padding" />
+        </Fragment>
       )}
       {/* <Button disabled={!form.formState.isDirty} onClick={save}>
         Save

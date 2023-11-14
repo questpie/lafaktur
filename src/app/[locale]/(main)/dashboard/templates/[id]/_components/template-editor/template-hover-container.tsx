@@ -27,7 +27,7 @@ export const TemplateEditorHoverContainer = (props: Props) => {
 
   const renderProps = {
     id,
-    className: cn("border p-[2px] border-transparent cursor-pointer", {
+    className: cn("border border-transparent cursor-pointer", {
       "border border-muted-foreground border-solid": isHovering,
       "border border-primary border-solid": selected,
     }),
