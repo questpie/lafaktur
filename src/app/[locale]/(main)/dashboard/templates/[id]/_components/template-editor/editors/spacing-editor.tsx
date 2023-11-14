@@ -48,7 +48,7 @@ const SPACING_KEYS_TO_ICON: Record<SpacingKey, ReactNode> = {
 export function SpacingEditor(props: SpacingEditorProps) {
   const selectedComponent = useAtomValue(selectedComponentAtom);
   const updateComponent = useSetAtom(updateComponentAtom);
-  const [isTwoWayEnabled, setIsTwoWayEnabled] = useState(false);
+  const [isTwoWayEnabled, setIsTwoWayEnabled] = useState(true);
 
   invariant(
     selectedComponent,
@@ -64,9 +64,9 @@ export function SpacingEditor(props: SpacingEditorProps) {
   const label = props.type === "margin" ? "Margin" : "Padding";
 
   return (
-    <div className="flex w-full flex-col gap-2">
+    <div className="flex w-full flex-col">
       <div className="flex w-full items-center justify-between gap-2">
-        <Label>{label}</Label>
+        <Label className="text-xs">{label}</Label>
         <Button
           size="iconSm"
           variant="ghost"
