@@ -1,13 +1,20 @@
 import { useAtom, useSetAtom } from "jotai";
-import { useEffect, type ReactNode, useRef } from "react";
+import { useEffect, useRef, type ReactNode } from "react";
 import {
   invoiceTemplateAtom,
   selectedComponentIdAtom,
-} from "~/app/[locale]/(main)/dashboard/templates/[id]/_components/template-editor/template-editor-atoms";
+} from "~/app/[locale]/(main)/dashboard/templates/[id]/_atoms/template-editor-atoms";
 import { TEMPLATE_EDITOR_RENDER_MAP } from "~/app/[locale]/(main)/dashboard/templates/[id]/_components/template-editor/template-editor-render-map";
 import { TemplateEditorSidebar } from "~/app/[locale]/(main)/dashboard/templates/[id]/_components/template-editor/template-editor-sidebar";
+import { Badge } from "~/app/_components/ui/badge";
 import { Card, CardContent } from "~/app/_components/ui/card";
+import { useDimensions } from "~/app/_hooks/use-dimensions";
+import { cn } from "~/app/_utils/styles-utils";
 import { type InvoiceTemplate } from "~/server/db/schema";
+import {
+  INVOICE_VARIABLE_LABELS,
+  type InvoiceVariable,
+} from "~/shared/invoice-template/invoice-template-types";
 import { TemplateRenderer } from "~/shared/invoice-template/render/template-renderer";
 
 function editorResolver(text: string): ReactNode {
@@ -22,13 +29,20 @@ function editorResolver(text: string): ReactNode {
   }
 
   return (
-    <>
+    <span
+      className="inline-flex
+     items-center"
+    >
       {prefix ? <span>{editorResolver(prefix)}</span> : null}
-      <span className="inline-flex h-4 items-center gap-2 rounded-[6px] bg-secondary px-1  text-secondary-foreground">
-        {variable}
-      </span>
+      <Badge
+        variant={"secondary"}
+        className={cn("mx-[1px] max-h-min self-center px-1 py-0")}
+        style={{ fontSize: "Inherit" }}
+      >
+        {INVOICE_VARIABLE_LABELS[variable as InvoiceVariable]}
+      </Badge>
       {suffix ? <span>{editorResolver(suffix)}</span> : null}
-    </>
+    </span>
   );
 }
 
@@ -41,6 +55,8 @@ export function TemplateEditorLayout(props: TemplateEditorLayoutProps) {
   const setSelectedComponent = useSetAtom(selectedComponentIdAtom);
 
   const invoiceContainerRef = useRef<HTMLDivElement>(null);
+
+  const dimensions = useDimensions(invoiceContainerRef);
 
   useEffect(() => {
     setInvoiceTemplate(structuredClone(props.invoiceTemplate));
@@ -56,9 +72,9 @@ export function TemplateEditorLayout(props: TemplateEditorLayoutProps) {
   }
 
   return (
-    <div className="grid w-full max-w-[1000px] grid-cols-12 @container">
+    <div className="grid w-full grid-cols-12 @container">
       <div
-        className="order-2 col-span-12 h-auto rounded-md rounded-e-none border @lg:order-1  @lg:col-span-8"
+        className="col-span-12 h-min overflow-hidden rounded-lg rounded-e-none border @lg:col-span-8"
         ref={invoiceContainerRef}
       >
         <TemplateRenderer
@@ -68,10 +84,12 @@ export function TemplateEditorLayout(props: TemplateEditorLayoutProps) {
         />
       </div>
       <Card
-        className="order-1 col-span-1 w-full overflow-y-hidden rounded-s-none border-s-0 @lg:order-2 @lg:col-span-4"
-        style={{ height: invoiceContainerRef.current?.clientHeight }}
+        className={cn(
+          "col-span-12 w-full overflow-y-auto rounded-s-none border-s-0 @lg:col-span-4",
+        )}
+        style={{ height: dimensions?.height }}
       >
-        <CardContent className="p-4">
+        <CardContent className=" p-4">
           <TemplateEditorSidebar />
         </CardContent>
       </Card>

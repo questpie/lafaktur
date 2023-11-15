@@ -12,7 +12,7 @@ import { MdOutlineBorderClear, MdOutlineBorderOuter } from "react-icons/md";
 import {
   selectedComponentAtom,
   updateSelectedComponentAtom,
-} from "~/app/[locale]/(main)/dashboard/templates/[id]/_components/template-editor/template-editor-atoms";
+} from "~/app/[locale]/(main)/dashboard/templates/[id]/_atoms/template-editor-atoms";
 import { Button } from "~/app/_components/ui/button";
 import { Label } from "~/app/_components/ui/label";
 import {

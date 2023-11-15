@@ -106,3 +106,22 @@ export function pdfStyleToCssProperties(
 
   return result as CSSProperties;
 }
+
+export function getAllTemplateIds(
+  page: InvoiceTemplateComponent,
+  acc: Set<string> = new Set<string>(),
+): Set<string> {
+  acc.add(page.id);
+
+  if ("children" in page && Array.isArray(page.children)) {
+    for (const child of page.children) {
+      getAllTemplateIds(child, acc);
+    }
+  }
+
+  if ("item" in page && page.item) {
+    getAllTemplateIds(page.item, acc);
+  }
+
+  return acc;
+}

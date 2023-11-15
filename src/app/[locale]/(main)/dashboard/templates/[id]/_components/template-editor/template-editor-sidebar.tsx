@@ -1,14 +1,15 @@
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { Fragment, type ReactNode } from "react";
 import { LuBoxSelect, LuImage, LuList, LuType } from "react-icons/lu";
-import { ColorEditor } from "~/app/[locale]/(main)/dashboard/templates/[id]/_components/template-editor/editors/color-editor";
-import { SpacingEditor } from "~/app/[locale]/(main)/dashboard/templates/[id]/_components/template-editor/editors/spacing-editor";
 import {
   invoiceTemplateAtom,
   selectedComponentAtom,
   selectedComponentIdAtom,
   updateComponentAtom,
-} from "~/app/[locale]/(main)/dashboard/templates/[id]/_components/template-editor/template-editor-atoms";
+} from "~/app/[locale]/(main)/dashboard/templates/[id]/_atoms/template-editor-atoms";
+import { ColorEditor } from "~/app/[locale]/(main)/dashboard/templates/[id]/_components/template-editor/editors/color-editor";
+import { ComponentTypeEditor } from "~/app/[locale]/(main)/dashboard/templates/[id]/_components/template-editor/editors/component-type-editor";
+import { SpacingEditor } from "~/app/[locale]/(main)/dashboard/templates/[id]/_components/template-editor/editors/spacing-editor";
 import { Badge } from "~/app/_components/ui/badge";
 import { Input } from "~/app/_components/ui/input";
 import { Label } from "~/app/_components/ui/label";
@@ -18,10 +19,6 @@ import {
   sizeValueToString,
   stringToSizeValue,
 } from "~/app/_components/ui/size-input";
-import {
-  ToggleGroup,
-  ToggleGroupItem,
-} from "~/app/_components/ui/toggle-group";
 import { type InvoiceTemplateComponent } from "~/shared/invoice-template/invoice-template-types";
 
 const TYPE_TO_ICON: Record<InvoiceTemplateComponent["type"], ReactNode> = {
@@ -39,7 +36,7 @@ export function TemplateEditorSidebar() {
   const updateComponent = useSetAtom(updateComponentAtom);
 
   return (
-    <div className="flex flex-col gap-4 overflow-y-scroll">
+    <div className="flex h-auto flex-col gap-4">
       <div className="text-xs font-semibold text-muted-foreground">General</div>
       <div className="flex flex-col gap-4">
         <div className="flex flex-col gap-1">
@@ -73,32 +70,7 @@ export function TemplateEditorSidebar() {
                 className={{ wrapper: "opacity-80" }}
               />
             </div>
-            <div className="flex flex-col items-start gap-1">
-              <Label className="text-xs">Type</Label>
-              <ToggleGroup
-                type="single"
-                value={selectedComponent.type}
-                onValueChange={(type) =>
-                  updateComponent({
-                    id: selectedComponent.id,
-                    component: {
-                      ...selectedComponent,
-                      type,
-                    } as InvoiceTemplateComponent,
-                  })
-                }
-              >
-                <ToggleGroupItem value="text" aria-label="Toggle bold">
-                  Text
-                </ToggleGroupItem>
-                <ToggleGroupItem value="view" aria-label="Toggle italic">
-                  View
-                </ToggleGroupItem>
-                <ToggleGroupItem value="list" aria-label="Toggle strikethrough">
-                  List
-                </ToggleGroupItem>
-              </ToggleGroup>
-            </div>
+            <ComponentTypeEditor />
             {selectedComponent.type === "text" && (
               <div className="flex flex-col gap-1">
                 <Label className="text-xs">Text</Label>
@@ -194,12 +166,8 @@ export function TemplateEditorSidebar() {
           </div>
 
           <div className="flex flex-col gap-2">
-            {["view", "page"].includes(selectedComponent.type) && (
-              <ColorEditor type="backgroundColor" />
-            )}
-            {["text", "page"].includes(selectedComponent.type) && (
-              <ColorEditor type="color" />
-            )}
+            <ColorEditor type="backgroundColor" />
+            <ColorEditor type="color" />
           </div>
         </Fragment>
       )}

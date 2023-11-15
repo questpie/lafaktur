@@ -127,6 +127,58 @@ export const invoiceVariableSchema = z.enum([
   "{{invoice_seller_bank_code}}",
 ] as const);
 
+// TODO: translate
+export const INVOICE_VARIABLE_LABELS: Record<InvoiceVariable, string> = {
+  "{{invoice_issue_date}}": "Invoice issue date",
+  "{{invoice_supply_date}}": "Invoice supply date",
+  "{{invoice_date_of_payment}}": "Invoice date of payment",
+  "{{invoice_due_date}}": "Invoice due date",
+  "{{invoice_status}}": "Invoice status",
+  "{{invoice_payment_type}}": "Invoice payment type",
+  "{{invoice_number}}": "Invoice number",
+  "{{invoice_reference}}": "Invoice reference",
+  "{{invoice_variable_symbol}}": "Invoice variable symbol",
+  "{{invoice_constant_symbol}}": "Invoice constant symbol",
+  "{{invoice_specific_symbol}}": "Invoice specific symbol",
+  "{{invoice_item_name}}": "Invoice item name",
+  "{{invoice_item_quantity}}": "Invoice item quantity",
+  "{{invoice_item_unit}}": "Invoice item unit",
+  "{{invoice_item_unit_price}}": "Invoice item unit price",
+  "{{invoice_item_unit_price_without_vat}}":
+    "Invoice item unit price without VAT",
+  "{{invoice_item_total}}": "Invoice item total",
+  "{{invoice_item_total_without_vat}}": "Invoice item total without VAT",
+  "{{invoice_total}}": "Invoice total",
+  "{{invoice_total_without_vat}}": "Invoice total without VAT",
+  "{{invoice_vat}}": "Invoice VAT",
+  "{{invoice_vat_rate}}": "Invoice VAT rate",
+  "{{invoice_currency}}": "Invoice currency",
+  "{{invoice_customer_name}}": "Invoice customer name",
+  "{{invoice_customer_address}}": "Invoice customer address",
+  "{{invoice_customer_city}}": "Invoice customer city",
+  "{{invoice_customer_zip}}": "Invoice customer ZIP",
+  "{{invoice_customer_country}}": "Invoice customer country",
+  "{{invoice_customer_phone}}": "Invoice customer phone",
+  "{{invoice_customer_email}}": "Invoice customer email",
+  "{{invoice_customer_business_id}}": "Invoice customer business ID",
+  "{{invoice_customer_tax_id}}": "Invoice customer tax ID",
+  "{{invoice_customer_vat_id}}": "Invoice customer VAT ID",
+  "{{invoice_customer_bank_account}}": "Invoice customer bank account",
+  "{{invoice_customer_bank_code}}": "Invoice customer bank code",
+  "{{invoice_seller_name}}": "Invoice seller name",
+  "{{invoice_seller_address}}": "Invoice seller address",
+  "{{invoice_seller_city}}": "Invoice seller city",
+  "{{invoice_seller_zip}}": "Invoice seller ZIP",
+  "{{invoice_seller_country}}": "Invoice seller country",
+  "{{invoice_seller_phone}}": "Invoice seller phone",
+  "{{invoice_seller_email}}": "Invoice seller email",
+  "{{invoice_seller_business_id}}": "Invoice seller business ID",
+  "{{invoice_seller_tax_id}}": "Invoice seller tax ID",
+  "{{invoice_seller_vat_id}}": "Invoice seller VAT ID",
+  "{{invoice_seller_bank_account}}": "Invoice seller bank account",
+  "{{invoice_seller_bank_code}}": "Invoice seller bank code",
+};
+
 export type InvoiceVariable = z.infer<typeof invoiceVariableSchema>;
 
 export type InvoiceValue = StringWithAutocomplete<
@@ -134,6 +186,15 @@ export type InvoiceValue = StringWithAutocomplete<
 >;
 
 export type InvoiceTemplateStyle = ReactPDF.Styles[keyof ReactPDF.Styles];
+
+export const invoiceTemplateComponentTypeSchema = z.enum([
+  "text",
+  "view",
+  "image",
+  "list",
+  "page",
+]);
+
 export type InvoiceTemplateComponent =
   | {
       id: string;
@@ -212,6 +273,8 @@ export const DEFAULT_TEMPLATE: InvoiceTemplateData = {
       flexDirection: "column",
       fontSize: "11px",
       gap: "32px",
+      color: "#000",
+      backgroundColor: "#fff",
     },
     children: [
       {

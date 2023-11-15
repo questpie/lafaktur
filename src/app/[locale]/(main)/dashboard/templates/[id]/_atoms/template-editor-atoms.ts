@@ -2,6 +2,7 @@ import { atom } from "jotai";
 import { atomWithImmer } from "jotai-immer";
 import { type InvoiceTemplate } from "~/server/db/schema";
 import {
+  getAllTemplateIds,
   getTemplateComponentById,
   getTemplateComponentParentById,
 } from "~/shared/invoice-template/invoice-template-helpers";
@@ -93,3 +94,9 @@ export const updateSelectedComponentAtom = atom(
         });
   },
 );
+
+export const invoiceComponentsIdsAtom = atom((get) => {
+  const template = get(invoiceTemplateAtom);
+  if (!template) return [];
+  return getAllTemplateIds(template.template.content);
+});

@@ -1,6 +1,6 @@
 import { useAtom } from "jotai";
 import React, { useId, type SyntheticEvent } from "react";
-import { selectedComponentIdAtom } from "~/app/[locale]/(main)/dashboard/templates/[id]/_components/template-editor/template-editor-atoms";
+import { selectedComponentIdAtom } from "~/app/[locale]/(main)/dashboard/templates/[id]/_atoms/template-editor-atoms";
 import { cn } from "~/app/_utils/styles-utils";
 
 type RenderProps = {
