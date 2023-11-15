@@ -1,5 +1,5 @@
 import { useAtom, useSetAtom } from "jotai";
-import { useEffect, type ReactNode } from "react";
+import { useEffect, type ReactNode, useRef } from "react";
 import {
   invoiceTemplateAtom,
   selectedComponentIdAtom,
@@ -40,6 +40,8 @@ export function TemplateEditorLayout(props: TemplateEditorLayoutProps) {
   const [invoiceTemplate, setInvoiceTemplate] = useAtom(invoiceTemplateAtom);
   const setSelectedComponent = useSetAtom(selectedComponentIdAtom);
 
+  const invoiceContainerRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     setInvoiceTemplate(structuredClone(props.invoiceTemplate));
     setSelectedComponent(props.invoiceTemplate.template.content.id);
@@ -55,14 +57,20 @@ export function TemplateEditorLayout(props: TemplateEditorLayoutProps) {
 
   return (
     <div className="grid w-full max-w-[1000px] grid-cols-12 @container">
-      <div className="order-2 col-span-12 h-auto rounded-md rounded-e-none border @lg:order-1  @lg:col-span-8">
+      <div
+        className="order-2 col-span-12 h-auto rounded-md rounded-e-none border @lg:order-1  @lg:col-span-8"
+        ref={invoiceContainerRef}
+      >
         <TemplateRenderer
           invoiceTemplate={invoiceTemplate}
           renderMap={TEMPLATE_EDITOR_RENDER_MAP}
           resolver={editorResolver}
         />
       </div>
-      <Card className="order-1 col-span-1 max-h-full overflow-y-hidden rounded-s-none border-s-0 @lg:order-2 @lg:col-span-4">
+      <Card
+        className="order-1 col-span-1 w-full overflow-y-hidden rounded-s-none border-s-0 @lg:order-2 @lg:col-span-4"
+        style={{ height: invoiceContainerRef.current?.clientHeight }}
+      >
         <CardContent className="p-4">
           <TemplateEditorSidebar />
         </CardContent>
