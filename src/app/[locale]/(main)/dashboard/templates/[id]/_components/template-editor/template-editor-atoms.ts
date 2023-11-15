@@ -70,3 +70,26 @@ export const updateComponentAtom = atom(
     });
   },
 );
+
+export const updateSelectedComponentAtom = atom(
+  null,
+  (
+    get,
+    set,
+    component:
+      | InvoiceTemplateComponent
+      | ((c: InvoiceTemplateComponent) => InvoiceTemplateComponent),
+  ) => {
+    const selectedComponent = get(selectedComponentAtom);
+    if (!selectedComponent) return;
+    typeof component === "function"
+      ? set(updateComponentAtom, {
+          id: selectedComponent.id,
+          component: component(selectedComponent),
+        })
+      : set(updateComponentAtom, {
+          id: selectedComponent.id,
+          component,
+        });
+  },
+);

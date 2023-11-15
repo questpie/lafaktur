@@ -43,7 +43,7 @@ export function TemplateEditorSidebar() {
   const updateComponent = useSetAtom(updateComponentAtom);
 
   return (
-    <Accordion type="single">
+    <Accordion type="multiple">
       <AccordionItem value="general">
         <AccordionTrigger className="text-xs font-semibold text-muted-foreground">
           General
@@ -180,6 +180,7 @@ export function TemplateEditorSidebar() {
               </div>
             </AccordionContent>
           </AccordionItem>
+
           <AccordionItem value="spacing">
             <AccordionTrigger className="text-xs font-semibold text-muted-foreground">
               Spacing
