@@ -61,6 +61,12 @@ export const updateComponentAtom = atom(
   },
 );
 
+export const invoiceComponentsIdsAtom = atom((get) => {
+  const template = get(invoiceTemplateAtom);
+  if (!template) return [];
+  return getAllTemplateIds(template.template.content);
+});
+
 const selectedComponentAtom = atom((get) => {
   const template = get(invoiceTemplateAtom);
   const selectedComponentId = get(selectedComponentIdAtom);
@@ -96,17 +102,11 @@ const updateSelectedComponentAtom = atom(
   },
 );
 
-export const invoiceComponentsIdsAtom = atom((get) => {
-  const template = get(invoiceTemplateAtom);
-  if (!template) return [];
-  return getAllTemplateIds(template.template.content);
-});
-
 /**
  * Returns the selected component and a function to update it.
  * This components throws an error if there is no selected component.
  */
-export const useSelectedComponent = () => {
+export function useSelectedComponent() {
   const selectedComponent = useAtomValue(selectedComponentAtom);
   const updateSelectedComponent = useSetAtom(updateSelectedComponentAtom);
 
@@ -117,4 +117,4 @@ export const useSelectedComponent = () => {
   );
 
   return [selectedComponent, updateSelectedComponent] as const;
-};
+}
