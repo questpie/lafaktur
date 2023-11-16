@@ -97,6 +97,7 @@ export function TemplateEditorSidebar() {
       {selectedComponent.type === "text" ||
         (selectedComponent.type === "page" && (
           <>
+            <Separator />
             <div className="text-xs font-semibold text-muted-foreground">
               Font
             </div>
