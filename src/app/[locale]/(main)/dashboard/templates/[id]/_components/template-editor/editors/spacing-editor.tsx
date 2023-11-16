@@ -9,10 +9,7 @@ import {
   LuPanelTop,
 } from "react-icons/lu";
 import { MdOutlineBorderClear, MdOutlineBorderOuter } from "react-icons/md";
-import {
-  selectedComponentAtom,
-  updateSelectedComponentAtom,
-} from "~/app/[locale]/(main)/dashboard/templates/[id]/_atoms/template-editor-atoms";
+import { useSelectedComponent } from "~/app/[locale]/(main)/dashboard/templates/[id]/_atoms/template-editor-atoms";
 import { Button } from "~/app/_components/ui/button";
 import { Label } from "~/app/_components/ui/label";
 import {
@@ -20,7 +17,6 @@ import {
   sizeValueToString,
   stringToSizeValue,
 } from "~/app/_components/ui/size-input";
-import { invariant } from "~/app/_utils/misc-utils";
 
 export type SpacingEditorProps = {
   type: "margin" | "padding";
@@ -91,14 +87,7 @@ const useSpacingEditorSettings = (
 };
 
 export function SpacingEditor(props: SpacingEditorProps) {
-  const selectedComponent = useAtomValue(selectedComponentAtom);
-  const updateComponent = useSetAtom(updateSelectedComponentAtom);
-
-  invariant(
-    selectedComponent,
-    "selectedComponent is required",
-    "spacing-editor",
-  );
+  const [selectedComponent, updateComponent] = useSelectedComponent();
 
   const [settings, setSettings] = useSpacingEditorSettings(
     selectedComponent?.id ?? "fallback-component-id",

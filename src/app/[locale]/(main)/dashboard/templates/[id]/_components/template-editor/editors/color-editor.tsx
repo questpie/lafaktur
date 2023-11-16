@@ -1,11 +1,7 @@
-import { useAtomValue, useSetAtom } from "jotai";
 import React from "react";
 import { HexColorPicker } from "react-colorful";
 import tinycolor from "tinycolor2";
-import {
-  selectedComponentAtom,
-  updateSelectedComponentAtom,
-} from "~/app/[locale]/(main)/dashboard/templates/[id]/_atoms/template-editor-atoms";
+import { useSelectedComponent } from "~/app/[locale]/(main)/dashboard/templates/[id]/_atoms/template-editor-atoms";
 import { Input } from "~/app/_components/ui/input";
 import { Label } from "~/app/_components/ui/label";
 import {
@@ -13,19 +9,15 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "~/app/_components/ui/popover";
-import { invariant } from "~/app/_utils/misc-utils";
 
 type ColorEditorProps = {
   type: "color" | "backgroundColor" | "borderColor";
 };
 
 export function ColorEditor(props: ColorEditorProps) {
-  const selectedComponent = useAtomValue(selectedComponentAtom);
-  const updateSelectedComponent = useSetAtom(updateSelectedComponentAtom);
-  invariant(selectedComponent, "selectedComponent is required", "color-editor");
+  const [selectedComponent, updateSelectedComponent] = useSelectedComponent();
   const backupValue = React.useRef<string | undefined>();
 
-  const [isOpen, setOpen] = React.useState(false);
   const label = props.type === "color" ? "Text" : "Background";
 
   return (

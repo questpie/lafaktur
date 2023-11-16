@@ -1,5 +1,6 @@
-import { atom } from "jotai";
+import { atom, useAtomValue, useSetAtom } from "jotai";
 import { atomWithImmer } from "jotai-immer";
+import { invariant } from "~/app/_utils/misc-utils";
 import { type InvoiceTemplate } from "~/server/db/schema";
 import {
   getAllTemplateIds,
@@ -10,18 +11,6 @@ import { type InvoiceTemplateComponent } from "~/shared/invoice-template/invoice
 
 export const invoiceTemplateAtom = atomWithImmer<InvoiceTemplate | null>(null);
 export const selectedComponentIdAtom = atom<string | null>(null);
-
-export const selectedComponentAtom = atom((get) => {
-  const template = get(invoiceTemplateAtom);
-  const selectedComponentId = get(selectedComponentIdAtom);
-  if (!template || !selectedComponentId) {
-    return null;
-  }
-  return getTemplateComponentById(
-    selectedComponentId,
-    template.template.content,
-  );
-});
 
 export const updateComponentAtom = atom(
   null,
@@ -72,7 +61,19 @@ export const updateComponentAtom = atom(
   },
 );
 
-export const updateSelectedComponentAtom = atom(
+const selectedComponentAtom = atom((get) => {
+  const template = get(invoiceTemplateAtom);
+  const selectedComponentId = get(selectedComponentIdAtom);
+  if (!template || !selectedComponentId) {
+    return null;
+  }
+  return getTemplateComponentById(
+    selectedComponentId,
+    template.template.content,
+  );
+});
+
+const updateSelectedComponentAtom = atom(
   null,
   (
     get,
@@ -100,3 +101,20 @@ export const invoiceComponentsIdsAtom = atom((get) => {
   if (!template) return [];
   return getAllTemplateIds(template.template.content);
 });
+
+/**
+ * Returns the selected component and a function to update it.
+ * This components throws an error if there is no selected component.
+ */
+export const useSelectedComponent = () => {
+  const selectedComponent = useAtomValue(selectedComponentAtom);
+  const updateSelectedComponent = useSetAtom(updateSelectedComponentAtom);
+
+  invariant(
+    selectedComponent,
+    "No selected component",
+    useSelectedComponent.name,
+  );
+
+  return [selectedComponent, updateSelectedComponent] as const;
+};

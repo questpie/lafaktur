@@ -1,4 +1,4 @@
-import { useAtom, useSetAtom } from "jotai";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { useEffect, useRef, type ReactNode } from "react";
 import {
   invoiceTemplateAtom,
@@ -53,6 +53,7 @@ type TemplateEditorLayoutProps = {
 export function TemplateEditorLayout(props: TemplateEditorLayoutProps) {
   const [invoiceTemplate, setInvoiceTemplate] = useAtom(invoiceTemplateAtom);
   const setSelectedComponent = useSetAtom(selectedComponentIdAtom);
+  const selectedComponentId = useAtomValue(selectedComponentIdAtom);
 
   const invoiceContainerRef = useRef<HTMLDivElement>(null);
 
@@ -90,7 +91,7 @@ export function TemplateEditorLayout(props: TemplateEditorLayoutProps) {
         style={{ height: dimensions?.height }}
       >
         <CardContent className=" p-4">
-          <TemplateEditorSidebar />
+          <TemplateEditorSidebar key={selectedComponentId} />
         </CardContent>
       </Card>
     </div>

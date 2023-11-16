@@ -1,28 +1,31 @@
-import { useAtomValue, useSetAtom } from "jotai";
-import {
-  selectedComponentAtom,
-  updateSelectedComponentAtom,
-} from "~/app/[locale]/(main)/dashboard/templates/[id]/_atoms/template-editor-atoms";
+import { useSelectedComponent } from "~/app/[locale]/(main)/dashboard/templates/[id]/_atoms/template-editor-atoms";
 import { Label } from "~/app/_components/ui/label";
 import {
   ToggleGroup,
   ToggleGroupItem,
 } from "~/app/_components/ui/toggle-group";
-import { invariant } from "~/app/_utils/misc-utils";
 import {
   invoiceTemplateComponentTypeSchema,
   type InvoiceTemplateComponent,
 } from "~/shared/invoice-template/invoice-template-types";
 
 export function ComponentTypeEditor() {
-  const selectedComponent = useAtomValue(selectedComponentAtom);
-  const updateSelectedCompoent = useSetAtom(updateSelectedComponentAtom);
+  const [selectedComponent, updateSelectedComponent] = useSelectedComponent();
 
-  invariant(
-    selectedComponent,
-    "selectedComponent is required",
-    "component-type-editor",
-  );
+  function handleTypeChange(type: InvoiceTemplateComponent["type"]) {
+    if (!selectedComponent) return;
+    if (!invoiceTemplateComponentTypeSchema.safeParse(type).success) return;
+
+    const component = { ...selectedComponent };
+
+    if (component.type === "page") {
+    }
+
+    updateSelectedComponent({
+      ...selectedComponent,
+      type,
+    } as InvoiceTemplateComponent);
+  }
 
   return (
     <div className="flex flex-col items-start gap-1">
@@ -31,15 +34,7 @@ export function ComponentTypeEditor() {
         type="single"
         disabled={selectedComponent.type === "page"}
         value={selectedComponent.type}
-        onValueChange={(type) => {
-          if (!invoiceTemplateComponentTypeSchema.safeParse(type).success)
-            return;
-
-          updateSelectedCompoent({
-            ...selectedComponent,
-            type,
-          } as InvoiceTemplateComponent);
-        }}
+        onValueChange={handleTypeChange}
       >
         {selectedComponent.type === "page" ? (
           <ToggleGroupItem value="page" aria-label="Toggle page">
