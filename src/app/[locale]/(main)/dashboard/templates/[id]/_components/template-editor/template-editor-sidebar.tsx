@@ -1,9 +1,5 @@
-import { useSetAtom } from "jotai";
 import { type PropsWithChildren } from "react";
-import {
-  selectedComponentIdAtom,
-  useSelectedComponent,
-} from "~/app/[locale]/(main)/dashboard/templates/[id]/_atoms/template-editor-atoms";
+import { useSelectedComponent } from "~/app/[locale]/(main)/dashboard/templates/[id]/_atoms/template-editor-atoms";
 import { ChildrenEditor } from "~/app/[locale]/(main)/dashboard/templates/[id]/_components/template-editor/editors/children-editor";
 import { ColorEditor } from "~/app/[locale]/(main)/dashboard/templates/[id]/_components/template-editor/editors/color-editor";
 import { ComponentTypeEditor } from "~/app/[locale]/(main)/dashboard/templates/[id]/_components/template-editor/editors/component-type-editor";
@@ -14,8 +10,7 @@ import { TextContentEditor } from "~/app/[locale]/(main)/dashboard/templates/[id
 import { Separator } from "~/app/_components/ui/separator";
 
 export function TemplateEditorSidebar() {
-  const setSelectedComponent = useSetAtom(selectedComponentIdAtom);
-  const [selectedComponent, updateComponent] = useSelectedComponent();
+  const [selectedComponent] = useSelectedComponent();
 
   if (!selectedComponent) return null;
 
