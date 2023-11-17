@@ -11,10 +11,8 @@ import { Card, CardContent } from "~/app/_components/ui/card";
 import { useDimensions } from "~/app/_hooks/use-dimensions";
 import { cn } from "~/app/_utils/styles-utils";
 import { type InvoiceTemplate } from "~/server/db/schema";
-import {
-  INVOICE_VARIABLE_LABELS,
-  type InvoiceVariable,
-} from "~/shared/invoice-template/invoice-template-types";
+import { INVOICE_VARIABLE_LABELS } from "~/shared/invoice-template/invoice-template-constants";
+import { type InvoiceVariable } from "~/shared/invoice-template/invoice-template-schemas";
 import { TemplateRenderer } from "~/shared/invoice-template/render/template-renderer";
 
 function editorResolver(text: string): ReactNode {

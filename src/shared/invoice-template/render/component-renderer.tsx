@@ -1,4 +1,4 @@
-import { type InvoiceTemplateComponent } from "~/shared/invoice-template/invoice-template-types";
+import { type InvoiceTemplateComponent } from "~/shared/invoice-template/invoice-template-schemas";
 import { type FromUnion } from "~/types/misc-types";
 
 export type InvoiceRenderFn<T extends InvoiceTemplateComponent["type"]> =

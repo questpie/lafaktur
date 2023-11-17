@@ -5,7 +5,7 @@ import {
 } from "~/shared/invoice-template/render/component-renderer";
 
 export const PDF_RENDER_MAP: TemplateRenderMap = {
-  page: ({ cmp, resolver, context }) => {
+  root: ({ cmp, resolver, context }) => {
     return (
       <Document>
         <Page size="A4" style={cmp.style}>

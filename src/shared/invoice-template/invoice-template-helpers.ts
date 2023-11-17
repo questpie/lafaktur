@@ -1,9 +1,11 @@
 import { customAlphabet } from "nanoid";
 import { type CSSProperties } from "react";
 import {
+  type InvoiceTemplateChild,
   type InvoiceTemplateComponent,
+  type InvoiceTemplateContentRoot as InvoiceTemplatePage,
   type InvoiceTemplateStyle,
-} from "~/shared/invoice-template/invoice-template-types";
+} from "~/shared/invoice-template/invoice-template-schemas";
 
 export const generateInvoiceHash = customAlphabet(
   "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
@@ -39,8 +41,8 @@ export function getTemplateComponentById(
 
 export function getTemplateComponentParentById(
   id: string,
-  page: InvoiceTemplateComponent,
-): InvoiceTemplateComponent | null {
+  page: InvoiceTemplateChild | InvoiceTemplatePage,
+): InvoiceTemplateChild | InvoiceTemplatePage | null {
   if ("children" in page && Array.isArray(page.children)) {
     for (const child of page.children) {
       if (child.id === id) {

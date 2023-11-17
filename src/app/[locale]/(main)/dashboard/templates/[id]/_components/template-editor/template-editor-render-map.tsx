@@ -7,7 +7,7 @@ import {
 } from "~/shared/invoice-template/render/component-renderer";
 
 export const TEMPLATE_EDITOR_RENDER_MAP: TemplateRenderMap = {
-  page: ({ cmp, resolver }) => {
+  root: ({ cmp, resolver }) => {
     return (
       <TemplateEditorHoverContainer id={cmp.id}>
         {(renderProps) => (

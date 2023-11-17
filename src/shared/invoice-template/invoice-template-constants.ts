@@ -1,271 +1,15 @@
-import type ReactPDF from "@react-pdf/renderer";
 import { nanoid } from "nanoid";
-import { z } from "zod";
 import {
-  type FromUnion,
-  type StringWithAutocomplete,
-  type UnionWithout,
-} from "~/types/misc-types";
-
-export const invoiceCurrencySchema = z.enum([
-  "EUR",
-  "USD",
-  "GBP",
-  "AUD",
-  "CAD",
-  "CHF",
-  "CNY",
-  "JPY",
-  "NZD",
-  "SEK",
-  "KRW",
-  "SGD",
-  "NOK",
-  "MXN",
-  "INR",
-  "RUB",
-  "ZAR",
-  "TRY",
-  "BRL",
-  "TWD",
-  "DKK",
-  "PLN",
-  "CZK",
-  "HKD",
-  "HUF",
-  "ILS",
-  "THB",
-  "CLP",
-  "PHP",
-  "AED",
-  "COP",
-  "SAR",
-  "MYR",
-  "RON",
-] as const);
-export const invoiceDateFormatSchema = z.enum([
-  "DD.MM.YYYY",
-  "DD/MM/YYYY",
-  "MM/DD/YYYY",
-  "MM-DD-YYYY",
-  "YYYY-MM-DD",
-  "YYYY/MM/DD",
-  "YYYY.MM.DD",
-] as const);
-
-export type InvoiceCurrency = z.infer<typeof invoiceCurrencySchema>;
-export type InvoiceDateFormat = z.infer<typeof invoiceDateFormatSchema>;
-
-export const unitTypeSchema = z.enum(["hour", "day", "month", "year", "item"]);
-export type UnitType = z.infer<typeof unitTypeSchema>;
-
-export const invoiceStatusSchema = z.enum([
-  "draft",
-  "sent",
-  "paid",
-  "overdue",
-] as const);
-export type InvoiceStatus = z.infer<typeof invoiceStatusSchema>;
-
-export const invoicePaymentTypeSchema = z.enum([
-  "bank_transfer",
-  "cash",
-  "credit_card",
-  "paypal",
-  "stripe",
-  "other",
-] as const);
-export type InvoicePaymentType = z.infer<typeof invoicePaymentTypeSchema>;
-
-export const invoiceVariableSchema = z.enum([
-  "{{invoice_issue_date}}",
-  "{{invoice_supply_date}}",
-  "{{invoice_date_of_payment}}",
-  "{{invoice_due_date}}",
-  "{{invoice_status}}",
-  "{{invoice_payment_type}}",
-  "{{invoice_number}}",
-  "{{invoice_reference}}",
-  "{{invoice_variable_symbol}}",
-  "{{invoice_constant_symbol}}",
-  "{{invoice_specific_symbol}}",
-  "{{invoice_item_name}}",
-  "{{invoice_item_quantity}}",
-  "{{invoice_item_unit}}",
-  "{{invoice_item_unit_price}}",
-  "{{invoice_item_unit_price_without_vat}}",
-  "{{invoice_item_total}}",
-  "{{invoice_item_total_without_vat}}",
-  "{{invoice_total}}",
-  "{{invoice_total_without_vat}}",
-  "{{invoice_vat}}",
-  "{{invoice_vat_rate}}",
-  "{{invoice_currency}}",
-  "{{invoice_customer_name}}",
-  "{{invoice_customer_address}}",
-  "{{invoice_customer_city}}",
-  "{{invoice_customer_zip}}",
-  "{{invoice_customer_country}}",
-  "{{invoice_customer_phone}}",
-  "{{invoice_customer_email}}",
-  "{{invoice_customer_business_id}}",
-  "{{invoice_customer_tax_id}}",
-  "{{invoice_customer_vat_id}}",
-  "{{invoice_customer_bank_account}}",
-  "{{invoice_customer_bank_code}}",
-  "{{invoice_seller_name}}",
-  "{{invoice_seller_address}}",
-  "{{invoice_seller_city}}",
-  "{{invoice_seller_zip}}",
-  "{{invoice_seller_country}}",
-  "{{invoice_seller_phone}}",
-  "{{invoice_seller_email}}",
-  "{{invoice_seller_business_id}}",
-  "{{invoice_seller_tax_id}}",
-  "{{invoice_seller_vat_id}}",
-  "{{invoice_seller_bank_account}}",
-  "{{invoice_seller_bank_code}}",
-] as const);
-
-// TODO: translate
-export const INVOICE_VARIABLE_LABELS: Record<InvoiceVariable, string> = {
-  "{{invoice_issue_date}}": "Invoice issue date",
-  "{{invoice_supply_date}}": "Invoice supply date",
-  "{{invoice_date_of_payment}}": "Invoice date of payment",
-  "{{invoice_due_date}}": "Invoice due date",
-  "{{invoice_status}}": "Invoice status",
-  "{{invoice_payment_type}}": "Invoice payment type",
-  "{{invoice_number}}": "Invoice number",
-  "{{invoice_reference}}": "Invoice reference",
-  "{{invoice_variable_symbol}}": "Invoice variable symbol",
-  "{{invoice_constant_symbol}}": "Invoice constant symbol",
-  "{{invoice_specific_symbol}}": "Invoice specific symbol",
-  "{{invoice_item_name}}": "Invoice item name",
-  "{{invoice_item_quantity}}": "Invoice item quantity",
-  "{{invoice_item_unit}}": "Invoice item unit",
-  "{{invoice_item_unit_price}}": "Invoice item unit price",
-  "{{invoice_item_unit_price_without_vat}}":
-    "Invoice item unit price without VAT",
-  "{{invoice_item_total}}": "Invoice item total",
-  "{{invoice_item_total_without_vat}}": "Invoice item total without VAT",
-  "{{invoice_total}}": "Invoice total",
-  "{{invoice_total_without_vat}}": "Invoice total without VAT",
-  "{{invoice_vat}}": "Invoice VAT",
-  "{{invoice_vat_rate}}": "Invoice VAT rate",
-  "{{invoice_currency}}": "Invoice currency",
-  "{{invoice_customer_name}}": "Invoice customer name",
-  "{{invoice_customer_address}}": "Invoice customer address",
-  "{{invoice_customer_city}}": "Invoice customer city",
-  "{{invoice_customer_zip}}": "Invoice customer ZIP",
-  "{{invoice_customer_country}}": "Invoice customer country",
-  "{{invoice_customer_phone}}": "Invoice customer phone",
-  "{{invoice_customer_email}}": "Invoice customer email",
-  "{{invoice_customer_business_id}}": "Invoice customer business ID",
-  "{{invoice_customer_tax_id}}": "Invoice customer tax ID",
-  "{{invoice_customer_vat_id}}": "Invoice customer VAT ID",
-  "{{invoice_customer_bank_account}}": "Invoice customer bank account",
-  "{{invoice_customer_bank_code}}": "Invoice customer bank code",
-  "{{invoice_seller_name}}": "Invoice seller name",
-  "{{invoice_seller_address}}": "Invoice seller address",
-  "{{invoice_seller_city}}": "Invoice seller city",
-  "{{invoice_seller_zip}}": "Invoice seller ZIP",
-  "{{invoice_seller_country}}": "Invoice seller country",
-  "{{invoice_seller_phone}}": "Invoice seller phone",
-  "{{invoice_seller_email}}": "Invoice seller email",
-  "{{invoice_seller_business_id}}": "Invoice seller business ID",
-  "{{invoice_seller_tax_id}}": "Invoice seller tax ID",
-  "{{invoice_seller_vat_id}}": "Invoice seller VAT ID",
-  "{{invoice_seller_bank_account}}": "Invoice seller bank account",
-  "{{invoice_seller_bank_code}}": "Invoice seller bank code",
-};
-
-export type InvoiceVariable = z.infer<typeof invoiceVariableSchema>;
-
-export type InvoiceValue = StringWithAutocomplete<
-  z.infer<typeof invoiceVariableSchema>
->;
-
-export type InvoiceTemplateStyle = ReactPDF.Styles[keyof ReactPDF.Styles];
-
-export const invoiceTemplateComponentTypeSchema = z.enum([
-  "text",
-  "view",
-  "image",
-  "list",
-  "page",
-]);
-
-export type InvoiceTemplateComponent =
-  | {
-      id: string;
-      type: "text";
-      value: InvoiceValue;
-      style?: InvoiceTemplateStyle;
-      if?: InvoiceVariable;
-    }
-  | {
-      id: string;
-      type: "view";
-      style?: InvoiceTemplateStyle;
-      children?: UnionWithout<InvoiceTemplateComponent, "type", "page">[];
-      if?: InvoiceVariable;
-    }
-  | {
-      id: string;
-      type: "image";
-      src: string;
-      style?: InvoiceTemplateStyle;
-      if?: InvoiceVariable;
-    }
-  | {
-      id: string;
-      type: "list";
-      for: "invoice_items";
-      style?: InvoiceTemplateStyle;
-      item: UnionWithout<InvoiceTemplateComponent, "type", "page">;
-      if?: InvoiceVariable;
-    }
-  | {
-      id: string;
-      type: "page";
-      style: InvoiceTemplateStyle;
-      children: UnionWithout<InvoiceTemplateComponent, "type", "page">[];
-    };
-
-export const invoiceTemplateDataSchema = z.object({
-  content: z.custom<FromUnion<InvoiceTemplateComponent, "type", "page">>(),
-
-  currency: invoiceCurrencySchema.default("EUR"),
-  dateFormat: invoiceDateFormatSchema.default("DD.MM.YYYY"),
-  // unitLabels?: { [key in UnitType]: string };
-  // paymentTypeLabels?: { [key in InvoicePaymentType]: string };
-  unitLabels: z.record(unitTypeSchema, z.string()).optional(),
-  paymentTypeLabels: z.record(invoicePaymentTypeSchema, z.string()).optional(),
-
-  /**
-   * integer value in range 0 - 100
-   */
-  vatRate: z.number().int().min(0).max(100).optional(),
-  /**
-   * If true, we will calculate VAT from price
-   * so total = price_with_vat + price_with_vat * vatRate
-   * If false, we will calculate VAT from price
-   * so total = price_without_vat
-   * If vatRate is not set, we will not calculate VAT
-   * so total = price
-   * @default false
-   */
-  vatIncluded: z.boolean().default(false),
-});
-
-export type InvoiceTemplateData = z.infer<typeof invoiceTemplateDataSchema>;
+  type InvoiceTemplateData,
+  type InvoiceVariable,
+} from "~/shared/invoice-template/invoice-template-schemas";
 
 export const DEFAULT_TEMPLATE: InvoiceTemplateData = {
   currency: "EUR",
   dateFormat: "DD.MM.YYYY",
   content: {
     id: nanoid(),
-    type: "page",
+    type: "root",
     style: {
       display: "flex",
       fontFamily: "Helvetica",
@@ -745,4 +489,56 @@ export const DEFAULT_TEMPLATE: InvoiceTemplateData = {
     ],
   },
   vatIncluded: false,
+};
+
+// TODO: translate
+export const INVOICE_VARIABLE_LABELS: Record<InvoiceVariable, string> = {
+  "{{invoice_issue_date}}": "Invoice issue date",
+  "{{invoice_supply_date}}": "Invoice supply date",
+  "{{invoice_date_of_payment}}": "Invoice date of payment",
+  "{{invoice_due_date}}": "Invoice due date",
+  "{{invoice_status}}": "Invoice status",
+  "{{invoice_payment_type}}": "Invoice payment type",
+  "{{invoice_number}}": "Invoice number",
+  "{{invoice_reference}}": "Invoice reference",
+  "{{invoice_variable_symbol}}": "Invoice variable symbol",
+  "{{invoice_constant_symbol}}": "Invoice constant symbol",
+  "{{invoice_specific_symbol}}": "Invoice specific symbol",
+  "{{invoice_item_name}}": "Invoice item name",
+  "{{invoice_item_quantity}}": "Invoice item quantity",
+  "{{invoice_item_unit}}": "Invoice item unit",
+  "{{invoice_item_unit_price}}": "Invoice item unit price",
+  "{{invoice_item_unit_price_without_vat}}":
+    "Invoice item unit price without VAT",
+  "{{invoice_item_total}}": "Invoice item total",
+  "{{invoice_item_total_without_vat}}": "Invoice item total without VAT",
+  "{{invoice_total}}": "Invoice total",
+  "{{invoice_total_without_vat}}": "Invoice total without VAT",
+  "{{invoice_vat}}": "Invoice VAT",
+  "{{invoice_vat_rate}}": "Invoice VAT rate",
+  "{{invoice_currency}}": "Invoice currency",
+  "{{invoice_customer_name}}": "Invoice customer name",
+  "{{invoice_customer_address}}": "Invoice customer address",
+  "{{invoice_customer_city}}": "Invoice customer city",
+  "{{invoice_customer_zip}}": "Invoice customer ZIP",
+  "{{invoice_customer_country}}": "Invoice customer country",
+  "{{invoice_customer_phone}}": "Invoice customer phone",
+  "{{invoice_customer_email}}": "Invoice customer email",
+  "{{invoice_customer_business_id}}": "Invoice customer business ID",
+  "{{invoice_customer_tax_id}}": "Invoice customer tax ID",
+  "{{invoice_customer_vat_id}}": "Invoice customer VAT ID",
+  "{{invoice_customer_bank_account}}": "Invoice customer bank account",
+  "{{invoice_customer_bank_code}}": "Invoice customer bank code",
+  "{{invoice_seller_name}}": "Invoice seller name",
+  "{{invoice_seller_address}}": "Invoice seller address",
+  "{{invoice_seller_city}}": "Invoice seller city",
+  "{{invoice_seller_zip}}": "Invoice seller ZIP",
+  "{{invoice_seller_country}}": "Invoice seller country",
+  "{{invoice_seller_phone}}": "Invoice seller phone",
+  "{{invoice_seller_email}}": "Invoice seller email",
+  "{{invoice_seller_business_id}}": "Invoice seller business ID",
+  "{{invoice_seller_tax_id}}": "Invoice seller tax ID",
+  "{{invoice_seller_vat_id}}": "Invoice seller VAT ID",
+  "{{invoice_seller_bank_account}}": "Invoice seller bank account",
+  "{{invoice_seller_bank_code}}": "Invoice seller bank code",
 };

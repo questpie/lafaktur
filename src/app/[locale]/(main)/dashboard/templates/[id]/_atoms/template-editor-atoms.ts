@@ -7,7 +7,7 @@ import {
   getTemplateComponentById,
   getTemplateComponentParentById,
 } from "~/shared/invoice-template/invoice-template-helpers";
-import { type InvoiceTemplateComponent } from "~/shared/invoice-template/invoice-template-types";
+import { type InvoiceTemplateComponent } from "~/shared/invoice-template/invoice-template-schemas";
 
 export const invoiceTemplateAtom = atomWithImmer<InvoiceTemplate | null>(null);
 export const selectedComponentIdAtom = atom<string | null>(null);
@@ -17,7 +17,13 @@ export const updateComponentAtom = atom(
   (
     get,
     set,
-    { id, component }: { id: string; component: InvoiceTemplateComponent },
+    {
+      id,
+      component,
+    }: {
+      id: string;
+      component: InvoiceTemplateComponent;
+    },
   ) => {
     const template = get(invoiceTemplateAtom);
     if (!template) {
@@ -35,26 +41,23 @@ export const updateComponentAtom = atom(
       // if we don't have parent make sure we only update the root if the component is a page
       if (!parent) {
         if (!draft.template.content) return draft;
-        if (component.type !== "page") return draft;
+        if (component.type !== "root") return draft;
         draft.template.content = component;
         return draft;
       }
 
-      // if the component is page but we are not updating the root return
-      if (component.type === "page") return draft;
-
       //handle view and list
-
-      if (parent.type === "view") {
+      if (parent.type === "view" && component.type !== "root") {
         parent.children = parent.children?.map((child) => {
           if (child.id === id) {
             return component;
           }
+
           return child;
         });
       }
 
-      if (parent.type === "list") {
+      if (parent.type === "list" && component.type !== "root") {
         parent.item = component;
       }
     });

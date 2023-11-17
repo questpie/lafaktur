@@ -15,12 +15,12 @@ import {
 import { createInsertSchema } from "drizzle-zod";
 import { type AdapterAccount } from "next-auth/adapters";
 import { typedJson } from "~/server/db/types/typed-json";
+import { DEFAULT_TEMPLATE } from "~/shared/invoice-template/invoice-template-constants";
 import {
-  DEFAULT_TEMPLATE,
   invoiceStatusSchema,
   invoiceTemplateDataSchema,
   type InvoiceTemplateData,
-} from "~/shared/invoice-template/invoice-template-types";
+} from "~/shared/invoice-template/invoice-template-schemas";
 
 /**
  * This is an example of how to use the multi-project schema feature of Drizzle ORM. Use the same

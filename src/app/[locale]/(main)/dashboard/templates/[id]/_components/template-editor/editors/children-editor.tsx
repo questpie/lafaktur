@@ -7,12 +7,11 @@ import {
 } from "~/app/[locale]/(main)/dashboard/templates/[id]/_atoms/template-editor-atoms";
 import { Badge } from "~/app/_components/ui/badge";
 import { Label } from "~/app/_components/ui/label";
-import { type InvoiceTemplateComponent } from "~/shared/invoice-template/invoice-template-types";
+import { type InvoiceTemplateChild } from "~/shared/invoice-template/invoice-template-schemas";
 
-const TYPE_TO_ICON: Record<InvoiceTemplateComponent["type"], ReactNode> = {
+const TYPE_TO_ICON: Record<InvoiceTemplateChild["type"], ReactNode> = {
   image: <LuImage />,
   list: <LuList />,
-  page: <LuBoxSelect />,
   text: <LuType />,
   view: <LuBoxSelect />,
 };

@@ -7,23 +7,22 @@ import {
 } from "~/app/_components/ui/toggle-group";
 import {
   invoiceTemplateComponentTypeSchema,
-  type InvoiceTemplateComponent,
-} from "~/shared/invoice-template/invoice-template-types";
+  type InvoiceTemplateChild,
+} from "~/shared/invoice-template/invoice-template-schemas";
 
 export function ComponentTypeEditor() {
   const [selectedComponent, updateSelectedComponent] = useSelectedComponent();
 
-  const handleTypeChange = (type: InvoiceTemplateComponent["type"]) => {
+  const handleTypeChange = (type: InvoiceTemplateChild["type"]) => {
     if (!selectedComponent) return;
     if (!invoiceTemplateComponentTypeSchema.safeParse(type).success) return;
 
     // we should'n never be able and allowed to set page types
-    if (type === "page") type = "view";
 
     const updatedPayload = {
       ...selectedComponent,
       type,
-    } as InvoiceTemplateComponent;
+    } as InvoiceTemplateChild;
 
     // We won't remove redundant fields yet so we can change it back later, this will be strapped while validating on backend
     // delete component.children;
@@ -48,11 +47,11 @@ export function ComponentTypeEditor() {
       <Label className="text-xs">Type</Label>
       <ToggleGroup
         type="single"
-        disabled={selectedComponent.type === "page"}
+        disabled={selectedComponent.type === "root"}
         value={selectedComponent.type}
         onValueChange={handleTypeChange}
       >
-        {selectedComponent.type === "page" ? (
+        {selectedComponent.type === "root" ? (
           <ToggleGroupItem value="page" aria-label="Toggle page">
             Page
           </ToggleGroupItem>
