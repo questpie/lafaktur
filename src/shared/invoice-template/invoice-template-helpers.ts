@@ -1,6 +1,7 @@
 import { customAlphabet } from "nanoid";
 import { type CSSProperties } from "react";
 import {
+  invoiceVariableSchema,
   type InvoiceTemplateChild,
   type InvoiceTemplateComponent,
   type InvoiceTemplateContentRoot as InvoiceTemplatePage,
@@ -126,4 +127,49 @@ export function getAllTemplateIds(
   }
 
   return acc;
+}
+
+type TemplateVariableNode =
+  | {
+      type: "variable";
+      value: string;
+    }
+  | {
+      type: "text";
+      value: string;
+    };
+
+export const TEMPLATE_VARIABLE_REGEX = /{{(?<key>[^}]+)}}/g;
+
+export function parseTemplateTextValue(text: string): TemplateVariableNode[] {
+  const result: TemplateVariableNode[] = [];
+
+  let match;
+  let lastIndex = 0;
+
+  while ((match = TEMPLATE_VARIABLE_REGEX.exec(text)) !== null) {
+    const { key } = match.groups ?? {};
+
+    if (key) {
+      const textBefore = text.slice(lastIndex, match.index);
+
+      if (textBefore) {
+        result.push({ type: "text", value: textBefore });
+      }
+
+      if (!invoiceVariableSchema.safeParse(key).success) {
+        result.push({ type: "text", value: `{{${key}}}` });
+      } else {
+        result.push({ type: "variable", value: key });
+      }
+      lastIndex = match.index + match[0].length;
+    }
+  }
+
+  const textAfter = text.slice(lastIndex);
+  if (textAfter) {
+    result.push({ type: "text", value: textAfter });
+  }
+
+  return result;
 }

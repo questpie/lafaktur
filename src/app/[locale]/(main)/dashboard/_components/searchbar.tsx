@@ -11,7 +11,7 @@ export function SearchBar() {
       <Input
         variant="filled"
         className={{ wrapper: "w-full rounded-e-none  " }}
-        before={<LuSearch />}
+        before={<LuSearch className="ml-3" />}
         placeholder={"Search"}
       />
       <Button variant="default" className="rounded-s-none">

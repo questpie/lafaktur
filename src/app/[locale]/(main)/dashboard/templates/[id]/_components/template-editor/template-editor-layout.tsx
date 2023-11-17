@@ -12,34 +12,38 @@ import { useDimensions } from "~/app/_hooks/use-dimensions";
 import { cn } from "~/app/_utils/styles-utils";
 import { type InvoiceTemplate } from "~/server/db/schema";
 import { INVOICE_VARIABLE_LABELS } from "~/shared/invoice-template/invoice-template-constants";
+import { parseTemplateTextValue } from "~/shared/invoice-template/invoice-template-helpers";
 import { type InvoiceVariable } from "~/shared/invoice-template/invoice-template-schemas";
 import { TemplateRenderer } from "~/shared/invoice-template/render/template-renderer";
 
 function editorResolver(text: string): ReactNode {
   // replace each {{variable}} in a text with a chip
-  const match = text.match(/(?<prefix>.*)(?<variable>{{.*}})(?<suffix>.*)/);
-  const prefix = match?.groups?.prefix;
-  const variable = match?.groups?.variable;
-  const suffix = match?.groups?.suffix;
-
-  if (!match) {
-    return text;
-  }
+  const nodes = parseTemplateTextValue(text);
 
   return (
-    <span
-      className="inline-flex
-     items-center"
-    >
-      {prefix ? <span>{editorResolver(prefix)}</span> : null}
-      <Badge
-        variant={"secondary"}
-        className={cn("mx-[1px] max-h-min self-center px-1 py-0")}
-        style={{ fontSize: "Inherit" }}
-      >
-        {INVOICE_VARIABLE_LABELS[variable as InvoiceVariable]}
-      </Badge>
-      {suffix ? <span>{editorResolver(suffix)}</span> : null}
+    <span className={cn("inline-flex items-center")}>
+      {nodes.map((node, i) => {
+        const key = `${node.value}-${i}`;
+        if (node.type === "text") {
+          return <span key={key}>{node.value}</span>;
+        }
+
+        const variable = node.value as InvoiceVariable;
+        const label = INVOICE_VARIABLE_LABELS[variable];
+
+        return (
+          <Badge
+            key={key}
+            variant={"secondary"}
+            className={cn(
+              "mx-[1px] line-clamp-1 max-w-full text-ellipsis whitespace-nowrap px-1 py-0",
+            )}
+            style={{ fontSize: "Inherit" }}
+          >
+            {label}
+          </Badge>
+        );
+      })}
     </span>
   );
 }

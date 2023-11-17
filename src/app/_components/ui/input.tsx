@@ -4,7 +4,7 @@ import * as React from "react";
 import { cn } from "~/app/_utils/styles-utils";
 
 export const inputVariants = cva(
-  "flex h-9 w-full relative rounded-md overflow-hidden text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50",
+  "flex h-9 w-full relative rounded-md overflow-hidden text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-within:outline-none focus-within:ring-1 focus-within:ring-ring disabled:cursor-not-allowed disabled:opacity-50",
   {
     variants: {
       variant: {
@@ -53,7 +53,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             }),
           )}
         >
-          <span className="absolute inset-y-0 left-0 flex items-center pl-3">
+          <span className="absolute inset-y-0 left-0 flex items-center">
             {before}
           </span>
           <input
@@ -73,7 +73,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             ref={ref}
             {...props}
           />
-          <span className="absolute inset-y-0 right-0 flex items-center pr-3">
+          <span className="absolute inset-y-0 right-0 flex items-center">
             {after}
           </span>
         </div>

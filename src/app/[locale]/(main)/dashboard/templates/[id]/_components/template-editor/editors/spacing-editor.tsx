@@ -7,8 +7,8 @@ import {
   LuPanelLeft,
   LuPanelRight,
   LuPanelTop,
+  LuSquare,
 } from "react-icons/lu";
-import { MdOutlineBorderClear, MdOutlineBorderOuter } from "react-icons/md";
 import { useSelectedComponent } from "~/app/[locale]/(main)/dashboard/templates/[id]/_atoms/template-editor-atoms";
 import { Button } from "~/app/_components/ui/button";
 import { Label } from "~/app/_components/ui/label";
@@ -134,28 +134,24 @@ export function SpacingEditor(props: SpacingEditorProps) {
   };
 
   return (
-    <div className="flex w-full flex-col">
+    <div className="flex w-full flex-col gap-1">
       <div className="flex w-full items-center justify-between gap-2">
         <Label className="text-xs">
           {props.type === "margin" ? "Margin" : "Padding"}
         </Label>
         <Button size="iconSm" variant="ghost" onClick={toggleSettingsEditType}>
-          {settings.editType === "each" ? (
-            <MdOutlineBorderClear />
-          ) : (
-            <MdOutlineBorderOuter />
-          )}
+          {settings.editType === "each" ? <LuSquare /> : <LuBoxSelect />}
         </Button>
       </div>
 
-      <div className="grid grid-cols-2 gap-2">
-        {settings.editType === "each" &&
-          SPACING_KEYS?.map((key) => (
+      {settings.editType === "each" && (
+        <div className="grid grid-cols-2 gap-2">
+          {SPACING_KEYS?.map((key) => (
             <SizeInput
               key={key}
               placeholder={"0px"}
               value={stringToSizeValue(selectedComponent.style?.[getKey(key)])}
-              before={SPACING_KEYS_TO_ICON[key]}
+              before={<div className="pl-3">{SPACING_KEYS_TO_ICON[key]}</div>}
               onValueChange={(val) =>
                 val &&
                 updateComponent({
@@ -168,24 +164,25 @@ export function SpacingEditor(props: SpacingEditorProps) {
               }
             />
           ))}
-        {settings.editType === "all" && (
-          <SizeInput
-            placeholder={"0px"}
-            value={stringToSizeValue(selectedComponent.style?.[props.type])}
-            before={<LuBoxSelect />}
-            onValueChange={(val) =>
-              val &&
-              updateComponent({
-                ...selectedComponent,
-                style: {
-                  ...selectedComponent.style,
-                  [props.type]: sizeValueToString(val),
-                },
-              })
-            }
-          />
-        )}
-      </div>
+        </div>
+      )}
+      {settings.editType === "all" && (
+        <SizeInput
+          placeholder={"0px"}
+          value={stringToSizeValue(selectedComponent.style?.[props.type])}
+          before={<LuBoxSelect className="ml-3" />}
+          onValueChange={(val) =>
+            val &&
+            updateComponent({
+              ...selectedComponent,
+              style: {
+                ...selectedComponent.style,
+                [props.type]: sizeValueToString(val),
+              },
+            })
+          }
+        />
+      )}
     </div>
   );
 }
