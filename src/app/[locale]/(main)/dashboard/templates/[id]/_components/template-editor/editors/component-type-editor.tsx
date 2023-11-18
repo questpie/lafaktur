@@ -53,7 +53,7 @@ export function ComponentTypeEditor() {
       >
         {selectedComponent.type === "root" ? (
           <ToggleGroupItem value="page" aria-label="Toggle page">
-            Page
+            Root
           </ToggleGroupItem>
         ) : (
           <>

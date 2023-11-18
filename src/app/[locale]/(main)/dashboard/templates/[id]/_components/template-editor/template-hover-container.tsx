@@ -1,6 +1,10 @@
 import { useAtom } from "jotai";
-import React, { useId, type SyntheticEvent } from "react";
-import { selectedComponentIdAtom } from "~/app/[locale]/(main)/dashboard/templates/[id]/_atoms/template-editor-atoms";
+import type React from "react";
+import { useId, type SyntheticEvent } from "react";
+import {
+  highlightedComponentIdAtom,
+  selectedComponentIdAtom,
+} from "~/app/[locale]/(main)/dashboard/templates/[id]/_atoms/template-editor-atoms";
 import { cn } from "~/app/_utils/styles-utils";
 
 type RenderProps = {
@@ -18,7 +22,9 @@ type Props = {
 
 export const TemplateEditorHoverContainer = (props: Props) => {
   const id = useId();
-  const [isHovering, setIsHovering] = React.useState(false);
+  const [highlightedComponentId, setHighlightedComponentId] = useAtom(
+    highlightedComponentIdAtom,
+  );
 
   const [selectedComponent, setSelectedComponent] = useAtom(
     selectedComponentIdAtom,
@@ -28,20 +34,22 @@ export const TemplateEditorHoverContainer = (props: Props) => {
   const renderProps = {
     id,
     className: cn("border border-transparent cursor-pointer", {
-      "border border-muted-foreground border-solid": isHovering,
+      "border border-muted-foreground border-solid":
+        highlightedComponentId === props.id && !selected,
       "border border-primary border-solid": selected,
     }),
     onMouseOver: (e: SyntheticEvent<HTMLElement>) => {
       const activeTarget = e.target as HTMLElement;
       if (activeTarget.id === id) {
-        setIsHovering(true);
+        setHighlightedComponentId(props.id);
       }
     },
     onMouseOut: (e: SyntheticEvent<HTMLElement>) => {
       const activeTarget = e.target as HTMLElement;
       if (activeTarget.id === id) {
-        setIsHovering(false);
+        setHighlightedComponentId(props.id);
       }
+      setHighlightedComponentId;
     },
     onClick: (e: SyntheticEvent<HTMLElement>) => {
       const activeTarget = e.target as HTMLElement;

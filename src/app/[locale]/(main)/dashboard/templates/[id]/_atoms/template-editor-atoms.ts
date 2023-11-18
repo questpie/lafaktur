@@ -15,6 +15,9 @@ const [invoiceTemplateAtomPrimitive, useInvoiceTemplateListener] =
 
 const invoiceTemplateAtom = withImmer(invoiceTemplateAtomPrimitive);
 const selectedComponentIdAtom = atom<string | null>(null);
+const highlightedComponentIdAtom = atom<string | null>(null);
+
+const invoiceTemplateStateAtom = atom<"dirty" | "saving" | "saved">("saved");
 
 const updateComponentAtom = atom(
   null,
@@ -64,6 +67,8 @@ const updateComponentAtom = atom(
       if (parent.type === "list" && component.type !== "root") {
         parent.item = component;
       }
+
+      set(invoiceTemplateStateAtom, "dirty");
     });
   },
 );
@@ -97,15 +102,23 @@ const updateSelectedComponentAtom = atom(
   ) => {
     const selectedComponent = get(selectedComponentAtom);
     if (!selectedComponent) return;
-    typeof component === "function"
-      ? set(updateComponentAtom, {
-          id: selectedComponent.id,
-          component: component(selectedComponent),
-        })
-      : set(updateComponentAtom, {
-          id: selectedComponent.id,
-          component,
-        });
+
+    const newComponent =
+      typeof component === "function"
+        ? component(selectedComponent)
+        : component;
+
+    console.log("newComponent", newComponent);
+
+    set(updateComponentAtom, {
+      id: selectedComponent.id,
+      component: newComponent,
+    });
+
+    set(invoiceTemplateStateAtom, "dirty");
+
+    if (selectedComponent.id === newComponent.id) return;
+    set(selectedComponentIdAtom, newComponent.id);
   },
 );
 
@@ -127,8 +140,10 @@ function useSelectedComponent() {
 }
 
 export {
+  highlightedComponentIdAtom,
   invoiceComponentsIdsAtom,
   invoiceTemplateAtom,
+  invoiceTemplateStateAtom,
   selectedComponentIdAtom,
   updateComponentAtom,
   useInvoiceTemplateListener,

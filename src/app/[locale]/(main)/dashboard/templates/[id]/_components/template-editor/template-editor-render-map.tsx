@@ -47,7 +47,7 @@ export const TEMPLATE_EDITOR_RENDER_MAP: TemplateRenderMap = {
       <TemplateEditorHoverContainer id={cmp.id}>
         {(renderProps) => (
           <div style={pdfStyleToCssProperties(cmp.style)} {...renderProps}>
-            {resolver(cmp.value, "node")}
+            {resolver(cmp.value ?? "", "node")}
           </div>
         )}
       </TemplateEditorHoverContainer>

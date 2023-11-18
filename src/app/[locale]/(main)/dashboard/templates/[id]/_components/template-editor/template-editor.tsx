@@ -2,6 +2,7 @@ import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { useCallback, useEffect, useRef, type ReactNode } from "react";
 import {
   invoiceTemplateAtom,
+  invoiceTemplateStateAtom,
   selectedComponentIdAtom,
   useInvoiceTemplateListener,
 } from "~/app/[locale]/(main)/dashboard/templates/[id]/_atoms/template-editor-atoms";
@@ -9,6 +10,7 @@ import { TEMPLATE_EDITOR_RENDER_MAP } from "~/app/[locale]/(main)/dashboard/temp
 import { TemplateEditorSidebar } from "~/app/[locale]/(main)/dashboard/templates/[id]/_components/template-editor/template-editor-sidebar";
 import { Badge } from "~/app/_components/ui/badge";
 import { Card, CardContent } from "~/app/_components/ui/card";
+import { Spinner } from "~/app/_components/ui/spinner";
 import { useDebounce } from "~/app/_hooks/use-debounce";
 import { useDimensions } from "~/app/_hooks/use-dimensions";
 import { cn } from "~/app/_utils/styles-utils";
@@ -24,7 +26,7 @@ function editorResolver(text: string): ReactNode {
   const nodes = parseTemplateTextValue(text);
 
   return (
-    <span className={cn("inline-flex items-center")}>
+    <span className={cn("pointer-events-none inline-flex items-center")}>
       {nodes.map((node, i) => {
         const key = `${node.value}-${i}`;
         if (node.type === "text") {
@@ -61,8 +63,18 @@ export function TemplateEditor(props: TemplateEditorLayoutProps) {
   const selectedComponentId = useAtomValue(selectedComponentIdAtom);
   const invoiceContainerRef = useRef<HTMLDivElement>(null);
   const dimensions = useDimensions(invoiceContainerRef);
+  const [invoiceTemplateState, setInvoiceTemplateState] = useAtom(
+    invoiceTemplateStateAtom,
+  );
 
-  const updateMutation = api.invoiceTemplate.update.useMutation();
+  const updateMutation = api.invoiceTemplate.update.useMutation({
+    onMutate() {
+      setInvoiceTemplateState("saving");
+    },
+    onSuccess() {
+      setInvoiceTemplateState("saved");
+    },
+  });
   const debouncedMutate = useDebounce(updateMutation.mutate, 500);
 
   useEffect(() => {
@@ -90,27 +102,41 @@ export function TemplateEditor(props: TemplateEditorLayoutProps) {
   }
 
   return (
-    <div className="grid w-full grid-cols-12 @container">
-      <div
-        className="col-span-12 h-min overflow-hidden rounded-lg rounded-e-none border @lg:col-span-8"
-        ref={invoiceContainerRef}
-      >
-        <TemplateRenderer
-          invoiceTemplate={invoiceTemplate}
-          renderMap={TEMPLATE_EDITOR_RENDER_MAP}
-          resolver={editorResolver}
-        />
-      </div>
-      <Card
-        className={cn(
-          "col-span-12 w-full overflow-y-auto rounded-s-none border-s-0 @lg:col-span-4",
+    <div className="flex flex-col gap-1">
+      <div className="flex items-center justify-end gap-2">
+        {invoiceTemplateState === "saving" ? (
+          <>
+            <Spinner size="sm" />
+            <span className="text-xs text-muted-foreground">Saving...</span>
+          </>
+        ) : (
+          <span className="text-xs text-muted-foreground">
+            {invoiceTemplateState === "saved" ? "Saved" : "Dirty"}
+          </span>
         )}
-        style={{ height: dimensions?.height }}
-      >
-        <CardContent className=" p-4">
-          <TemplateEditorSidebar key={selectedComponentId} />
-        </CardContent>
-      </Card>
+      </div>
+      <div className="grid w-full grid-cols-12 @container">
+        <div
+          className="col-span-12 h-min overflow-hidden rounded-lg rounded-e-none border @lg:col-span-8"
+          ref={invoiceContainerRef}
+        >
+          <TemplateRenderer
+            invoiceTemplate={invoiceTemplate}
+            renderMap={TEMPLATE_EDITOR_RENDER_MAP}
+            resolver={editorResolver}
+          />
+        </div>
+        <Card
+          className={cn(
+            "col-span-12 w-full overflow-y-auto rounded-s-none border-s-0 @lg:col-span-4",
+          )}
+          style={{ height: dimensions?.height }}
+        >
+          <CardContent className=" p-4">
+            <TemplateEditorSidebar key={selectedComponentId} />
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }

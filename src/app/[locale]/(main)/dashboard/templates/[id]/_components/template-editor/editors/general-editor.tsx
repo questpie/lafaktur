@@ -1,4 +1,3 @@
-import React from "react";
 import { useSelectedComponent } from "~/app/[locale]/(main)/dashboard/templates/[id]/_atoms/template-editor-atoms";
 import { Input } from "~/app/_components/ui/input";
 import { Label } from "~/app/_components/ui/label";
