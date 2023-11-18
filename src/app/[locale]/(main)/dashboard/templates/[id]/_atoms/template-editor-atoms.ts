@@ -1,5 +1,6 @@
 import { atom, useAtomValue, useSetAtom } from "jotai";
-import { atomWithImmer } from "jotai-immer";
+import { withImmer } from "jotai-immer";
+import { atomWithListeners } from "~/app/_atoms/atom-with-listener";
 import { invariant } from "~/app/_utils/misc-utils";
 import { type InvoiceTemplate } from "~/server/db/schema";
 import {
@@ -9,10 +10,13 @@ import {
 } from "~/shared/invoice-template/invoice-template-helpers";
 import { type InvoiceTemplateComponent } from "~/shared/invoice-template/invoice-template-schemas";
 
-export const invoiceTemplateAtom = atomWithImmer<InvoiceTemplate | null>(null);
-export const selectedComponentIdAtom = atom<string | null>(null);
+const [invoiceTemplateAtomPrimitive, useInvoiceTemplateListener] =
+  atomWithListeners<InvoiceTemplate | null>(null);
 
-export const updateComponentAtom = atom(
+const invoiceTemplateAtom = withImmer(invoiceTemplateAtomPrimitive);
+const selectedComponentIdAtom = atom<string | null>(null);
+
+const updateComponentAtom = atom(
   null,
   (
     get,
@@ -64,7 +68,7 @@ export const updateComponentAtom = atom(
   },
 );
 
-export const invoiceComponentsIdsAtom = atom((get) => {
+const invoiceComponentsIdsAtom = atom((get) => {
   const template = get(invoiceTemplateAtom);
   if (!template) return [];
   return getAllTemplateIds(template.template.content);
@@ -109,7 +113,7 @@ const updateSelectedComponentAtom = atom(
  * Returns the selected component and a function to update it.
  * This components throws an error if there is no selected component.
  */
-export function useSelectedComponent() {
+function useSelectedComponent() {
   const selectedComponent = useAtomValue(selectedComponentAtom);
   const updateSelectedComponent = useSetAtom(updateSelectedComponentAtom);
 
@@ -121,3 +125,12 @@ export function useSelectedComponent() {
 
   return [selectedComponent, updateSelectedComponent] as const;
 }
+
+export {
+  invoiceComponentsIdsAtom,
+  invoiceTemplateAtom,
+  selectedComponentIdAtom,
+  updateComponentAtom,
+  useInvoiceTemplateListener,
+  useSelectedComponent,
+};

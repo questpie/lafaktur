@@ -1,13 +1,15 @@
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
-import { useEffect, useRef, type ReactNode } from "react";
+import { useCallback, useEffect, useRef, type ReactNode } from "react";
 import {
   invoiceTemplateAtom,
   selectedComponentIdAtom,
+  useInvoiceTemplateListener,
 } from "~/app/[locale]/(main)/dashboard/templates/[id]/_atoms/template-editor-atoms";
 import { TEMPLATE_EDITOR_RENDER_MAP } from "~/app/[locale]/(main)/dashboard/templates/[id]/_components/template-editor/template-editor-render-map";
 import { TemplateEditorSidebar } from "~/app/[locale]/(main)/dashboard/templates/[id]/_components/template-editor/template-editor-sidebar";
 import { Badge } from "~/app/_components/ui/badge";
 import { Card, CardContent } from "~/app/_components/ui/card";
+import { useDebounce } from "~/app/_hooks/use-debounce";
 import { useDimensions } from "~/app/_hooks/use-dimensions";
 import { cn } from "~/app/_utils/styles-utils";
 import { type InvoiceTemplate } from "~/server/db/schema";
@@ -15,6 +17,7 @@ import { INVOICE_VARIABLE_LABELS } from "~/shared/invoice-template/invoice-templ
 import { parseTemplateTextValue } from "~/shared/invoice-template/invoice-template-helpers";
 import { type InvoiceVariable } from "~/shared/invoice-template/invoice-template-schemas";
 import { TemplateRenderer } from "~/shared/invoice-template/render/template-renderer";
+import { api } from "~/trpc/react";
 
 function editorResolver(text: string): ReactNode {
   // replace each {{variable}} in a text with a chip
@@ -52,14 +55,15 @@ type TemplateEditorLayoutProps = {
   invoiceTemplate: InvoiceTemplate;
 };
 
-export function TemplateEditorLayout(props: TemplateEditorLayoutProps) {
+export function TemplateEditor(props: TemplateEditorLayoutProps) {
   const [invoiceTemplate, setInvoiceTemplate] = useAtom(invoiceTemplateAtom);
   const setSelectedComponent = useSetAtom(selectedComponentIdAtom);
   const selectedComponentId = useAtomValue(selectedComponentIdAtom);
-
   const invoiceContainerRef = useRef<HTMLDivElement>(null);
-
   const dimensions = useDimensions(invoiceContainerRef);
+
+  const updateMutation = api.invoiceTemplate.update.useMutation();
+  const debouncedMutate = useDebounce(updateMutation.mutate, 500);
 
   useEffect(() => {
     setInvoiceTemplate(structuredClone(props.invoiceTemplate));
@@ -69,6 +73,17 @@ export function TemplateEditorLayout(props: TemplateEditorLayoutProps) {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useInvoiceTemplateListener(
+    useCallback(
+      (get, set, newVal, prev) => {
+        if (!prev || !newVal) return;
+        if (updateMutation.isLoading) return;
+        debouncedMutate(newVal);
+      },
+      [debouncedMutate, updateMutation.isLoading],
+    ),
+  );
 
   if (!invoiceTemplate) {
     return null;

@@ -140,33 +140,37 @@ export const invoiceTemplateComponentTypeSchema = z.enum([
 export type InvoiceTemplateTextComponent = {
   id: string;
   type: "text";
-  value: InvoiceValue;
-  style?: InvoiceTemplateStyle;
   if?: InvoiceVariable;
+
+  value?: InvoiceValue;
+  style?: InvoiceTemplateStyle;
 };
 export type InvoiceTemplateViewComponent = {
   id: string;
   type: "view";
   style?: InvoiceTemplateStyle;
-  children?: InvoiceTemplateChild[];
   if?: InvoiceVariable;
+
+  children?: InvoiceTemplateChild[];
 };
 
 export type InvoiceTemplateImageComponent = {
   id: string;
   type: "image";
-  src: string;
   style?: InvoiceTemplateStyle;
   if?: InvoiceVariable;
+
+  src: string;
 };
 
 export type InvoiceTemplateListComponent = {
   id: string;
   type: "list";
-  for: "invoice_items";
   style?: InvoiceTemplateStyle;
-  item: InvoiceTemplateChild;
   if?: InvoiceVariable;
+
+  for: "invoice_items";
+  item: InvoiceTemplateChild;
 };
 
 export const invoiceTemplateStyle = z.custom<InvoiceTemplateStyle>();
@@ -175,9 +179,10 @@ export const invoiceTemplateTextComponentSchema: z.ZodType<InvoiceTemplateTextCo
   z.object({
     id: z.string(),
     type: z.literal("text"),
-    value: invoiceVariableSchema,
     style: invoiceTemplateStyle.optional(),
     if: invoiceVariableSchema.optional(),
+
+    value: z.union([invoiceVariableSchema, z.string()]).default(""),
   });
 
 export const invoiceTemplateViewComponentSchema: z.ZodType<InvoiceTemplateViewComponent> =
@@ -185,27 +190,30 @@ export const invoiceTemplateViewComponentSchema: z.ZodType<InvoiceTemplateViewCo
     id: z.string(),
     type: z.literal("view"),
     style: invoiceTemplateStyle.optional(),
-    children: z.array(z.lazy(() => invoiceTemplateChildSchema)).optional(),
     if: invoiceVariableSchema.optional(),
+
+    children: z.array(z.lazy(() => invoiceTemplateChildSchema)).optional(),
   });
 
 export const invoiceTemplateImageComponentSchema: z.ZodType<InvoiceTemplateImageComponent> =
   z.object({
     id: z.string(),
     type: z.literal("image"),
-    src: z.string(),
     style: invoiceTemplateStyle.optional(),
     if: invoiceVariableSchema.optional(),
+
+    src: z.string(),
   });
 
 export const invoiceTemplateListComponentSchema: z.ZodType<InvoiceTemplateListComponent> =
   z.object({
     id: z.string(),
     type: z.literal("list"),
-    for: z.literal("invoice_items"),
     style: invoiceTemplateStyle.optional(),
-    item: z.lazy(() => invoiceTemplateChildSchema),
     if: invoiceVariableSchema.optional(),
+
+    for: z.literal("invoice_items"),
+    item: z.lazy(() => invoiceTemplateChildSchema),
   });
 
 export const invoiceTemplateChildSchema = z.union([

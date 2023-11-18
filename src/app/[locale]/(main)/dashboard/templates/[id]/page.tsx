@@ -4,7 +4,7 @@ import {
   useHeader,
 } from "~/app/[locale]/(main)/dashboard/_components/header";
 import { useSelectedOrganization } from "~/app/[locale]/(main)/dashboard/_components/organization-guard";
-import { TemplateEditorLayout } from "~/app/[locale]/(main)/dashboard/templates/[id]/_components/template-editor/template-editor-layout";
+import { TemplateEditor } from "~/app/[locale]/(main)/dashboard/templates/[id]/_components/template-editor/template-editor";
 import { api } from "~/trpc/react";
 
 type InvoiceTemplatePageProps = {
@@ -35,5 +35,5 @@ export default function InvoiceTemplatePage(props: InvoiceTemplatePageProps) {
     level: 2,
   });
 
-  return <TemplateEditorLayout invoiceTemplate={invoiceTemplate} />;
+  return <TemplateEditor invoiceTemplate={invoiceTemplate} />;
 }
