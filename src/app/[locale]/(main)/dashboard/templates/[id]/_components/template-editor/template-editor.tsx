@@ -111,7 +111,7 @@ export function TemplateEditor(props: TemplateEditorLayoutProps) {
           </>
         ) : (
           <span className="text-xs text-muted-foreground">
-            {invoiceTemplateState === "saved" ? "Saved" : "Dirty"}
+            {invoiceTemplateState === "saved" ? "Saved" : "Not saved"}
           </span>
         )}
       </div>
