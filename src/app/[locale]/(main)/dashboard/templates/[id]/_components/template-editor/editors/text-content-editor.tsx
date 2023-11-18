@@ -8,11 +8,11 @@ import {
   PopoverAnchor,
   PopoverContent,
 } from "~/app/_components/ui/popover";
-import { ScrollArea } from "~/app/_components/ui/scroll-area";
 import { useDisclosure } from "~/app/_hooks/use-disclosure";
 import { cn } from "~/app/_utils/styles-utils";
 import { INVOICE_VARIABLE_LABELS } from "~/shared/invoice-template/invoice-template-constants";
 
+// TODO: autocomplete
 export function TextContentEditor() {
   const [selectedComponent, updateComponent] = useSelectedComponent();
   const {
@@ -50,32 +50,30 @@ export function TextContentEditor() {
           />
         </div>
       </PopoverAnchor>
-      <PopoverContent asChild>
-        <ScrollArea className="max-h-[300px]">
-          <div className="flex flex-col gap-1">
-            {Object.keys(INVOICE_VARIABLE_LABELS).map((key) => (
-              <Button
-                key={key}
-                size="sm"
-                variant="ghost"
-                className="justify-start text-left"
-                onClick={() => {
-                  updateComponent({
-                    ...selectedComponent,
-                    value: `${selectedComponent.value} {{${key}}}`,
-                  });
-                  setIsVariablePickerOpen(false);
-                }}
-              >
-                {
-                  INVOICE_VARIABLE_LABELS[
-                    key as keyof typeof INVOICE_VARIABLE_LABELS
-                  ]
-                }
-              </Button>
-            ))}
-          </div>
-        </ScrollArea>
+      <PopoverContent className="max-h-[300px] overflow-y-auto">
+        <div className="flex flex-col gap-1">
+          {Object.keys(INVOICE_VARIABLE_LABELS).map((key) => (
+            <Button
+              key={key}
+              size="sm"
+              variant="ghost"
+              className="justify-start text-left"
+              onClick={() => {
+                updateComponent({
+                  ...selectedComponent,
+                  value: `${selectedComponent.value} {{${key}}}`,
+                });
+                setIsVariablePickerOpen(false);
+              }}
+            >
+              {
+                INVOICE_VARIABLE_LABELS[
+                  key as keyof typeof INVOICE_VARIABLE_LABELS
+                ]
+              }
+            </Button>
+          ))}
+        </div>
       </PopoverContent>
     </Popover>
   );
