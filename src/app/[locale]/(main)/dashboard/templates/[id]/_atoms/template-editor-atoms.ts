@@ -45,7 +45,7 @@ const updateComponentAtom = atom(
         return draft;
       }
 
-      // if we don't have parent make sure we only update the root if the component is a page
+      // if we don't have parent make sure we only update the root if the component is a root
       if (!parent) {
         if (!draft.template.content) return draft;
         if (component.type !== "root") return draft;
@@ -53,10 +53,16 @@ const updateComponentAtom = atom(
         return draft;
       }
 
-      //handle view and list
-      if (parent.type === "view" && component.type !== "root") {
+      if (component.type === "root") {
+        return draft;
+      }
+
+      /** if parent is view or root, we have to remap it's children */
+      if (parent.type === "view" || parent.type === "root") {
+        console.log("parent", { ...parent });
         parent.children = parent.children?.map((child) => {
           if (child.id === id) {
+            console.log("child", { ...child }, { component });
             return component;
           }
 
@@ -64,10 +70,13 @@ const updateComponentAtom = atom(
         });
       }
 
-      if (parent.type === "list" && component.type !== "root") {
+      /** If parent is list just update it's item */
+      if (parent.type === "list") {
         parent.item = component;
       }
 
+      // TODO: add actual dirty checking logic
+      /** Update invoicee state */
       set(invoiceTemplateStateAtom, "dirty");
     });
   },
@@ -103,22 +112,70 @@ const updateSelectedComponentAtom = atom(
     const selectedComponent = get(selectedComponentAtom);
     if (!selectedComponent) return;
 
+    /** retrieve new payload */
     const newComponent =
       typeof component === "function"
         ? component(selectedComponent)
         : component;
 
-    console.log("newComponent", newComponent);
-
+    /** update component */
     set(updateComponentAtom, {
       id: selectedComponent.id,
       component: newComponent,
     });
 
-    set(invoiceTemplateStateAtom, "dirty");
-
     if (selectedComponent.id === newComponent.id) return;
     set(selectedComponentIdAtom, newComponent.id);
+  },
+);
+
+const deleteSelectedComponentAtom = atom(null, (get, set) => {
+  const invoiceTemplate = get(invoiceTemplateAtom);
+  const selectedComponent = get(selectedComponentAtom);
+
+  /** If no template or selected component is present stop, (should never happen while executing this) */
+  if (!invoiceTemplate || !selectedComponent) return;
+
+  /** Don't delete root */
+  if (selectedComponent.type === "root") return;
+
+  /** Find parent of component we are trying to delete */
+  const parent = getTemplateComponentParentById(
+    selectedComponent.id,
+    invoiceTemplate.template.content,
+  );
+  /** Id there is no parent or no children are present in parent stop (should never happen) */
+  if (!parent || !("children" in parent)) return;
+
+  /** Update parent component by remapping selected component */
+  const updatedParent = {
+    ...parent,
+    children: parent.children?.filter((c) => c.id !== selectedComponent.id),
+  };
+
+  /** Select parent component and remove the selected one */
+  set(selectedComponentIdAtom, parent.id);
+  set(updateComponentAtom, {
+    id: parent.id,
+    component: updatedParent as InvoiceTemplateComponent,
+  });
+});
+
+const addSelectedComponentChildAtom = atom(
+  null,
+  (get, set, newComponent: InvoiceTemplateComponent) => {
+    const selectedComponent = get(selectedComponentAtom);
+
+    /** If no selected component is present stop, (should never happen while executing this) */
+    if (!selectedComponent) return;
+    if (!("children" in selectedComponent)) return;
+
+    /** Update selected component by adding new child */
+    set(updateSelectedComponentAtom, {
+      ...selectedComponent,
+      // @ts-expect-error TODO: fix this union type issue
+      children: [...(selectedComponent.children ?? []), newComponent],
+    });
   },
 );
 
@@ -140,6 +197,8 @@ function useSelectedComponent() {
 }
 
 export {
+  addSelectedComponentChildAtom,
+  deleteSelectedComponentAtom,
   highlightedComponentIdAtom,
   invoiceComponentsIdsAtom,
   invoiceTemplateAtom,

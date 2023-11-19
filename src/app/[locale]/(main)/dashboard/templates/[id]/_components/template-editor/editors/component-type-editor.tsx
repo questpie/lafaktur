@@ -23,6 +23,7 @@ export function ComponentTypeEditor() {
       ...selectedComponent,
       type,
     } as InvoiceTemplateChild;
+    console.log("updatedPayload", updatedPayload);
 
     // We won't remove redundant fields yet so we can change it back later, this will be strapped while validating on backend
     // delete component.children;
@@ -41,6 +42,8 @@ export function ComponentTypeEditor() {
 
     updateSelectedComponent(updatedPayload);
   };
+
+  console.log("selectedComponent", selectedComponent);
 
   return (
     <div className="flex flex-col items-start gap-1">
