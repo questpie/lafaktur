@@ -45,8 +45,11 @@ export function ComponentTreeEditor() {
   );
 
   const siblings = useMemo(
-    () => (parent && "children" in parent ? parent.children ?? [] : []),
-    [parent],
+    () =>
+      parent && "children" in parent
+        ? parent.children ?? []
+        : [selectedComponent],
+    [parent, selectedComponent],
   );
 
   return (
@@ -71,9 +74,10 @@ export function ComponentTreeEditor() {
               key={sibling.id}
               onClick={() => setSelectedComponent(sibling.id)}
               variant="secondary"
-              className={cn("ml-4 cursor-pointer gap-2", {
-                "pointer-events-none ml-4 gap-2 border-primary opacity-70":
+              className={cn("cursor-pointer gap-2", {
+                "pointer-events-none gap-2 border-primary opacity-70":
                   sibling.id === selectedComponent.id,
+                "ml-4": parent,
               })}
               onMouseOver={() => setHighlightedComponent(sibling.id)}
               onMouseOut={() => setHighlightedComponent(null)}
@@ -88,7 +92,9 @@ export function ComponentTreeEditor() {
                     key={child.id}
                     onClick={() => setSelectedComponent(child.id)}
                     variant="secondary"
-                    className="ml-8 cursor-pointer gap-2"
+                    className={cn("ml-4 cursor-pointer gap-2", {
+                      "ml-8": parent,
+                    })}
                     onMouseOver={() => setHighlightedComponent(child.id)}
                     onMouseOut={() => setHighlightedComponent(null)}
                   >
