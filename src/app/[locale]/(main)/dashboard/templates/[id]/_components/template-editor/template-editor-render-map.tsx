@@ -6,7 +6,6 @@ import {
   addSelectedComponentChildAtom,
   deleteSelectedComponentAtom,
   invoiceTemplateAtom,
-  selectedComponentIdAtom,
   useSelectedComponent,
 } from "~/app/[locale]/(main)/dashboard/templates/[id]/_atoms/template-editor-atoms";
 import { TemplateEditorHoverContainer } from "~/app/[locale]/(main)/dashboard/templates/[id]/_components/template-editor/template-hover-container";
@@ -21,7 +20,7 @@ import {
 
 export const TEMPLATE_EDITOR_RENDER_MAP: TemplateRenderMap = {
   root: ({ cmp, resolver }) => {
-    const selectedComponentId = useAtomValue(selectedComponentIdAtom);
+    // const selectedComponentId = useAtomValue(selectedComponentIdAtom);
     return (
       <TemplateEditorHoverContainer id={cmp.id}>
         {(renderProps) => (
@@ -41,7 +40,7 @@ export const TEMPLATE_EDITOR_RENDER_MAP: TemplateRenderMap = {
                 resolver={resolver}
               />
             ))}
-            {selectedComponentId === cmp.id && <ComponentControlArea />}
+            {/* {selectedComponentId === cmp.id && <ComponentControlArea />} */}
           </div>
         )}
       </TemplateEditorHoverContainer>
@@ -86,7 +85,7 @@ export const TEMPLATE_EDITOR_RENDER_MAP: TemplateRenderMap = {
   },
 
   view: ({ cmp, resolver }) => {
-    const selectedComponentId = useAtomValue(selectedComponentIdAtom);
+    // const selectedComponentId = useAtomValue(selectedComponentIdAtom);
     return (
       <TemplateEditorHoverContainer id={cmp.id}>
         {(renderProps) => (
@@ -103,7 +102,7 @@ export const TEMPLATE_EDITOR_RENDER_MAP: TemplateRenderMap = {
                 resolver={resolver}
               />
             ))}
-            {selectedComponentId === cmp.id && <ComponentControlArea />}
+            {/* {selectedComponentId === cmp.id && <ComponentControlArea />} */}
           </div>
         )}
       </TemplateEditorHoverContainer>

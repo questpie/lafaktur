@@ -43,7 +43,7 @@ export default function OrganizationOnboardingPage() {
     });
   };
 
-  if (organizations.length) {
+  if (organizations?.length) {
     // we already have an organization redirect to dashboard
     router.push("/dashboard");
     return null;
