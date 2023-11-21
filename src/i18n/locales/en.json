@@ -76,9 +76,15 @@
     "err": {
       "notFound": "Invoice Template not found"
     },
-    "newTemplate": "New Template"
+    "newTemplate": "New Template",
+    "editor": {
+      "addComponent": "Add component"
+    }
   },
   "dataTable": {
     "noResults": "No results."
+  },
+  "common": {
+    "add": "Add"
   }
 }

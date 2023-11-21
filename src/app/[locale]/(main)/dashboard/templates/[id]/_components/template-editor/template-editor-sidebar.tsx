@@ -32,7 +32,7 @@ export function TemplateEditorSidebar() {
         </AccordionTrigger>
         <AccordionContent className="flex flex-col gap-2">
           <GeneralEditor />
-          {/* <ComponentTypeEditor /> */}
+          <ComponentTypeEditor />
           <TextContentEditor />
         </AccordionContent>
       </AccordionItem>

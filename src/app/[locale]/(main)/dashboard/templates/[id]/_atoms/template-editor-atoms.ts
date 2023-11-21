@@ -8,7 +8,10 @@ import {
   getTemplateComponentById,
   getTemplateComponentParentById,
 } from "~/shared/invoice-template/invoice-template-helpers";
-import { type InvoiceTemplateComponent } from "~/shared/invoice-template/invoice-template-schemas";
+import {
+  type InvoiceTemplateChild,
+  type InvoiceTemplateComponent,
+} from "~/shared/invoice-template/invoice-template-schemas";
 
 const [invoiceTemplateAtomPrimitive, useInvoiceTemplateListener] =
   atomWithListeners<InvoiceTemplate | null>(null);
@@ -38,31 +41,25 @@ const updateComponentAtom = atom(
     }
 
     set(invoiceTemplateAtom, (draft) => {
-      if (!draft) return draft;
+      if (!draft) return;
       const parent = getTemplateComponentParentById(id, draft.template.content);
       // if we don't have any parent check whether the id is the same as the root
       if (!parent && draft.template.content.id !== id) {
-        return draft;
+        return;
       }
 
       // if we don't have parent make sure we only update the root if the component is a root
-      if (!parent) {
-        if (!draft.template.content) return draft;
-        if (component.type !== "root") return draft;
+      if (!parent || component.type === "root") {
+        if (!draft.template.content) return;
+        if (component.type !== "root") return;
         draft.template.content = component;
-        return draft;
-      }
-
-      if (component.type === "root") {
-        return draft;
+        return;
       }
 
       /** if parent is view or root, we have to remap it's children */
       if (parent.type === "view" || parent.type === "root") {
-        console.log("parent", { ...parent });
         parent.children = parent.children?.map((child) => {
           if (child.id === id) {
-            console.log("child", { ...child }, { component });
             return component;
           }
 
@@ -129,19 +126,27 @@ const updateSelectedComponentAtom = atom(
   },
 );
 
-const deleteSelectedComponentAtom = atom(null, (get, set) => {
+const deleteComponentAtom = atom(null, (get, set, idToDelete: string) => {
   const invoiceTemplate = get(invoiceTemplateAtom);
   const selectedComponent = get(selectedComponentAtom);
+  /** If we have invoice template stop  */
+  if (!invoiceTemplate) return;
 
-  /** If no template or selected component is present stop, (should never happen while executing this) */
-  if (!invoiceTemplate || !selectedComponent) return;
+  /** Find component we want to delete */
+  const componentToDelete = getTemplateComponentById(
+    idToDelete,
+    invoiceTemplate.template.content,
+  );
 
-  /** Don't delete root */
-  if (selectedComponent.type === "root") return;
+  /** If we provided id that is not present in template stop */
+  if (!componentToDelete) return;
+
+  /** We don't want to delete root */
+  if (componentToDelete.type === "root") return;
 
   /** Find parent of component we are trying to delete */
   const parent = getTemplateComponentParentById(
-    selectedComponent.id,
+    componentToDelete.id,
     invoiceTemplate.template.content,
   );
   /** Id there is no parent or no children are present in parent stop (should never happen) */
@@ -150,31 +155,63 @@ const deleteSelectedComponentAtom = atom(null, (get, set) => {
   /** Update parent component by remapping selected component */
   const updatedParent = {
     ...parent,
-    children: parent.children?.filter((c) => c.id !== selectedComponent.id),
+    children: parent.children?.filter((c) => c.id !== componentToDelete.id),
   };
 
-  /** Select parent component and remove the selected one */
-  set(selectedComponentIdAtom, parent.id);
+  console.log(
+    "updatedParent",
+    { ...updatedParent },
+    componentToDelete.id,
+    parent.id,
+    selectedComponent?.id,
+  );
+
   set(updateComponentAtom, {
     id: parent.id,
     component: updatedParent as InvoiceTemplateComponent,
   });
+
+  /** If our component is selected, reselect and update parent */
+  if (selectedComponent?.id === componentToDelete.id) {
+    console.log("selectedComponent?.id === componentToDelete.id");
+    set(selectedComponentIdAtom, parent.id);
+  }
 });
 
-const addSelectedComponentChildAtom = atom(
+const addComponentAtom = atom(
   null,
-  (get, set, newComponent: InvoiceTemplateComponent) => {
-    const selectedComponent = get(selectedComponentAtom);
+  (
+    get,
+    set,
+    payload: {
+      parentId: string;
+      component: InvoiceTemplateChild;
+    },
+  ) => {
+    const invoiceTemplate = get(invoiceTemplateAtom);
 
-    /** If no selected component is present stop, (should never happen while executing this) */
-    if (!selectedComponent) return;
-    if (!("children" in selectedComponent)) return;
+    /** If we have invoice template stop  */
+    if (!invoiceTemplate) return;
 
-    /** Update selected component by adding new child */
-    set(updateSelectedComponentAtom, {
-      ...selectedComponent,
-      // @ts-expect-error TODO: fix this union type issue
-      children: [...(selectedComponent.children ?? []), newComponent],
+    /** Find parent component we are trying to add child to */
+    const parent = getTemplateComponentById(
+      payload.parentId,
+      invoiceTemplate.template.content,
+    );
+
+    /** If parent is not present stop (we should always provide valid id) */
+    if (!parent) return;
+
+    /** If parent's type disallows children stop */
+    if (parent.type !== "root" && parent.type !== "view") return;
+
+    /** Update parent component by adding new child */
+    set(updateComponentAtom, {
+      id: parent.id,
+      component: {
+        ...parent,
+        children: [...(parent.children ?? []), payload.component],
+      },
     });
   },
 );
@@ -196,9 +233,17 @@ function useSelectedComponent() {
   return [selectedComponent, updateSelectedComponent] as const;
 }
 
+/**
+ * Helper hook that exposes functions to add and delete components.
+ */
+function useTemplateTreeControls() {
+  const addComponent = useSetAtom(addComponentAtom);
+  const deleteComponent = useSetAtom(deleteComponentAtom);
+
+  return { addComponent, deleteComponent };
+}
+
 export {
-  addSelectedComponentChildAtom,
-  deleteSelectedComponentAtom,
   highlightedComponentIdAtom,
   invoiceComponentsIdsAtom,
   invoiceTemplateAtom,
@@ -207,4 +252,5 @@ export {
   updateComponentAtom,
   useInvoiceTemplateListener,
   useSelectedComponent,
+  useTemplateTreeControls,
 };
