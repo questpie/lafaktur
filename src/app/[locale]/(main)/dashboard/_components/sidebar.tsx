@@ -1,7 +1,7 @@
 "use client";
 import { atom, useAtom } from "jotai";
 import { useTranslations } from "next-intl";
-import { usePathname } from "next-intl/client";
+import { usePathname } from "next/navigation";
 import { useCallback, useState } from "react";
 import {
   LuBookTemplate,

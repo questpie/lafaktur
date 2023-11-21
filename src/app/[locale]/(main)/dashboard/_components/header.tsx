@@ -3,7 +3,7 @@
 import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
 import { atom, useAtomValue, useSetAtom } from "jotai";
 import { useTranslations } from "next-intl";
-import { usePathname } from "next-intl/client";
+import { usePathname } from "next/navigation";
 import React, { useEffect, useRef } from "react";
 import { LuMoreVertical } from "react-icons/lu";
 import { Button, LinkButton } from "~/app/_components/ui/button";
