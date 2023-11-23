@@ -25,7 +25,6 @@ export function convertSize(value: number, from: SizeUnit, to: SizeUnit) {
   if (from === to) return value;
   const pxValue = value * CONVERSION_AGAINST_PX[from];
   const result = roundTo(pxValue / CONVERSION_AGAINST_PX[to], 2);
-  console.log({ value, from, to, result });
   return result;
 }
 

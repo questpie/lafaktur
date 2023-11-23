@@ -115,6 +115,7 @@ export function TemplateEditor(props: TemplateEditorLayoutProps) {
           </span>
         )}
       </div>
+
       <div className="grid w-full grid-cols-12 @container">
         <div
           className="col-span-12 h-min overflow-hidden rounded-lg rounded-e-none border @lg:col-span-8"

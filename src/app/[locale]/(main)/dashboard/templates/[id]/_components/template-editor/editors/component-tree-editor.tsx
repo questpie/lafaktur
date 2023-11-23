@@ -1,8 +1,8 @@
 import { atom, useAtomValue, useSetAtom } from "jotai";
 import { nanoid } from "nanoid";
 import { useTranslations } from "next-intl";
-import { useMemo, useState, type SyntheticEvent } from "react";
-import { LuPlus, LuTrash, LuX } from "react-icons/lu";
+import { Fragment, useMemo, useState, type SyntheticEvent } from "react";
+import { LuPlus, LuX } from "react-icons/lu";
 import {
   highlightedComponentIdAtom,
   invoiceTemplateAtom,
@@ -84,9 +84,8 @@ export function ComponentTreeEditor() {
 
       {siblings?.map((sibling) => {
         return (
-          <>
+          <Fragment key={sibling.id}>
             <Badge
-              key={sibling.id}
               variant="secondary"
               className={cn("cursor-pointer gap-2", {
                 "border-primary": sibling.id === selectedComponent.id,
@@ -101,7 +100,10 @@ export function ComponentTreeEditor() {
                 <span className="flex flex-1 justify-end">
                   <LuX
                     className="cursor-pointer hover:text-destructive"
-                    onClick={() => deleteComponent(sibling.id)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      deleteComponent(sibling.id);
+                    }}
                   />
                 </span>
               )}
@@ -127,7 +129,10 @@ export function ComponentTreeEditor() {
                       <span className="flex flex-1 justify-end hover:text-destructive">
                         <LuX
                           className="cursor-pointer self-end"
-                          onClick={() => deleteComponent(child.id)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            deleteComponent(child.id);
+                          }}
                         />
                       </span>
                     </Badge>
@@ -138,7 +143,7 @@ export function ComponentTreeEditor() {
                 )}
               </>
             )}
-          </>
+          </Fragment>
         );
       })}
     </div>

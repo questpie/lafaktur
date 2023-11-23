@@ -28,7 +28,6 @@ export function useComponentTypeEditor(
         ...component,
         type,
       } as InvoiceTemplateChild;
-      console.log("updatedPayload", updatedPayload);
 
       // We won't remove redundant fields yet so we can change it back later, this will be strapped while validating on backend
       // delete component.children;

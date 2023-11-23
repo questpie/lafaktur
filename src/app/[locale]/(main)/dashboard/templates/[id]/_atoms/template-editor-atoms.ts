@@ -27,13 +27,7 @@ const updateComponentAtom = atom(
   (
     get,
     set,
-    {
-      id,
-      component,
-    }: {
-      id: string;
-      component: InvoiceTemplateComponent;
-    },
+    { id, component }: { id: string; component: InvoiceTemplateComponent },
   ) => {
     const template = get(invoiceTemplateAtom);
     if (!template) {
@@ -158,24 +152,15 @@ const deleteComponentAtom = atom(null, (get, set, idToDelete: string) => {
     children: parent.children?.filter((c) => c.id !== componentToDelete.id),
   };
 
-  console.log(
-    "updatedParent",
-    { ...updatedParent },
-    componentToDelete.id,
-    parent.id,
-    selectedComponent?.id,
-  );
+  /** If our component is selected, reselect and update parent */
+  if (selectedComponent?.id === componentToDelete.id) {
+    set(selectedComponentIdAtom, parent.id);
+  }
 
   set(updateComponentAtom, {
     id: parent.id,
     component: updatedParent as InvoiceTemplateComponent,
   });
-
-  /** If our component is selected, reselect and update parent */
-  if (selectedComponent?.id === componentToDelete.id) {
-    console.log("selectedComponent?.id === componentToDelete.id");
-    set(selectedComponentIdAtom, parent.id);
-  }
 });
 
 const addComponentAtom = atom(

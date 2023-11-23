@@ -64,7 +64,6 @@ export function ColorEditor(props: ColorEditorProps) {
             });
           }}
           onFocus={() => {
-            console.log("focus");
             backupValue.current = selectedComponent.style?.[props.type];
           }}
           onBlur={(e) => {
