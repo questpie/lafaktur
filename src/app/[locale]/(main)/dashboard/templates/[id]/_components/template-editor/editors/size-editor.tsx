@@ -148,9 +148,7 @@ export function SizeEditor(props: SizeEditorProps) {
 
   return (
     <div className="flex flex-col gap-1">
-      <Label>
-        {SIZE_TYPE_TO_LABEL[props.type]} ({dimensionType})
-      </Label>
+      <Label className="text-xs">{SIZE_TYPE_TO_LABEL[props.type]}</Label>
       <div className="flex flex-row gap-2">
         <Select
           value={dimensionType}

@@ -35,7 +35,8 @@ export function stringToSizeValue(
   const match = String(value).match(/(?<number>-?\d+(?:\.\d+)?)(?<unit>\w+)/);
   const number = match?.groups?.number ?? 0;
   const unit = match?.groups?.unit ?? "px";
-  if (!SIZE_UNITS.includes(unit as SizeUnit)) return { number: 0, unit: "px" };
+  if (!SIZE_UNITS.includes(unit as SizeUnit))
+    return { number: Number(number), unit: "px" };
 
   return { number: Number(number), unit: unit as SizeUnit };
 }
@@ -109,7 +110,7 @@ export function SizeInput({
   return (
     <Input
       placeholder={placeholder}
-      value={value ? value.number : undefined}
+      value={value ? value.number : ""}
       type="number"
       disabled={disabled}
       onChange={(e) => {
@@ -144,7 +145,8 @@ export function SizeInput({
             value={value.unit}
             onValueChange={(newValue: SizeUnit) => {
               onValueChange({
-                number: convertSize(value.number, value.unit, newValue),
+                // number: convertSize(value.number, value.unit, newValue),
+                number: value.number,
                 unit: newValue,
               });
             }}

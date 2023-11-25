@@ -3,12 +3,10 @@ import { useSelectedComponent } from "~/app/[locale]/(main)/dashboard/templates/
 import { ColorEditor } from "~/app/[locale]/(main)/dashboard/templates/[id]/_components/template-editor/editors/color-editor";
 import { ComponentTreeEditor } from "~/app/[locale]/(main)/dashboard/templates/[id]/_components/template-editor/editors/component-tree-editor";
 import { ComponentTypeEditor } from "~/app/[locale]/(main)/dashboard/templates/[id]/_components/template-editor/editors/component-type-editor";
-import {
-  SizeEditor,
-  SizeEditorValueType,
-} from "~/app/[locale]/(main)/dashboard/templates/[id]/_components/template-editor/editors/size-editor";
 import { FontEditor } from "~/app/[locale]/(main)/dashboard/templates/[id]/_components/template-editor/editors/font-editor";
 import { GeneralEditor } from "~/app/[locale]/(main)/dashboard/templates/[id]/_components/template-editor/editors/general-editor";
+import { LayoutEditor } from "~/app/[locale]/(main)/dashboard/templates/[id]/_components/template-editor/editors/layout-editor";
+import { SizeEditor } from "~/app/[locale]/(main)/dashboard/templates/[id]/_components/template-editor/editors/size-editor";
 import { SpacingEditor } from "~/app/[locale]/(main)/dashboard/templates/[id]/_components/template-editor/editors/spacing-editor";
 import { TextContentEditor } from "~/app/[locale]/(main)/dashboard/templates/[id]/_components/template-editor/editors/text-content-editor";
 import {
@@ -17,6 +15,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "~/app/_components/ui/accordion";
+import { isIncludedIn } from "~/app/_utils/misc-utils";
 
 export function TemplateEditorSidebar() {
   const [selectedComponent] = useSelectedComponent();
@@ -25,9 +24,9 @@ export function TemplateEditorSidebar() {
 
   return (
     <Accordion
-      className="flex h-auto flex-col gap-4"
+      className="flex h-auto flex-col "
       type="multiple"
-      defaultValue={["general", "component-tree"]}
+      defaultValue={["general", "component-tree", "spacing", "font", "fill"]}
     >
       {/* general */}
       <AccordionItem value="general">
@@ -39,7 +38,12 @@ export function TemplateEditorSidebar() {
           <ComponentTypeEditor />
           <SizeEditor type="width" />
           <SizeEditor type="height" />
-          <TextContentEditor />
+          {isIncludedIn(selectedComponent.type, ["view", "root"]) && (
+            <LayoutEditor />
+          )}
+          {isIncludedIn(selectedComponent.type, ["text"]) && (
+            <TextContentEditor />
+          )}
         </AccordionContent>
       </AccordionItem>
 

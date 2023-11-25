@@ -29,7 +29,7 @@ export const DEFAULT_TEMPLATE: InvoiceTemplateData = {
           marginTop: "1cm",
           flexDirection: "row",
           gap: "16px",
-          marginHorizontal: "1.5cm",
+          paddingHorizontal: "1.5cm",
         },
         children: [
           {
@@ -249,7 +249,8 @@ export const DEFAULT_TEMPLATE: InvoiceTemplateData = {
           display: "flex",
           flexDirection: "row",
           gap: "16px",
-          marginHorizontal: "1.5cm",
+          paddingLeft: "1.5cm",
+          paddingRight: "1.5cm",
         },
         children: [
           {

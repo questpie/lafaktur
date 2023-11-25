@@ -93,6 +93,7 @@ export function ComponentTreeEditor() {
               })}
               onMouseOver={() => setHighlightedComponent(sibling.id)}
               onMouseOut={() => setHighlightedComponent(null)}
+              onClick={() => setSelectedComponent(sibling.id)}
             >
               {INVOICE_COMPONENT_TYPE_TO_ICON[sibling.type]}
               {sibling.id}
