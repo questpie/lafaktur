@@ -3,6 +3,10 @@ import { useSelectedComponent } from "~/app/[locale]/(main)/dashboard/templates/
 import { ColorEditor } from "~/app/[locale]/(main)/dashboard/templates/[id]/_components/template-editor/editors/color-editor";
 import { ComponentTreeEditor } from "~/app/[locale]/(main)/dashboard/templates/[id]/_components/template-editor/editors/component-tree-editor";
 import { ComponentTypeEditor } from "~/app/[locale]/(main)/dashboard/templates/[id]/_components/template-editor/editors/component-type-editor";
+import {
+  SizeEditor,
+  SizeEditorValueType,
+} from "~/app/[locale]/(main)/dashboard/templates/[id]/_components/template-editor/editors/size-editor";
 import { FontEditor } from "~/app/[locale]/(main)/dashboard/templates/[id]/_components/template-editor/editors/font-editor";
 import { GeneralEditor } from "~/app/[locale]/(main)/dashboard/templates/[id]/_components/template-editor/editors/general-editor";
 import { SpacingEditor } from "~/app/[locale]/(main)/dashboard/templates/[id]/_components/template-editor/editors/spacing-editor";
@@ -33,6 +37,8 @@ export function TemplateEditorSidebar() {
         <AccordionContent className="flex flex-col gap-2">
           <GeneralEditor />
           <ComponentTypeEditor />
+          <SizeEditor type="width" />
+          <SizeEditor type="height" />
           <TextContentEditor />
         </AccordionContent>
       </AccordionItem>

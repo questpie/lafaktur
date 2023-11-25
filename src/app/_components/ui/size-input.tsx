@@ -54,6 +54,7 @@ type SizeInputProps = {
   onValueChange: (newValue: SizeValue | undefined) => void;
   placeholder?: string;
   before?: ReactNode;
+  disabled?: boolean;
 };
 
 export function SizeInput({
@@ -61,6 +62,7 @@ export function SizeInput({
   onValueChange,
   placeholder,
   before,
+  disabled,
 }: SizeInputProps) {
   const [startX, setStartX] = useState<number | null>(null);
 
@@ -109,6 +111,7 @@ export function SizeInput({
       placeholder={placeholder}
       value={value ? value.number : undefined}
       type="number"
+      disabled={disabled}
       onChange={(e) => {
         if (e.target.value === "") {
           onValueChange(undefined);
