@@ -14,6 +14,10 @@ export const env = createEnv({
         (str) => !str.includes("YOUR_MYSQL_URL_HERE"),
         "You forgot to change the default URL",
       ),
+    DATABASE_MODE: z
+      .literal("default")
+      .or(z.literal("planetscale"))
+      .default("default"),
     NODE_ENV: z
       .enum(["development", "test", "production"])
       .default("development"),
