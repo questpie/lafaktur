@@ -8,7 +8,7 @@ export const invoiceTemplateCreate = protectedProcedure
   .input(insertInvoiceTemplate)
   .mutation(async ({ ctx, input }) => {
     return ctx.db.transaction(async (trx) => {
-      const newInvoiceTemplate = await trx
+      const [newInvoiceTemplate] = await trx
         .insert(invoiceTemplatesTable)
         .values(input);
 

@@ -9,7 +9,7 @@ export const organizationCreate = protectedProcedure
   .input(insertOrganization)
   .mutation(async ({ ctx, input }) => {
     return ctx.db.transaction(async (trx) => {
-      const newOrganization = await trx
+      const [newOrganization] = await trx
         .insert(organizationsTable)
         .values(input);
 
