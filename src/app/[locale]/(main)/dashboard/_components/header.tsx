@@ -113,7 +113,7 @@ export const useBreadcrumbSegment = (segment: Breadcrumb) => {
 
 export function Header() {
   const headerData = useHeaderData();
-  const breadcrumbs = useAtomValue(breadcrumbsAtom);
+  const breadcrumbs = useBreadcrumbsData();
   const pathname = usePathname();
 
   useEffect(() => {
