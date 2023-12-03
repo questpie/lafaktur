@@ -24,6 +24,15 @@ interface DataTableProps<TData, TValue> {
   onRowClick?: (row: Row<TData>) => void;
 }
 
+/**
+ * type-safe helper for creating column definitions
+ */
+export function createColumnDef<TData, TValue>(
+  columnDef: ColumnDef<TData, TValue>[],
+) {
+  return columnDef;
+}
+
 export function DataTable<TData, TValue>({
   columns,
   data,
