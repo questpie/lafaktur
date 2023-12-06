@@ -1,4 +1,5 @@
 import { type PropsWithChildren } from "react";
+import { P, match } from "ts-pattern";
 import { useSelectedComponent } from "~/app/[locale]/(main)/dashboard/templates/[id]/_atoms/template-editor-atoms";
 import { ColorEditor } from "~/app/[locale]/(main)/dashboard/templates/[id]/_components/template-editor/editors/color-editor";
 import { ComponentTreeEditor } from "~/app/[locale]/(main)/dashboard/templates/[id]/_components/template-editor/editors/component-tree-editor";
@@ -16,7 +17,6 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "~/app/_components/ui/accordion";
-import { isIncludedIn } from "~/app/_utils/misc-utils";
 
 export function TemplateEditorSidebar() {
   const [selectedComponent] = useSelectedComponent();
@@ -39,15 +39,26 @@ export function TemplateEditorSidebar() {
           <ComponentTypeEditor />
           <SizeEditor type="width" />
           <SizeEditor type="height" />
-          {isIncludedIn(selectedComponent.type, ["view", "root"]) && (
-            <LayoutEditor />
-          )}
-          {isIncludedIn(selectedComponent.type, ["text"]) && (
-            <TextContentEditor />
-          )}
-          {isIncludedIn(selectedComponent.type, ["list"]) && (
-            <ListMapByEditor />
-          )}
+          {match(selectedComponent)
+            .with(
+              {
+                type: P.union("root", "view"),
+              },
+              () => <LayoutEditor />,
+            )
+            .with(
+              {
+                type: "text",
+              },
+              () => <TextContentEditor />,
+            )
+            .with(
+              {
+                type: "list",
+              },
+              () => <ListMapByEditor />,
+            )
+            .otherwise(() => null)}
         </AccordionContent>
       </AccordionItem>
 

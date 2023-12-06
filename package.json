@@ -56,11 +56,13 @@
     "jotai": "^2.6.0",
     "jotai-immer": "^0.2.0",
     "jotai-scope": "^0.4.1",
+    "million": "^2.6.4",
     "nanoid": "^5.0.3",
     "next": "^14.0.3",
     "next-auth": "^4.24.5",
     "next-intl": "3.1.4",
     "next-themes": "^0.2.1",
+    "pattycake": "^0.0.2",
     "react": "18.2.0",
     "react-colorful": "^5.6.1",
     "react-day-picker": "^8.9.1",
@@ -71,6 +73,7 @@
     "tailwind-merge": "^2.0.0",
     "tailwindcss-animate": "^1.0.7",
     "tinycolor2": "^1.6.0",
+    "ts-pattern": "^5.0.6",
     "zod": "^3.22.4"
   },
   "devDependencies": {
