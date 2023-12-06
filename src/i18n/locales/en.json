@@ -78,7 +78,8 @@
     },
     "newTemplate": "New Template",
     "editor": {
-      "addComponent": "Add component"
+      "addComponent": "Add component",
+      "addListItem": "Create item prefab"
     }
   },
   "dataTable": {

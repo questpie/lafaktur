@@ -187,6 +187,17 @@ const addComponentAtom = atom(
     /** If parent is not present stop (we should always provide valid id) */
     if (!parent) return;
 
+    if (parent.type === "list") {
+      set(updateComponentAtom, {
+        id: parent.id,
+        component: {
+          ...parent,
+          item: payload.component,
+        },
+      });
+      return;
+    }
+
     /** If parent's type disallows children stop */
     if (parent.type !== "root" && parent.type !== "view") return;
 

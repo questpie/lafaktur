@@ -25,7 +25,6 @@ import {
   PopoverTrigger,
 } from "~/app/_components/ui/popover";
 import { useDisclosure } from "~/app/_hooks/use-disclosure";
-import { isIncludedIn } from "~/app/_utils/misc-utils";
 import { cn } from "~/app/_utils/styles-utils";
 import { getTemplateComponentParentById } from "~/shared/invoice-template/invoice-template-helpers";
 import {
@@ -37,6 +36,16 @@ import { type FromUnion } from "~/types/misc-types";
 const templateRootAtom = atom(
   (get) => get(invoiceTemplateAtom)?.template.content,
 );
+
+const getChildren = (component: InvoiceTemplateComponent) => {
+  if (component.type === "view" || component.type === "root") {
+    return component.children ?? [];
+  }
+  if (component.type === "list") {
+    return component.item ? [component.item] : [];
+  }
+  return [];
+};
 
 export function ComponentTreeEditor() {
   const [selectedComponent] = useSelectedComponent();
@@ -109,11 +118,9 @@ export function ComponentTreeEditor() {
                 </span>
               )}
             </Badge>
-            {((selectedComponent.id === sibling.id &&
-              sibling.type === "view") ||
-              sibling.type === "root") && (
+            {selectedComponent.id === sibling.id && (
               <>
-                {sibling.children?.map((child) => {
+                {getChildren(sibling).map((child) => {
                   return (
                     <Badge
                       key={child.id}
@@ -139,7 +146,10 @@ export function ComponentTreeEditor() {
                     </Badge>
                   );
                 })}
-                {isIncludedIn(selectedComponent.type, ["view", "root"]) && (
+                {sibling.type === "list" && !sibling.item && (
+                  <AddComponentButton parent={sibling} />
+                )}
+                {(sibling.type === "view" || sibling.type === "root") && (
                   <AddComponentButton parent={sibling} />
                 )}
               </>
@@ -152,7 +162,11 @@ export function ComponentTreeEditor() {
 }
 
 type AddComponentButtonProps = {
-  parent?: FromUnion<InvoiceTemplateComponent, "type", "view" | "root">;
+  parent?: FromUnion<
+    InvoiceTemplateComponent,
+    "type",
+    "view" | "root" | "list"
+  >;
 };
 
 // TODO: use react hook form
@@ -196,7 +210,11 @@ function AddComponentButton(props: AddComponentButtonProps) {
           })}
         >
           {<LuPlus />}
-          {t("invoiceTemplate.editor.addComponent")}
+          <span className="text-xs">
+            {props.parent?.type === "list"
+              ? t("invoiceTemplate.editor.addListItem")
+              : t("invoiceTemplate.editor.addComponent")}
+          </span>
         </Button>
       </PopoverTrigger>
       <PopoverContent>

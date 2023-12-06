@@ -58,6 +58,10 @@ export function getTemplateComponentParentById(
   }
 
   if ("item" in page && page.item) {
+    if (page.item.id === id) {
+      return page;
+    }
+
     const result = getTemplateComponentParentById(id, page.item);
     if (result) {
       return result;
