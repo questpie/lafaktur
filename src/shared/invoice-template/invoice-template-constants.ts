@@ -487,6 +487,82 @@ export const DEFAULT_TEMPLATE: InvoiceTemplateData = {
           },
         ],
       },
+      {
+        id: nanoid(),
+        type: "list",
+        mapBy: "invoice_items",
+        item: {
+          id: nanoid(),
+          type: "view",
+          style: {
+            display: "flex",
+            flexDirection: "row",
+            gap: "16px",
+            paddingLeft: "1.5cm",
+            paddingRight: "1.5cm",
+          },
+          children: [
+            {
+              id: nanoid(),
+              type: "text",
+              value: "{{invoice_item_unit}}",
+            },
+            {
+              id: nanoid(),
+              type: "text",
+              value: "{{invoice_item_quantity}}",
+            },
+            {
+              id: nanoid(),
+              type: "text",
+              value: "{{invoice_item_name}}",
+              style: { flex: 1 },
+            },
+            {
+              id: nanoid(),
+              type: "text",
+              value: "{{invoice_item_unit_price}}",
+            },
+            {
+              id: nanoid(),
+              type: "text",
+              value: "{{invoice_item_total}}",
+            },
+          ],
+        },
+      },
+      {
+        id: nanoid(),
+        type: "view",
+        style: {
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "flex-end",
+          paddingRight: "1.5cm",
+        },
+        children: [
+          {
+            id: nanoid(),
+            type: "view",
+            style: {
+              display: "flex",
+              flexDirection: "column",
+              gap: "4px",
+            },
+            children: [
+              {
+                id: nanoid(),
+                type: "text",
+                value: "Total {{invoice_total}}",
+                style: {
+                  fontFamily: "Helvetica-Bold",
+                  fontSize: "14px",
+                },
+              },
+            ],
+          },
+        ],
+      },
     ],
   },
   vatIncluded: false,

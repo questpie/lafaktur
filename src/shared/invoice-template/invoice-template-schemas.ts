@@ -169,7 +169,7 @@ export type InvoiceTemplateListComponent = {
   style?: InvoiceTemplateStyle;
   if?: InvoiceVariable;
 
-  for: "invoice_items";
+  mapBy: "invoice_items";
   item: InvoiceTemplateChild;
 };
 
@@ -212,7 +212,7 @@ export const invoiceTemplateListComponentSchema: z.ZodType<InvoiceTemplateListCo
     style: invoiceTemplateStyle.optional(),
     if: invoiceVariableSchema.optional(),
 
-    for: z.literal("invoice_items"),
+    mapBy: z.literal("invoice_items"),
     item: z.lazy(() => invoiceTemplateChildSchema),
   });
 

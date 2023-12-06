@@ -53,7 +53,7 @@ export const PDF_RENDER_MAP: TemplateRenderMap = {
     return <Text style={cmp.style}>{resolvedText}</Text>;
   },
   list: ({ cmp, resolver }) => {
-    const list = resolver(cmp.for, "value");
+    const list = resolver(cmp.mapBy, "value");
 
     if (!Array.isArray(list)) {
       throw new Error("Invalid value for list component");

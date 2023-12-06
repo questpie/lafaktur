@@ -6,6 +6,7 @@ import { ComponentTypeEditor } from "~/app/[locale]/(main)/dashboard/templates/[
 import { FontEditor } from "~/app/[locale]/(main)/dashboard/templates/[id]/_components/template-editor/editors/font-editor";
 import { GeneralEditor } from "~/app/[locale]/(main)/dashboard/templates/[id]/_components/template-editor/editors/general-editor";
 import { LayoutEditor } from "~/app/[locale]/(main)/dashboard/templates/[id]/_components/template-editor/editors/layout-editor";
+import { ListMapByEditor } from "~/app/[locale]/(main)/dashboard/templates/[id]/_components/template-editor/editors/list-map-by-editor.tsx";
 import { SizeEditor } from "~/app/[locale]/(main)/dashboard/templates/[id]/_components/template-editor/editors/size-editor";
 import { SpacingEditor } from "~/app/[locale]/(main)/dashboard/templates/[id]/_components/template-editor/editors/spacing-editor";
 import { TextContentEditor } from "~/app/[locale]/(main)/dashboard/templates/[id]/_components/template-editor/editors/text-content-editor";
@@ -43,6 +44,9 @@ export function TemplateEditorSidebar() {
           )}
           {isIncludedIn(selectedComponent.type, ["text"]) && (
             <TextContentEditor />
+          )}
+          {isIncludedIn(selectedComponent.type, ["list"]) && (
+            <ListMapByEditor />
           )}
         </AccordionContent>
       </AccordionItem>

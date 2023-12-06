@@ -33,7 +33,7 @@ export function useComponentTypeEditor(
       // delete component.children;
       if (updatedPayload.type === "list") {
         updatedPayload.item ??= { id: nanoid(), type: "view", children: [] };
-        updatedPayload.for ??= "invoice_items";
+        updatedPayload.mapBy ??= "invoice_items";
       }
 
       if (updatedPayload.type === "view") {
