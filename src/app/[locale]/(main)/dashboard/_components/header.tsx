@@ -3,7 +3,6 @@
 import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
 import { atom, useAtomValue, useSetAtom } from "jotai";
 import { useTranslations } from "next-intl";
-import { usePathname } from "next/navigation";
 import React, { useEffect, useRef } from "react";
 import { LuMoreVertical } from "react-icons/lu";
 import { Button, LinkButton } from "~/app/_components/ui/button";
@@ -14,6 +13,7 @@ import {
 } from "~/app/_components/ui/dropdown-menu";
 import { Spinner } from "~/app/_components/ui/spinner";
 import { cn } from "~/app/_utils/styles-utils";
+import { usePathname } from "~/i18n/navigation";
 
 export type HeaderActionItem<TForceIcon extends boolean = false> = {
   label: string;
