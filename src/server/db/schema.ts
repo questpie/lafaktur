@@ -59,7 +59,7 @@ export const invoicesItemsTable = mysqlTable(
 export type InvoiceItem = typeof invoicesItemsTable.$inferSelect;
 export type InvoiceItemInsert = typeof invoicesItemsTable.$inferInsert;
 
-export const insertInvoiceItem = createInsertSchema(invoicesItemsTable);
+export const insertInvoiceItemSchema = createInsertSchema(invoicesItemsTable);
 
 export const invoicesItemsRelations = relations(
   invoicesItemsTable,
@@ -129,7 +129,7 @@ export const invoicesRelations = relations(invoicesTable, ({ one }) => ({
 export type Invoice = typeof invoicesTable.$inferSelect;
 export type InvoiceInsert = typeof invoicesTable.$inferInsert;
 
-export const insertInvoice = createInsertSchema(invoicesTable);
+export const insertInvoiceSchema = createInsertSchema(invoicesTable);
 
 export const invoiceTemplatesTable = mysqlTable(
   "invoiceTemplate",
@@ -162,9 +162,12 @@ export const invoiceTemplatesRelations = relations(
 export type InvoiceTemplate = typeof invoiceTemplatesTable.$inferSelect;
 export type InvoiceTemplateInsert = typeof invoiceTemplatesTable.$inferInsert;
 
-export const insertInvoiceTemplate = createInsertSchema(invoiceTemplatesTable, {
-  template: invoiceTemplateDataSchema,
-});
+export const insertInvoiceTemplateSchema = createInsertSchema(
+  invoiceTemplatesTable,
+  {
+    template: invoiceTemplateDataSchema,
+  },
+);
 
 export const customersTable = mysqlTable(
   "customer",
@@ -207,7 +210,7 @@ export const customersRelations = relations(
 export type Customer = typeof customersTable.$inferSelect;
 export type CustomerInsert = typeof customersTable.$inferInsert;
 
-export const insertCustomer = createInsertSchema(customersTable);
+export const insertCustomerSchema = createInsertSchema(customersTable);
 
 export const organizationUsersTable = mysqlTable(
   "organizationUser",
@@ -238,7 +241,7 @@ export const organizationUsersRelations = relations(
 export type OrganizationUser = typeof organizationUsersTable.$inferSelect;
 export type OrganizationUserInsert = typeof organizationUsersTable.$inferInsert;
 
-export const insertOrganizationUser = createInsertSchema(
+export const insertOrganizationUserSchema = createInsertSchema(
   organizationUsersTable,
 );
 
@@ -284,7 +287,7 @@ export const organizationsRelations = relations(
 export type Organization = typeof organizationsTable.$inferSelect;
 export type OrganizationInsert = typeof organizationsTable.$inferInsert;
 
-export const insertOrganization = createInsertSchema(organizationsTable);
+export const insertOrganizationSchema = createInsertSchema(organizationsTable);
 
 /**
  * Personal access tokens are used for API authentication. They are created by the user and can be
@@ -318,7 +321,7 @@ export type PersonalAccessToken = typeof personalAccessTokensTable.$inferSelect;
 export type PersonalAccessTokenInsert =
   typeof personalAccessTokensTable.$inferInsert;
 
-export const insertPersonalAccessToken = createInsertSchema(
+export const insertPersonalAccessTokenSchema = createInsertSchema(
   personalAccessTokensTable,
 );
 
@@ -403,6 +406,6 @@ export const verificationTokensTable = mysqlTable(
     expires: timestamp("expires").notNull(),
   },
   (vt) => ({
-    compoundKey: primaryKey(vt.identifier, vt.token),
+    compoundKey: primaryKey({ columns: [vt.identifier, vt.token] }),
   }),
 );

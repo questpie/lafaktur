@@ -7,8 +7,8 @@ import { createTRPCRouter } from "~/server/api/trpc";
 
 export const invoiceTemplateRouter = createTRPCRouter({
   create: invoiceTemplateCreate,
-  update: invoiceTemplateUpdate,
-  getById: invoiceTemplateGetById,
-  getAll: invoiceTemplateGetAll,
   deleteById: invoiceTemplateDeleteById,
+  getAll: invoiceTemplateGetAll,
+  getById: invoiceTemplateGetById,
+  update: invoiceTemplateUpdate,
 });

@@ -1,12 +1,12 @@
 import { protectedProcedure } from "~/server/api/trpc";
 import {
-  insertOrganization,
+  insertOrganizationSchema,
   organizationUsersTable,
   organizationsTable,
 } from "~/server/db/schema";
 
 export const organizationCreate = protectedProcedure
-  .input(insertOrganization)
+  .input(insertOrganizationSchema)
   .mutation(async ({ ctx, input }) => {
     return ctx.db.transaction(async (trx) => {
       const [newOrganization] = await trx

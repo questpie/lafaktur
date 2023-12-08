@@ -1,11 +1,11 @@
 import { protectedProcedure } from "~/server/api/trpc";
 import {
-  insertInvoiceTemplate,
+  insertInvoiceTemplateSchema,
   invoiceTemplatesTable,
 } from "~/server/db/schema";
 
 export const invoiceTemplateCreate = protectedProcedure
-  .input(insertInvoiceTemplate)
+  .input(insertInvoiceTemplateSchema)
   .mutation(async ({ ctx, input }) => {
     return ctx.db.transaction(async (trx) => {
       const [newInvoiceTemplate] = await trx
