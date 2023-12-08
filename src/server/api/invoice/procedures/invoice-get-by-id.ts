@@ -4,33 +4,33 @@ import { z } from "zod";
 import { $t } from "~/i18n/dummy";
 import { withOrganizationAccess } from "~/server/api/organization/organization-queries";
 import { protectedProcedure } from "~/server/api/trpc";
-import { invoiceTemplatesTable } from "~/server/db/schema";
+import { invoicesTable } from "~/server/db/schema";
 
-export const invoiceTemplateGetById = protectedProcedure
+export const invoiceGetById = protectedProcedure
   .input(z.object({ id: z.number(), organizationId: z.number() }))
   .query(async ({ ctx, input }) => {
     // search for invoiceTemplate by id that has relation to organization
-    const [foundInvoiceTemplate] = await withOrganizationAccess(
+    const [foundInvoice] = await withOrganizationAccess(
       ctx.db
         .select({
-          ...getTableColumns(invoiceTemplatesTable),
+          ...getTableColumns(invoicesTable),
         })
-        .from(invoiceTemplatesTable)
+        .from(invoicesTable)
+        .where(and(eq(invoicesTable.id, input.id)))
+        .limit(1)
         .$dynamic(),
       {
+        column: invoicesTable.organizationId,
         userId: ctx.session.user.id,
-        column: invoiceTemplatesTable.organizationId,
       },
-    )
-      .where(and(eq(invoiceTemplatesTable.id, input.id)))
-      .limit(1);
+    );
 
-    if (!foundInvoiceTemplate) {
+    if (!foundInvoice) {
       throw new TRPCError({
         code: "NOT_FOUND",
         message: $t("invoiceTemplate.err.notFound"),
       });
     }
 
-    return foundInvoiceTemplate;
+    return foundInvoice;
   });

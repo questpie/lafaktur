@@ -1,29 +1,26 @@
 import { eq } from "drizzle-orm";
 import { z } from "zod";
 import { protectedProcedure } from "~/server/api/trpc";
-import {
-  insertInvoiceTemplateSchema,
-  invoiceTemplatesTable,
-} from "~/server/db/schema";
+import { insertInvoiceSchema, invoicesTable } from "~/server/db/schema";
 
-// check for organization
-export const invoiceTemplateUpdate = protectedProcedure
+// TODO: check for organization
+export const invoiceUpdate = protectedProcedure
   .input(
-    insertInvoiceTemplateSchema.required().extend({
+    insertInvoiceSchema.required().extend({
       organizationId: z.number(),
     }),
   )
   .mutation(async ({ ctx, input }) => {
     return ctx.db.transaction(async (trx) => {
       await trx
-        .update(invoiceTemplatesTable)
+        .update(invoicesTable)
         .set(input)
-        .where(eq(invoiceTemplatesTable.id, input.id));
+        .where(eq(invoicesTable.id, input.id));
 
       const [updatedInvoiceTemplate] = await trx
         .select()
-        .from(invoiceTemplatesTable)
-        .where(eq(invoiceTemplatesTable.id, input.id))
+        .from(invoicesTable)
+        .where(eq(invoicesTable.id, input.id))
         .limit(1);
 
       return updatedInvoiceTemplate;

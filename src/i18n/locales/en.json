@@ -87,5 +87,10 @@
   },
   "common": {
     "add": "Add"
+  },
+  "invoice": {
+    "err": {
+      "notFound": "No invoice found"
+    }
   }
 }
