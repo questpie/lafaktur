@@ -1,3 +1,4 @@
+import { addDays } from "date-fns";
 import { relations, sql } from "drizzle-orm";
 import {
   bigint as bigintOI,
@@ -38,23 +39,19 @@ export const timestamp = <TMode extends "string" | "date" = "date">(
   options?: MySqlTimestampConfig<TMode>,
 ) => timestampOI(name, { mode: "date", fsp: 3, ...options });
 
-export const invoicesItemsTable = mysqlTable(
-  "invoiceItem",
-  {
-    id: bigint("id").notNull().primaryKey().autoincrement(),
-    invoiceId: bigint("invoiceId").notNull(),
-    name: varchar("name", { length: 255 }).notNull(),
-    quantity: int("quantity").notNull(),
-    unit: varchar("unit", { length: 255 }).notNull(),
-    unitPrice: int("unitPrice").notNull(),
-    unitPriceWithoutVat: int("unitPriceWithoutVat").notNull(),
-    total: int("total").notNull(),
-    totalWithoutVat: int("totalWithoutVat").notNull(),
-  },
-  (it) => ({
-    invoiceIdIdx: index("invoiceIdIdx").on(it.invoiceId),
-  }),
-);
+export const invoicesItemsTable = mysqlTable("invoiceItem", {
+  id: bigint("id").notNull().primaryKey().autoincrement(),
+  invoiceId: bigint("invoiceId")
+    .notNull()
+    .references(() => invoicesTable.id),
+  name: varchar("name", { length: 255 }).notNull(),
+  quantity: int("quantity").notNull(),
+  unit: varchar("unit", { length: 255 }).notNull(),
+  unitPrice: int("unitPrice").notNull(),
+  unitPriceWithoutVat: int("unitPriceWithoutVat").notNull(),
+  total: int("total").notNull(),
+  totalWithoutVat: int("totalWithoutVat").notNull(),
+});
 
 export type InvoiceItem = typeof invoicesItemsTable.$inferSelect;
 export type InvoiceItemInsert = typeof invoicesItemsTable.$inferInsert;
@@ -75,9 +72,13 @@ export const invoicesTable = mysqlTable(
   "invoice",
   {
     id: bigint("id").notNull().primaryKey().autoincrement(),
-    customerId: bigint("customerId").notNull(),
+    customerId: bigint("customerId")
+      .notNull()
+      .references(() => customersTable.id),
 
-    organizationId: bigint("organizationId").notNull(),
+    organizationId: bigint("organizationId")
+      .notNull()
+      .references(() => organizationsTable.id),
 
     number: varchar("number", { length: 255 }).notNull(),
     reference: varchar("reference", { length: 255 }),
@@ -90,9 +91,12 @@ export const invoicesTable = mysqlTable(
       .notNull()
       .default("draft"),
 
-    issueDate: timestamp("issueDate").notNull(),
-    dueDate: timestamp("dueDate").notNull(),
+    issueDate: timestamp("issueDate").notNull().defaultNow(),
+    dueDate: timestamp("dueDate")
+      .notNull()
+      .$defaultFn(() => addDays(new Date(), 14)),
     supplyDate: timestamp("supplyDate"),
+
     dateOfPayment: timestamp("dateOfPayment"),
 
     currency: varchar("currency", { length: 16 }).notNull(),
@@ -100,14 +104,13 @@ export const invoicesTable = mysqlTable(
     templateId: bigint("templateId").notNull(),
     templateData: typedJson<InvoiceTemplateData>("templateData").notNull(),
 
-    createdAt: timestamp("createdAt").notNull(),
+    createdAt: timestamp("createdAt").notNull().defaultNow(),
   },
   (it) => ({
     compoundKey: uniqueIndex("organizationIdNumberIdx").on(
       it.organizationId,
       it.number,
     ),
-    organizationIdIdx: index("organizationIdIdx").on(it.organizationId),
   }),
 );
 
@@ -135,7 +138,9 @@ export const invoiceTemplatesTable = mysqlTable(
   "invoiceTemplate",
   {
     id: bigint("id").notNull().primaryKey().autoincrement(),
-    organizationId: bigint("organizationId").notNull(),
+    organizationId: bigint("organizationId")
+      .notNull()
+      .references(() => organizationsTable.id),
     name: varchar("name", { length: 255 }).notNull(),
     template: typedJson<InvoiceTemplateData>("template")
       .notNull()
@@ -173,7 +178,9 @@ export const customersTable = mysqlTable(
   "customer",
   {
     id: bigint("id").notNull().primaryKey().autoincrement(),
-    organizationId: bigint("organizationId").notNull(),
+    organizationId: bigint("organizationId")
+      .notNull()
+      .references(() => organizationsTable.id),
     name: varchar("name", { length: 255 }).notNull(),
     street: varchar("address", { length: 255 }),
     city: varchar("city", { length: 255 }),
@@ -215,12 +222,16 @@ export const insertCustomerSchema = createInsertSchema(customersTable);
 export const organizationUsersTable = mysqlTable(
   "organizationUser",
   {
-    organizationId: bigint("organizationId").notNull(),
-    userId: varchar("userId", { length: 255 }).notNull(),
+    organizationId: bigint("organizationId")
+      .notNull()
+      .references(() => organizationsTable.id),
+    userId: varchar("userId", { length: 255 })
+      .notNull()
+      .references(() => usersTable.id),
     role: mysqlEnum("role", ["owner", "editor", "reader"]).notNull(),
   },
   (ou) => ({
-    compoundKey: primaryKey(ou.organizationId, ou.userId),
+    compoundKey: primaryKey({ columns: [ou.organizationId, ou.userId] }),
   }),
 );
 
@@ -293,19 +304,15 @@ export const insertOrganizationSchema = createInsertSchema(organizationsTable);
  * Personal access tokens are used for API authentication. They are created by the user and can be
  * revoked by the user at any time.
  */
-export const personalAccessTokensTable = mysqlTable(
-  "personalAccessToken",
-  {
-    id: bigint("id").notNull().primaryKey().autoincrement(),
-    name: varchar("name", { length: 255 }).notNull(),
-    token: varchar("token", { length: 255 }).notNull(),
-    expires: timestamp("expires").notNull(),
-    userId: varchar("userId", { length: 255 }).notNull(),
-  },
-  (pat) => ({
-    userIdIdx: index("userIdIdx").on(pat.userId),
-  }),
-);
+export const personalAccessTokensTable = mysqlTable("personalAccessToken", {
+  id: bigint("id").notNull().primaryKey().autoincrement(),
+  name: varchar("name", { length: 255 }).notNull(),
+  token: varchar("token", { length: 255 }).notNull(),
+  expires: timestamp("expires").notNull(),
+  userId: varchar("userId", { length: 255 })
+    .notNull()
+    .references(() => usersTable.id),
+});
 
 export const personalAccessTokensRelations = relations(
   personalAccessTokensTable,
@@ -365,7 +372,9 @@ export const accountsTable = mysqlTable(
     session_state: varchar("session_state", { length: 255 }),
   },
   (account) => ({
-    compoundKey: primaryKey(account.provider, account.providerAccountId),
+    compoundKey: primaryKey({
+      columns: [account.provider, account.providerAccountId],
+    }),
     userIdIdx: index("userIdIdx").on(account.userId),
   }),
 );
