@@ -68,7 +68,7 @@ const DeleteAction: ColumnDef<InvoiceTemplate>["cell"] = (props) => {
     e.stopPropagation();
     open({
       title: "Delete invoice template",
-      content: "Are you sure you want to delete this invoice template?",
+      description: "Are you sure you want to delete this invoice template?",
       confirmLabel: "Delete",
       cancelLabel: "Cancel",
       onConfirm: () => {

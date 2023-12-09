@@ -1,5 +1,6 @@
 "use client";
 import { useSession } from "next-auth/react";
+import { useTranslations } from "next-intl";
 import { useRouter } from "next-nprogress-bar";
 import { type PropsWithChildren } from "react";
 import {
@@ -13,9 +14,10 @@ import { Sidebar } from "~/app/[locale]/(main)/dashboard/_components/sidebar";
 export default function DashboardLayout(props: PropsWithChildren) {
   const session = useSession();
   const router = useRouter();
+  const t = useTranslations();
 
   useBreadcrumbSegment({
-    label: "Dashboard",
+    label: t("dashboard.breadcrumbs.dashboard"),
     href: "/dashboard",
     level: 0,
   });

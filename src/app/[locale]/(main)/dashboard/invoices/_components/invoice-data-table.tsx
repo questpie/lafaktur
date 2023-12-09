@@ -2,6 +2,7 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { type ColumnDef } from "@tanstack/react-table";
 import { getQueryKey } from "@trpc/react-query";
+import { useTranslations } from "next-intl";
 import { useRouter } from "next-nprogress-bar";
 import { type SyntheticEvent } from "react";
 import { LuBookTemplate, LuTrash } from "react-icons/lu";
@@ -9,19 +10,20 @@ import { useSelectedOrganization } from "~/app/[locale]/(main)/dashboard/_compon
 import { useConfirmDialog } from "~/app/_components/ui/alert-dialog";
 import { Button } from "~/app/_components/ui/button";
 import { DataTable } from "~/app/_components/ui/data-table";
+import { Translate } from "~/app/_components/ui/translate";
 import { api } from "~/trpc/react";
 import { type RouterOutputs } from "~/trpc/shared";
 
-type InvoiceTemplate =
-  RouterOutputs["invoiceTemplate"]["getAll"]["data"][number];
+type Invoice = RouterOutputs["invoice"]["getAll"]["data"][number];
 
-export default function InvoiceTemplateDataTable() {
+export default function InvoiceDataTable() {
   const router = useRouter();
+  const t = useTranslations();
 
   const selectedOrganization = useSelectedOrganization();
 
-  const [invoiceTemplates, { fetchNextPage, hasNextPage }] =
-    api.invoiceTemplate.getAll.useSuspenseInfiniteQuery(
+  const [invoices, { fetchNextPage, hasNextPage }] =
+    api.invoice.getAll.useSuspenseInfiniteQuery(
       { organizationId: selectedOrganization.id },
       { getNextPageParam: (lastPage) => lastPage.nextCursor },
     );
@@ -30,15 +32,15 @@ export default function InvoiceTemplateDataTable() {
     <div className="flex flex-col gap-6">
       <DataTable
         columns={columns}
-        data={invoiceTemplates.pages.flatMap((page) => page.data)}
+        data={invoices.pages.flatMap((page) => page.data)}
         onRowClick={(row) =>
-          router.push(`/dashboard/templates/${row.original.id}`)
+          router.push(`/dashboard/invoices/${row.original.id}`)
         }
       />
       {hasNextPage && (
         <div className="flex flex-row justify-center">
           <Button variant="outline" onClick={() => fetchNextPage()}>
-            Load more
+            {t("invoice.dataTable.loadMore")}
           </Button>
         </div>
       )}
@@ -46,9 +48,10 @@ export default function InvoiceTemplateDataTable() {
   );
 }
 
-const DeleteAction: ColumnDef<InvoiceTemplate>["cell"] = (props) => {
+const DeleteAction: ColumnDef<Invoice>["cell"] = (props) => {
   const queryClient = useQueryClient();
   const organization = useSelectedOrganization();
+  const t = useTranslations();
 
   const { open } = useConfirmDialog();
 
@@ -67,10 +70,10 @@ const DeleteAction: ColumnDef<InvoiceTemplate>["cell"] = (props) => {
   const handleDelete = (e: SyntheticEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     open({
-      title: "Delete invoice template",
-      content: "Are you sure you want to delete this invoice template?",
-      confirmLabel: "Delete",
-      cancelLabel: "Cancel",
+      title: t("invoice.dataTable.deleteAction.title"),
+      description: t("invoice.dataTable.deleteAction.description"),
+      confirmLabel: t("invoice.dataTable.deleteAction.confirm"),
+      cancelLabel: t("invoice.dataTable.deleteAction.cancel"),
       onConfirm: () => {
         deleteMutation.mutate({
           id: props.row.original.id,
@@ -92,7 +95,7 @@ const DeleteAction: ColumnDef<InvoiceTemplate>["cell"] = (props) => {
   );
 };
 
-const columns: ColumnDef<InvoiceTemplate>[] = [
+const columns: ColumnDef<Invoice>[] = [
   {
     id: "icon",
     cell: () => {
@@ -111,21 +114,12 @@ const columns: ColumnDef<InvoiceTemplate>[] = [
     ),
   },
   {
-    accessorFn: (og) => {
-      const vatRate = og.template.vatRate;
-      const vatIncludedLabel = og.template.vatIncluded
-        ? "Included"
-        : "Not included";
-      if (!vatRate) {
-        return "Not set";
-      }
-      return `${vatRate} (${vatIncludedLabel})`;
-    },
-    header: "VAT",
+    accessorKey: "dueDate",
+    header: () => <Translate name={"invoice.dataTable.dueDate"} />,
   },
   {
-    accessorFn: (og) => og.template.currency ?? "EUR",
-    header: "Currency",
+    accessorKey: "currency",
+    header: () => <Translate name={"invoice.dataTable.currency"} />,
   },
   {
     id: "actions",
