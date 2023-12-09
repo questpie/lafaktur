@@ -1,5 +1,5 @@
 import { type PropsWithChildren } from "react";
-import { P, match } from "ts-pattern";
+import { match } from "ts-pattern";
 import { useSelectedComponent } from "~/app/[locale]/(main)/dashboard/templates/[id]/_atoms/template-editor-atoms";
 import { ColorEditor } from "~/app/[locale]/(main)/dashboard/templates/[id]/_components/template-editor/editors/color-editor";
 import { ComponentTreeEditor } from "~/app/[locale]/(main)/dashboard/templates/[id]/_components/template-editor/editors/component-tree-editor";
@@ -41,18 +41,8 @@ export function TemplateEditorSidebar() {
           <SizeEditor type="height" />
           {match(selectedComponent)
             .with({ type: "root" }, { type: "view" }, () => <LayoutEditor />)
-            .with(
-              {
-                type: "text",
-              },
-              () => <TextContentEditor />,
-            )
-            .with(
-              {
-                type: "list",
-              },
-              () => <ListMapByEditor />,
-            )
+            .with({ type: "text" }, () => <TextContentEditor />)
+            .with({ type: "list" }, () => <ListMapByEditor />)
             .otherwise(() => null)}
         </AccordionContent>
       </AccordionItem>
