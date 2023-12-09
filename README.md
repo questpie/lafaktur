@@ -1,4 +1,4 @@
-# Welcome to Lafaktur: The Ultimate Invoice Management Platform
+# Welcome to Lafaktur: The Ultimate Invoice Builder Tool
 
 ## What's Lafaktur?
 
