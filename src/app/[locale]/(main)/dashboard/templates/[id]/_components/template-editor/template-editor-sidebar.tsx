@@ -40,12 +40,7 @@ export function TemplateEditorSidebar() {
           <SizeEditor type="width" />
           <SizeEditor type="height" />
           {match(selectedComponent)
-            .with(
-              {
-                type: P.union("root", "view"),
-              },
-              () => <LayoutEditor />,
-            )
+            .with({ type: "root" }, { type: "view" }, () => <LayoutEditor />)
             .with(
               {
                 type: "text",
