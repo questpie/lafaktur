@@ -23,6 +23,7 @@ export const invoiceDeleteById = protectedProcedure
           column: invoicesTable.organizationId,
           userId: ctx.session.user.id,
           organizationId: input.organizationId,
+          role: "editor",
         },
       );
 

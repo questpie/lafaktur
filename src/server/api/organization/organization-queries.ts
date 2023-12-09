@@ -1,4 +1,4 @@
-import { and, eq } from "drizzle-orm";
+import { and, eq, inArray } from "drizzle-orm";
 import { type MySqlColumn, type MySqlSelect } from "drizzle-orm/mysql-core";
 import {
   organizationUsersTable,
@@ -7,19 +7,47 @@ import {
 } from "~/server/db/schema";
 
 export type WithOrganizationAccessOptions = {
+  /**
+   * Id of a user that has to be a member of organization related to given resource
+   */
   userId: string;
+  /**
+   * FK column pointing at organization
+   */
   column: MySqlColumn;
+  /**
+   * This is needed if you want to check access to specific organization,
+   * by default we are just checking whether user has access to any organization related to given resource
+   */
   organizationId?: number;
+  /**
+   * Minimal role user has to have to be able to access the resource
+   */
   role?: OrganizationUser["role"];
 };
+
 /**
- *
- * makes sure user has access to given org
+ * This kind of mapping could probably be done more efficiently through array slicing,
+ * but this variant I find to be more declarative and flexible
+ */
+const ROLE_MAPPER: Record<
+  OrganizationUser["role"],
+  OrganizationUser["role"][]
+> = {
+  reader: ["reader", "editor", "owner"],
+  editor: ["editor", "owner"],
+  owner: ["owner"],
+};
+
+/**
+ * Adds constraints to given dynamic query that makes sure user has access to given resource (e.g is a member of related organization)
  */
 export function withOrganizationAccess<T extends MySqlSelect>(
   qb: T,
   options: WithOrganizationAccessOptions,
 ) {
+  const allowedRoles = ROLE_MAPPER[options.role ?? "reader"];
+
   return qb
     .innerJoin(organizationsTable, eq(organizationsTable.id, options.column))
     .innerJoin(
@@ -29,7 +57,7 @@ export function withOrganizationAccess<T extends MySqlSelect>(
     .where(
       and(
         eq(organizationUsersTable.userId, options.userId),
-        options.role && eq(organizationUsersTable.role, options.role),
+        inArray(organizationUsersTable.role, allowedRoles),
         typeof options.organizationId !== "undefined"
           ? eq(organizationsTable.id, options.organizationId)
           : undefined,
