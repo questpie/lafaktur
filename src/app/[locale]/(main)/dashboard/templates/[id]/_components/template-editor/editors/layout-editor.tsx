@@ -58,7 +58,7 @@ const FLEX_DIRECTION_VALUES_TO_ICON: Record<
   "flex-wrap": LuCornerDownLeft,
 };
 
-const FLEX_ALIGN_VALUES_TO_ICON = (
+const getFlexAlignIconFromValue = (
   direction: FlexDirectionValue,
 ): Record<FlexAlignValue, React.ComponentType<{ className: string }>> => ({
   "flex-start":
@@ -70,7 +70,7 @@ const FLEX_ALIGN_VALUES_TO_ICON = (
   stretch: direction === "flex-col" ? LuStretchVertical : LuStretchHorizontal,
 });
 
-const FLEX_JUSTIFY_VALUES_TO_ICON = (
+const getFlexJustifyIconFromValue = (
   direction: FlexDirectionValue,
 ): Record<FlexJustifyValue, React.ComponentType<{ className: string }>> => ({
   "flex-start":
@@ -225,7 +225,7 @@ export function LayoutEditor() {
           onValueChange={handleJustifyChange}
         >
           {FLEX_JUSTIFY_VALUES.map((value) => {
-            const Icon = FLEX_JUSTIFY_VALUES_TO_ICON(directionValue)[value];
+            const Icon = getFlexJustifyIconFromValue(directionValue)[value];
             return (
               <ToggleGroupItem key={value} value={value}>
                 <Icon className=" h-4 w-4" />
@@ -240,7 +240,7 @@ export function LayoutEditor() {
           onValueChange={handleAlignChange}
         >
           {FLEX_ALIGN_VALUES.map((value) => {
-            const Icon = FLEX_ALIGN_VALUES_TO_ICON(directionValue)[value];
+            const Icon = getFlexAlignIconFromValue(directionValue)[value];
             return (
               <ToggleGroupItem key={value} value={value}>
                 <Icon className=" h-4 w-4" />
