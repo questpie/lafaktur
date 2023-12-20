@@ -8,7 +8,6 @@ export default defineConfig({
   dbCredentials: {
     uri: env.DATABASE_URL,
   },
-  tablesFilter: ["lafaktur_*"],
   strict: true,
   breakpoints: true,
 });

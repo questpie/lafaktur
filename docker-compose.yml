@@ -24,8 +24,9 @@ services:
       MINIO_ROOT_USER: "root"
       MINIO_ROOT_PASSWORD: "password"
     volumes:
-      - "minio-gigzby-data:/data/minio"
+      - "lafaktur-minio:/data"
     command: minio server /data/minio --console-address ":9090"
 
 volumes:
   lafaktur-db:
+  lafaktur-minio:

@@ -5,7 +5,7 @@ import {
   index,
   int,
   mysqlEnum,
-  mysqlTableCreator,
+  mysqlTable,
   primaryKey,
   text,
   timestamp as timestampOI,
@@ -29,7 +29,6 @@ import {
  *
  * @see https://orm.drizzle.team/docs/goodies#multi-project-schema
  */
-export const mysqlTable = mysqlTableCreator((name) => `lafaktur_${name}`);
 /**
  * Creator for bigint columns. So we have always the number format as bigint.
  */
@@ -39,19 +38,25 @@ export const timestamp = <TMode extends "string" | "date" = "date">(
   options?: MySqlTimestampConfig<TMode>,
 ) => timestampOI(name, { mode: "date", fsp: 3, ...options });
 
-export const invoicesItemsTable = mysqlTable("invoiceItem", {
-  id: bigint("id").notNull().primaryKey().autoincrement(),
-  invoiceId: bigint("invoiceId")
-    .notNull()
-    .references(() => invoicesTable.id),
-  name: varchar("name", { length: 255 }).notNull(),
-  quantity: int("quantity").notNull(),
-  unit: varchar("unit", { length: 255 }).notNull(),
-  unitPrice: int("unitPrice").notNull(),
-  unitPriceWithoutVat: int("unitPriceWithoutVat").notNull(),
-  total: int("total").notNull(),
-  totalWithoutVat: int("totalWithoutVat").notNull(),
-});
+export const invoicesItemsTable = mysqlTable(
+  "invoiceItem",
+  {
+    id: bigint("id").notNull().primaryKey().autoincrement(),
+    invoiceId: bigint("invoice_id")
+      .notNull()
+      .references(() => invoicesTable.id),
+    name: varchar("name", { length: 255 }).notNull(),
+    quantity: int("quantity").notNull(),
+    unit: varchar("unit", { length: 255 }).notNull(),
+    unitPrice: int("unit_price").notNull(),
+    unitPriceWithoutVat: int("unit_price_without_vat").notNull(),
+    total: int("total").notNull(),
+    totalWithoutVat: int("total_without_vat").notNull(),
+  },
+  (it) => ({
+    invoiceIdIdx: index("invoice_id_idx").on(it.invoiceId),
+  }),
+);
 
 export type InvoiceItem = typeof invoicesItemsTable.$inferSelect;
 export type InvoiceItemInsert = typeof invoicesItemsTable.$inferInsert;
@@ -72,45 +77,46 @@ export const invoicesTable = mysqlTable(
   "invoice",
   {
     id: bigint("id").notNull().primaryKey().autoincrement(),
-    customerId: bigint("customerId")
+    customerId: bigint("customer_id")
       .notNull()
       .references(() => customersTable.id),
 
-    organizationId: bigint("organizationId")
+    organizationId: bigint("organization_id")
       .notNull()
       .references(() => organizationsTable.id),
 
     number: varchar("number", { length: 255 }).notNull(),
     reference: varchar("reference", { length: 255 }),
 
-    variableSymbol: varchar("variableSymbol", { length: 255 }),
-    constantSymbol: varchar("constantSymbol", { length: 255 }),
-    specificSymbol: varchar("specificSymbol", { length: 255 }),
+    variableSymbol: varchar("variable_symbol", { length: 255 }),
+    constantSymbol: varchar("constant_symbol", { length: 255 }),
+    specificSymbol: varchar("specific_symbol", { length: 255 }),
 
     status: mysqlEnum("status", invoiceStatusSchema._def.values)
       .notNull()
       .default("draft"),
 
-    issueDate: timestamp("issueDate").notNull().defaultNow(),
-    dueDate: timestamp("dueDate")
+    issueDate: timestamp("issue_date").notNull().defaultNow(),
+    dueDate: timestamp("due_date")
       .notNull()
       .$defaultFn(() => addDays(new Date(), 14)),
-    supplyDate: timestamp("supplyDate"),
+    supplyDate: timestamp("supply_date"),
 
-    dateOfPayment: timestamp("dateOfPayment"),
+    dateOfPayment: timestamp("date_of_payment"),
 
     currency: varchar("currency", { length: 16 }).notNull(),
 
-    templateId: bigint("templateId").notNull(),
-    templateData: typedJson<InvoiceTemplateData>("templateData").notNull(),
+    templateId: bigint("template_id").notNull(),
+    templateData: typedJson<InvoiceTemplateData>("template_data").notNull(),
 
-    createdAt: timestamp("createdAt").notNull().defaultNow(),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
   },
   (it) => ({
-    compoundKey: uniqueIndex("organizationIdNumberIdx").on(
+    compoundKey: uniqueIndex("organization_id_number_idx").on(
       it.organizationId,
       it.number,
     ),
+    organizationIdIdx: index("organization_id_idx").on(it.organizationId),
   }),
 );
 
@@ -135,10 +141,10 @@ export type InvoiceInsert = typeof invoicesTable.$inferInsert;
 export const insertInvoiceSchema = createInsertSchema(invoicesTable);
 
 export const invoiceTemplatesTable = mysqlTable(
-  "invoiceTemplate",
+  "invoice_template",
   {
     id: bigint("id").notNull().primaryKey().autoincrement(),
-    organizationId: bigint("organizationId")
+    organizationId: bigint("organization_id")
       .notNull()
       .references(() => organizationsTable.id),
     name: varchar("name", { length: 255 }).notNull(),
@@ -147,10 +153,11 @@ export const invoiceTemplatesTable = mysqlTable(
       .$default(() => DEFAULT_TEMPLATE),
   },
   (it) => ({
-    compoundKey: uniqueIndex("organizationIdNameIdx").on(
+    compoundKey: uniqueIndex("organization_id_name_idx").on(
       it.organizationId,
       it.name,
     ),
+    organizationIdIdx: index("organization_id_idx").on(it.organizationId),
   }),
 );
 
@@ -178,7 +185,7 @@ export const customersTable = mysqlTable(
   "customer",
   {
     id: bigint("id").notNull().primaryKey().autoincrement(),
-    organizationId: bigint("organizationId")
+    organizationId: bigint("organization_id")
       .notNull()
       .references(() => organizationsTable.id),
     name: varchar("name", { length: 255 }).notNull(),
@@ -188,18 +195,19 @@ export const customersTable = mysqlTable(
     country: varchar("country", { length: 255 }),
     phone: varchar("phone", { length: 255 }),
     email: varchar("email", { length: 255 }),
-    businessId: varchar("businessId", { length: 255 }),
-    taxId: varchar("taxId", { length: 255 }),
-    vatId: varchar("vatId", { length: 255 }),
-    bankAccount: varchar("bankAccount", { length: 255 }),
-    bankCode: varchar("bankCode", { length: 255 }),
+    businessId: varchar("business_id", { length: 255 }),
+    taxId: varchar("tax_id", { length: 255 }),
+    vatId: varchar("vat_id", { length: 255 }),
+    bankAccount: varchar("bank_account", { length: 255 }),
+    bankCode: varchar("bank_code", { length: 255 }),
   },
   (c) => ({
-    compoundKey: uniqueIndex("organizationIdNameIdx").on(
+    compoundKey: uniqueIndex("organization_id_name_idx").on(
       c.organizationId,
       c.name,
     ),
-    nameIdx: index("nameIdx").on(c.name),
+    nameIdx: index("name_idx").on(c.name),
+    organizationIdIdx: index("organization_id_idx").on(c.organizationId),
   }),
 );
 
@@ -220,18 +228,23 @@ export type CustomerInsert = typeof customersTable.$inferInsert;
 export const insertCustomerSchema = createInsertSchema(customersTable);
 
 export const organizationUsersTable = mysqlTable(
-  "organizationUser",
+  "organization_user",
   {
-    organizationId: bigint("organizationId")
+    organizationId: bigint("organization_id")
       .notNull()
       .references(() => organizationsTable.id),
-    userId: varchar("userId", { length: 255 })
+    userId: varchar("user_id", { length: 255 })
       .notNull()
       .references(() => usersTable.id),
     role: mysqlEnum("role", ["owner", "editor", "reader"]).notNull(),
   },
   (ou) => ({
-    compoundKey: primaryKey({ columns: [ou.organizationId, ou.userId] }),
+    compoundKey: primaryKey({
+      name: "organization_user_compound_key",
+      columns: [ou.organizationId, ou.userId],
+    }),
+    organizationIdIdx: index("organization_id_idx").on(ou.organizationId),
+    userIdIdx: index("user_id_idx").on(ou.userId),
   }),
 );
 
@@ -262,7 +275,7 @@ export const organizationsTable = mysqlTable(
     id: bigint("id").notNull().primaryKey().autoincrement(),
     name: varchar("name", { length: 255 }).notNull(),
     slug: varchar("slug", { length: 255 }).notNull(),
-    invoiceNumbering: mysqlEnum("invoiceNumbering", [
+    invoiceNumbering: mysqlEnum("invoice_numbering", [
       "sequential",
       "yearly",
       "monthly",
@@ -276,14 +289,14 @@ export const organizationsTable = mysqlTable(
     country: varchar("country", { length: 255 }),
     phone: varchar("phone", { length: 255 }),
     email: varchar("email", { length: 255 }),
-    bankAccount: varchar("bankAccount", { length: 255 }),
-    bankCode: varchar("bankCode", { length: 255 }),
-    businessId: varchar("businessId", { length: 255 }),
-    taxId: varchar("taxId", { length: 255 }),
-    vatId: varchar("vatId", { length: 255 }),
+    bankAccount: varchar("bank_account", { length: 255 }),
+    bankCode: varchar("bank_code", { length: 255 }),
+    businessId: varchar("business_id", { length: 255 }),
+    taxId: varchar("tax_id", { length: 255 }),
+    vatId: varchar("vat_id", { length: 255 }),
   },
   (org) => ({
-    slugIdx: index("slugIdx").on(org.slug),
+    slugIdx: index("slug_idx").on(org.slug),
   }),
 );
 
@@ -304,12 +317,12 @@ export const insertOrganizationSchema = createInsertSchema(organizationsTable);
  * Personal access tokens are used for API authentication. They are created by the user and can be
  * revoked by the user at any time.
  */
-export const personalAccessTokensTable = mysqlTable("personalAccessToken", {
+export const personalAccessTokensTable = mysqlTable("personal_access_token", {
   id: bigint("id").notNull().primaryKey().autoincrement(),
   name: varchar("name", { length: 255 }).notNull(),
   token: varchar("token", { length: 255 }).notNull(),
   expires: timestamp("expires").notNull(),
-  userId: varchar("userId", { length: 255 })
+  userId: varchar("user_id", { length: 255 })
     .notNull()
     .references(() => usersTable.id),
 });

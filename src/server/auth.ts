@@ -9,9 +9,10 @@ import GoogleProvider from "next-auth/providers/google";
 
 import { compare } from "bcrypt";
 import { eq } from "drizzle-orm";
+import { mysqlTable } from "drizzle-orm/mysql-core";
 import { env } from "~/env.mjs";
 import { db } from "~/server/db";
-import { mysqlTable, usersTable } from "~/server/db/schema";
+import { usersTable } from "~/server/db/schema";
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
  * object and keep type safety.
