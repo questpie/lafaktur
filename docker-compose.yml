@@ -23,7 +23,7 @@ services:
     environment:
       MINIO_ROOT_USER: "root"
       MINIO_ROOT_PASSWORD: "password"
-     volumes:
+    volumes:
       - "lafaktur-minio:/data/minio"
     command: minio server /data/minio --console-address ":9090"
 

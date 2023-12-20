@@ -1,5 +1,4 @@
 "use client";
-import React from "react";
 import {
   useBreadcrumbSegment,
   useHeader,
@@ -15,5 +14,5 @@ export default function InvoicePage() {
     level: 2,
   });
 
-  return <div>AddInvoicePage</div>;
+  return <div></div>;
 }

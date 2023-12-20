@@ -1,4 +1,4 @@
-import { getTableColumns } from "drizzle-orm";
+import { getTableColumns, sql } from "drizzle-orm";
 import { z } from "zod";
 import { withOrganizationAccess } from "~/server/api/organization/organization-queries";
 import { protectedProcedure } from "~/server/api/trpc";
@@ -11,6 +11,11 @@ export const invoiceTemplateGetAll = protectedProcedure
       organizationId: z.number(),
       cursor: z.number().default(0),
       limit: z.number().min(1).max(100).default(10),
+      filter: z
+        .object({
+          name: z.string().optional(),
+        })
+        .default({}),
     }),
   )
   .query(async ({ ctx, input }) => {
@@ -20,6 +25,15 @@ export const invoiceTemplateGetAll = protectedProcedure
         ...getTableColumns(invoiceTemplatesTable),
       })
       .from(invoiceTemplatesTable)
+      .where(
+        input.filter.name
+          ? sql`replace(lower(${
+              invoiceTemplatesTable.name
+            }), ' ', '') like ${`%${input.filter.name
+              .toLowerCase()
+              .replace(" ", "")}%`}`
+          : undefined,
+      )
       .$dynamic();
 
     const data = await withPagination(
