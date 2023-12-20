@@ -1,6 +1,14 @@
 import { createEnv } from "@t3-oss/env-nextjs";
 import { z } from "zod";
 
+const zBoolean = () =>
+  z
+    .string()
+    // only allow "true" or "false"
+    .refine((s) => s === "true" || s === "false")
+    // transform to boolean
+    .transform((s) => s === "true");
+
 export const env = createEnv({
   /**
    * Specify your server-side environment variables schema here. This way you can ensure the app
@@ -35,6 +43,19 @@ export const env = createEnv({
     // Add ` on ID and SECRET if you want to make sure they're not empty
     GOOGLE_CLIENT_ID: z.string().optional(),
     GOOGLE_CLIENT_SECRET: z.string().optional(),
+
+    S3_ENDPOINT_HOST: z.string().min(1),
+    S3_ENDPOINT_PORT: z
+      .string()
+      .default("9000")
+      .transform((v) => parseInt(v, 10)),
+    S3_ACCESS_KEY: z.string().min(1),
+    S3_SECRET_KEY: z.string().min(1),
+    S3_REGION: z.string().min(1).optional(),
+    S3_USE_PATH_STYLE: zBoolean().default("true"),
+    S3_USE_SSL: zBoolean().default(
+      process.env.NODE_ENV === "production" ? "true" : "false",
+    ),
   },
 
   /**
@@ -58,6 +79,14 @@ export const env = createEnv({
     NEXTAUTH_URL: process.env.NEXTAUTH_URL,
     GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
     GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
+
+    S3_ENDPOINT_HOST: process.env.S3_ENDPOINT_HOST,
+    S3_ENDPOINT_PORT: process.env.S3_ENDPOINT_PORT,
+    S3_ACCESS_KEY: process.env.S3_ACCESS_KEY,
+    S3_SECRET_KEY: process.env.S3_SECRET_KEY,
+    S3_REGION: process.env.S3_REGION,
+    S3_USE_PATH_STYLE: process.env.S3_USE_PATH_STYLE,
+    S3_USE_SSL: process.env.S3_USE_SSL,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially
