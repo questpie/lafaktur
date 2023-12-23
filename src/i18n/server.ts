@@ -1,4 +1,4 @@
-import { getRequestConfig, getTranslator } from "next-intl/server";
+import { getRequestConfig } from "next-intl/server";
 import { cache } from "react";
 
 export default getRequestConfig(async ({ locale }) => ({
@@ -22,11 +22,4 @@ export const getRequestLocale = (): string => {
   }
 
   return requestLocale;
-};
-
-export const getTranslations = <NestedKey extends string = never>(
-  namespace?: NestedKey,
-) => {
-  const locale = getRequestLocale();
-  return getTranslator(locale, namespace);
 };

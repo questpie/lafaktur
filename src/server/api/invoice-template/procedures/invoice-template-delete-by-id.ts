@@ -2,12 +2,9 @@ import { TRPCError } from "@trpc/server";
 import { and, eq } from "drizzle-orm";
 import { z } from "zod";
 import { $t } from "~/i18n/dummy";
+import { withOrganizationAccess } from "~/server/api/organization/organization-queries";
 import { protectedProcedure } from "~/server/api/trpc";
-import {
-  invoiceTemplatesTable,
-  organizationUsersTable,
-  organizationsTable,
-} from "~/server/db/schema";
+import { invoiceTemplatesTable } from "~/server/db/schema";
 
 export const invoiceTemplateDeleteById = protectedProcedure
   .input(z.object({ id: z.number(), organizationId: z.number() }))
@@ -16,26 +13,19 @@ export const invoiceTemplateDeleteById = protectedProcedure
       /**
        * We are making a proper select to be sure we have access to this resource
        */
-      const [foundInvoiceTemplate] = await trx
-        .select({
-          id: invoiceTemplatesTable.id,
-        })
-        .from(invoiceTemplatesTable)
-        .innerJoin(
-          organizationsTable,
-          eq(organizationsTable.id, invoiceTemplatesTable.organizationId),
-        )
-        .innerJoin(
-          organizationUsersTable,
-          eq(organizationUsersTable.organizationId, organizationsTable.id),
-        )
-        .where(
-          and(
-            eq(invoiceTemplatesTable.id, input.id),
-            eq(organizationUsersTable.userId, ctx.session.user.id),
-            eq(organizationsTable.id, input.organizationId),
-          ),
-        )
+      const [foundInvoiceTemplate] = await withOrganizationAccess(
+        trx
+          .select({
+            id: invoiceTemplatesTable.id,
+          })
+          .from(invoiceTemplatesTable)
+          .$dynamic(),
+        {
+          userId: ctx.session.user.id,
+          column: invoiceTemplatesTable.organizationId,
+        },
+      )
+        .where(and(eq(invoiceTemplatesTable.id, input.id)))
         .limit(1);
 
       if (!foundInvoiceTemplate) {

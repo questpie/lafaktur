@@ -131,7 +131,7 @@ AlertDialogCancel.displayName = AlertDialogPrimitive.Cancel.displayName;
 
 type ConfirmDialogConfig = {
   title: React.ReactNode;
-  content: React.ReactNode;
+  description: React.ReactNode;
   confirmLabel: string;
   cancelLabel: string;
   onConfirm?: () => void;
@@ -180,7 +180,9 @@ function ConfirmDialogRenderer() {
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>{confirmData.title}</AlertDialogTitle>
-          <AlertDialogDescription>{confirmData.content}</AlertDialogDescription>
+          <AlertDialogDescription>
+            {confirmData.description}
+          </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel onClick={confirmData.onCancel}>

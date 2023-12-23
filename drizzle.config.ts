@@ -4,11 +4,12 @@ import { env } from "~/env.mjs";
 
 export default defineConfig({
   schema: "./src/server/db/schema.ts",
-  driver: "mysql2",
+  out: "./src/server/db/migrations",
+  driver: "pg",
   dbCredentials: {
-    uri: env.DATABASE_URL,
+    connectionString: env.DATABASE_URL,
   },
-  tablesFilter: ["lafaktur_*"],
   strict: true,
+  verbose: env.DATABASE_VERBOSE,
   breakpoints: true,
 });

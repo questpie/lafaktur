@@ -3,7 +3,7 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { getQueryKey } from "@trpc/react-query";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "next-nprogress-bar";
 import { useState } from "react";
 import { Button } from "~/app/_components/ui/button";
 import { Input } from "~/app/_components/ui/input";
@@ -43,7 +43,7 @@ export default function OrganizationOnboardingPage() {
     });
   };
 
-  if (organizations.length) {
+  if (organizations?.length) {
     // we already have an organization redirect to dashboard
     router.push("/dashboard");
     return null;

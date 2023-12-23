@@ -3,7 +3,6 @@
 import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
 import { atom, useAtomValue, useSetAtom } from "jotai";
 import { useTranslations } from "next-intl";
-import { usePathname } from "next-intl/client";
 import React, { useEffect, useRef } from "react";
 import { LuMoreVertical } from "react-icons/lu";
 import { Button, LinkButton } from "~/app/_components/ui/button";
@@ -14,6 +13,7 @@ import {
 } from "~/app/_components/ui/dropdown-menu";
 import { Spinner } from "~/app/_components/ui/spinner";
 import { cn } from "~/app/_utils/styles-utils";
+import { usePathname } from "~/i18n/navigation";
 
 export type HeaderActionItem<TForceIcon extends boolean = false> = {
   label: string;
@@ -21,6 +21,7 @@ export type HeaderActionItem<TForceIcon extends boolean = false> = {
   onClick?: () => void;
   href?: string;
   isLoading?: boolean;
+  Wrapper?: React.ComponentType;
 } & (TForceIcon extends true
   ? {
       icon: React.ReactNode;
@@ -113,7 +114,7 @@ export const useBreadcrumbSegment = (segment: Breadcrumb) => {
 
 export function Header() {
   const headerData = useHeaderData();
-  const breadcrumbs = useAtomValue(breadcrumbsAtom);
+  const breadcrumbs = useBreadcrumbsData();
   const pathname = usePathname();
 
   useEffect(() => {
@@ -204,48 +205,58 @@ export const HeaderAction = ({
         </DropdownMenuTrigger>
         <DropdownMenuContent>
           {headerData.otherActions?.map((action, i) => {
+            const Wrapper = action.Wrapper ?? React.Fragment;
             return (
-              <DropdownMenuItem
-                key={i}
-                className="flex flex-row items-center gap-2"
-                onSelect={action.onClick}
-                disabled={action.isLoading}
-              >
-                {action.isLoading ? <Spinner /> : action.icon}
+              <Wrapper key={i}>
+                <DropdownMenuItem
+                  className="flex flex-row items-center gap-2"
+                  onSelect={action.onClick}
+                  disabled={action.isLoading}
+                >
+                  {action.isLoading ? <Spinner /> : action.icon}
 
-                {action.label}
-              </DropdownMenuItem>
+                  {action.label}
+                </DropdownMenuItem>
+              </Wrapper>
             );
           })}
         </DropdownMenuContent>
       </DropdownMenu>
     );
 
-  if (type === "secondary" && headerData.secondaryAction)
+  if (type === "secondary" && headerData.secondaryAction) {
+    const Wrapper = headerData.secondaryAction.Wrapper ?? React.Fragment;
     return (
-      <LinkButton
-        variant="secondary"
-        onClick={headerData.secondaryAction.onClick}
-        className="flex-1 flex-row items-center gap-2 md:flex-none"
-        href={headerData.secondaryAction.href}
-        isLoading={headerData.secondaryAction.isLoading}
-      >
-        {headerData.secondaryAction.icon}
-        {headerData.secondaryAction.label}
-      </LinkButton>
+      <Wrapper>
+        <LinkButton
+          variant="secondary"
+          onClick={headerData.secondaryAction.onClick}
+          className="flex-1 flex-row items-center gap-2 md:flex-none"
+          href={headerData.secondaryAction.href}
+          isLoading={headerData.secondaryAction.isLoading}
+        >
+          {headerData.secondaryAction.icon}
+          {headerData.secondaryAction.label}
+        </LinkButton>
+      </Wrapper>
     );
+  }
 
-  if (type === "main" && headerData.mainAction)
+  if (type === "main" && headerData.mainAction) {
+    const Wrapper = headerData.mainAction.Wrapper ?? React.Fragment;
     return (
-      <LinkButton
-        variant="default"
-        onClick={headerData.mainAction.onClick}
-        className="flex-1 flex-row items-center gap-2 md:flex-none"
-        href={headerData.mainAction.href}
-        isLoading={headerData.mainAction.isLoading}
-      >
-        {headerData.mainAction.icon}
-        {headerData.mainAction.label}
-      </LinkButton>
+      <Wrapper>
+        <LinkButton
+          variant="default"
+          onClick={headerData.mainAction.onClick}
+          className="flex-1 flex-row items-center gap-2 md:flex-none"
+          href={headerData.mainAction.href}
+          isLoading={headerData.mainAction.isLoading}
+        >
+          {headerData.mainAction.icon}
+          {headerData.mainAction.label}
+        </LinkButton>
+      </Wrapper>
     );
+  }
 };

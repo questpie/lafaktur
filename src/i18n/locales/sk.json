@@ -66,6 +66,9 @@
       "invoicesAdd": "Pridať faktúru",
       "invoicesAll": "Všetky faktúry",
       "overview": "Prehľad"
+    },
+    "breadcrumbs": {
+      "dashboard": "Nástenka"
     }
   },
   "themeToggle": {
@@ -77,6 +80,48 @@
     "err": {
       "notFound": "Šablóna faktúry sa nenašla"
     },
-    "newTemplate": "Nová šablóna"
+    "newTemplate": "Nová šablóna",
+    "editor": {
+      "addComponent": "Pridať komponent",
+      "addListItem": "Vytvorte vzor položky"
+    },
+    "breadcrumbs": {
+      "invoiceTemplates": "Šablóny faktúr"
+    },
+    "invoiceTemplatePage": {
+      "mainAction": "Pridať šablónu faktúry",
+      "title": "Šablóny faktúr"
+    }
+  },
+  "common": {
+    "add": "Pridať"
+  },
+  "dataTable": {
+    "noResults": "Žiadne výsledky."
+  },
+  "invoice": {
+    "dataTable": {
+      "currency": "mena",
+      "deleteAction": {
+        "cancel": "Zrušiť",
+        "confirm": "Odstrániť",
+        "description": "Naozaj chcete odstrániť túto faktúru?",
+        "title": "Vymazať faktúru"
+      },
+      "dueDate": "Dátum splatnosti",
+      "loadMore": "Načítať viac",
+      "number": "Faktúra č.",
+      "status": "Postavenie"
+    },
+    "err": {
+      "notFound": "Nenašla sa žiadna faktúra"
+    },
+    "invoicePage": {
+      "mainAction": "Pridať faktúru",
+      "title": "Vaše faktúry"
+    },
+    "breadcrumbs": {
+      "invoices": "Faktúry"
+    }
   }
 }

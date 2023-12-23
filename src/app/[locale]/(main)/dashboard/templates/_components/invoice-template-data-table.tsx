@@ -2,7 +2,7 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { type ColumnDef } from "@tanstack/react-table";
 import { getQueryKey } from "@trpc/react-query";
-import { useRouter } from "next/navigation";
+import { useRouter } from "next-nprogress-bar";
 import { type SyntheticEvent } from "react";
 import { LuBookTemplate, LuTrash } from "react-icons/lu";
 import { useSelectedOrganization } from "~/app/[locale]/(main)/dashboard/_components/organization-guard";
@@ -68,7 +68,7 @@ const DeleteAction: ColumnDef<InvoiceTemplate>["cell"] = (props) => {
     e.stopPropagation();
     open({
       title: "Delete invoice template",
-      content: "Are you sure you want to delete this invoice template?",
+      description: "Are you sure you want to delete this invoice template?",
       confirmLabel: "Delete",
       cancelLabel: "Cancel",
       onConfirm: () => {

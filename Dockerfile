@@ -1,6 +1,6 @@
 ##### DEPENDENCIES
 
-FROM node:lts-alpine3.17 AS deps
+FROM --platform=linux/amd64 node:20-alpine3.17 AS deps
 RUN apk add --no-cache libc6-compat openssl1.1-compat
 WORKDIR /app
 
@@ -12,7 +12,7 @@ RUN yarn global add pnpm && pnpm i
 
 ##### BUILDER
 
-FROM node:lts-alpine3.17 AS builder
+FROM --platform=linux/amd64 node:20-alpine3.17 AS builder
 ARG DATABASE_URL
 # ARG NEXT_PUBLIC_CLIENTVAR
 WORKDIR /app
@@ -21,12 +21,15 @@ COPY . .
 
 # ENV NEXT_TELEMETRY_DISABLED 1
 
-RUN yarn global add pnpm && SKIP_ENV_VALIDATION=1 pnpm run build
+RUN yarn global add pnpm
+# if database_url is set run migrations
+RUN if [ -n "$DATABASE_URL" ]; then pnpm migration:up; fi
+RUN SKIP_ENV_VALIDATION=1 pnpm run build;
 
 
 ##### RUNNER
 
-FROM node:lts-alpine3.17 AS runner
+FROM --platform=linux/amd64 node:20-alpine3.17 AS runner
 WORKDIR /app
 
 ENV NODE_ENV production

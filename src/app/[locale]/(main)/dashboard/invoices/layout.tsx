@@ -1,4 +1,5 @@
 "use client";
+import { useTranslations } from "next-intl";
 import { useBreadcrumbSegment } from "~/app/[locale]/(main)/dashboard/_components/header";
 
 export default function InvoiceLayout({
@@ -6,8 +7,9 @@ export default function InvoiceLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const t = useTranslations();
   useBreadcrumbSegment({
-    label: "Invoices",
+    label: t("invoice.breadcrumbs.invoices"),
     href: "/dashboard/invoices",
     level: 1,
   });

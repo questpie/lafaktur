@@ -1,24 +1,41 @@
+import { TRPCError } from "@trpc/server";
+import { $t } from "~/i18n/dummy";
 import { protectedProcedure } from "~/server/api/trpc";
 import {
-  insertOrganization,
+  insertOrganizationSchema,
   organizationUsersTable,
   organizationsTable,
 } from "~/server/db/schema";
 
 export const organizationCreate = protectedProcedure
-  .input(insertOrganization)
+  .input(insertOrganizationSchema)
   .mutation(async ({ ctx, input }) => {
     return ctx.db.transaction(async (trx) => {
-      const newOrganization = await trx
+      const [newOrganization] = await trx
         .insert(organizationsTable)
-        .values(input);
+        .values(input)
+        .returning({ id: organizationsTable.id });
+
+      if (!newOrganization) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: $t("organization.err.createFailed"),
+        });
+      }
 
       await trx.insert(organizationUsersTable).values({
-        organizationId: Number(newOrganization.insertId),
+        organizationId: Number(newOrganization?.id),
         userId: ctx.session!.user.id,
         role: "owner",
       });
 
-      return { id: newOrganization.insertId };
+      if (!newOrganization) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: $t("organization.err.createFailed"),
+        });
+      }
+
+      return { id: newOrganization.id };
     });
   });

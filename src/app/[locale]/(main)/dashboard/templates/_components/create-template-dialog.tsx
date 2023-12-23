@@ -1,5 +1,5 @@
 import { useTranslations } from "next-intl";
-import { useRouter } from "next/navigation";
+import { useRouter } from "next-nprogress-bar";
 import { useState } from "react";
 import { useSelectedOrganization } from "~/app/[locale]/(main)/dashboard/_components/organization-guard";
 import { Button } from "~/app/_components/ui/button";
@@ -12,7 +12,7 @@ import {
 } from "~/app/_components/ui/dialog";
 import { Input } from "~/app/_components/ui/input";
 import { Label } from "~/app/_components/ui/label";
-import { generateInvoiceHash } from "~/shared/invoice-template/invoice-template-utils";
+import { generateInvoiceHash } from "~/shared/invoice-template/invoice-template-helpers";
 import { api } from "~/trpc/react";
 
 export function CreateTemplateDialog() {

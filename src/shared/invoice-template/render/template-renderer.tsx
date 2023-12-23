@@ -11,7 +11,7 @@ type InvoiceTemplateRenderer = {
 };
 
 export function TemplateRenderer(props: InvoiceTemplateRenderer) {
-  return props.renderMap.page({
+  return props.renderMap.root({
     cmp: props.invoiceTemplate.template.content,
     resolver: props.resolver,
     // context: props.invoiceTemplate,

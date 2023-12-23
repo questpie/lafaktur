@@ -1,65 +1,64 @@
+import { addDays } from "date-fns";
 import { relations, sql } from "drizzle-orm";
 import {
-  bigint as bigintOI,
+  bigint as bigintOi,
+  bigserial as bigserialOI,
   index,
-  int,
-  mysqlEnum,
-  mysqlTableCreator,
+  integer,
+  pgEnum,
+  pgTable,
   primaryKey,
   text,
   timestamp as timestampOI,
   uniqueIndex,
   varchar,
-  type MySqlTimestampConfig,
-} from "drizzle-orm/mysql-core";
+  type PgTimestampConfig,
+} from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { type AdapterAccount } from "next-auth/adapters";
 import { typedJson } from "~/server/db/types/typed-json";
+import { DEFAULT_TEMPLATE } from "~/shared/invoice-template/invoice-template-constants";
 import {
-  DEFAULT_TEMPLATE,
-  invoiceStatusSchema,
   invoiceTemplateDataSchema,
   type InvoiceTemplateData,
-} from "~/shared/invoice-template/invoice-template-types";
+} from "~/shared/invoice-template/invoice-template-schemas";
 
-/**
- * This is an example of how to use the multi-project schema feature of Drizzle ORM. Use the same
- * database instance for multiple projects.
- *
- * @see https://orm.drizzle.team/docs/goodies#multi-project-schema
- */
-export const mysqlTable = mysqlTableCreator((name) => `lafaktur_${name}`);
 /**
  * Creator for bigint columns. So we have always the number format as bigint.
  */
-export const bigint = (name: string) => bigintOI(name, { mode: "number" });
+export const bigserial = (name: string) =>
+  bigserialOI(name, { mode: "number" });
+export const bigint = (name: string) => bigintOi(name, { mode: "number" });
+
 export const timestamp = <TMode extends "string" | "date" = "date">(
   name: string,
-  options?: MySqlTimestampConfig<TMode>,
-) => timestampOI(name, { mode: "date", fsp: 3, ...options });
+  options?: PgTimestampConfig<TMode>,
+) => timestampOI(name, { mode: "date", precision: 3, ...options });
 
-export const invoicesItemsTable = mysqlTable(
-  "invoiceItem",
+export const invoicesItemsTable = pgTable(
+  "invoice_items",
   {
-    id: bigint("id").notNull().primaryKey().autoincrement(),
-    invoiceId: bigint("invoiceId").notNull(),
+    id: bigserial("id").primaryKey().notNull(),
+    invoiceId: bigint("invoice_id")
+      .notNull()
+      .references(() => invoicesTable.id),
     name: varchar("name", { length: 255 }).notNull(),
-    quantity: int("quantity").notNull(),
+    quantity: integer("quantity").notNull(),
     unit: varchar("unit", { length: 255 }).notNull(),
-    unitPrice: int("unitPrice").notNull(),
-    unitPriceWithoutVat: int("unitPriceWithoutVat").notNull(),
-    total: int("total").notNull(),
-    totalWithoutVat: int("totalWithoutVat").notNull(),
+    unitPrice: integer("unit_price").notNull(),
+    unitPriceWithoutVat: integer("unit_price_without_vat").notNull(),
+    total: integer("total").notNull(),
+    totalWithoutVat: integer("total_without_vat").notNull(),
   },
   (it) => ({
-    invoiceIdIdx: index("invoiceIdIdx").on(it.invoiceId),
+    invoiceIdIdx: index().on(it.invoiceId),
   }),
 );
 
 export type InvoiceItem = typeof invoicesItemsTable.$inferSelect;
 export type InvoiceItemInsert = typeof invoicesItemsTable.$inferInsert;
 
-export const insertInvoiceItem = createInsertSchema(invoicesItemsTable);
+export const insertInvoiceItemSchema = createInsertSchema(invoicesItemsTable);
 
 export const invoicesItemsRelations = relations(
   invoicesItemsTable,
@@ -71,43 +70,49 @@ export const invoicesItemsRelations = relations(
   }),
 );
 
-export const invoicesTable = mysqlTable(
-  "invoice",
-  {
-    id: bigint("id").notNull().primaryKey().autoincrement(),
-    customerId: bigint("customerId").notNull(),
+export const invoiceStatusEnum = pgEnum("invoice_status", [
+  "draft",
+  "sent",
+  "paid",
+  "cancelled",
+]);
 
-    organizationId: bigint("organizationId").notNull(),
+export const invoicesTable = pgTable(
+  "invoices",
+  {
+    id: bigserial("id").notNull().primaryKey(),
+
+    customerId: bigint("customer_id").references(() => customersTable.id),
+    organizationId: bigint("organization_id")
+      .notNull()
+      .references(() => organizationsTable.id),
 
     number: varchar("number", { length: 255 }).notNull(),
     reference: varchar("reference", { length: 255 }),
 
-    variableSymbol: varchar("variableSymbol", { length: 255 }),
-    constantSymbol: varchar("constantSymbol", { length: 255 }),
-    specificSymbol: varchar("specificSymbol", { length: 255 }),
+    variableSymbol: varchar("variable_symbol", { length: 255 }),
+    constantSymbol: varchar("constant_symbol", { length: 255 }),
+    specificSymbol: varchar("specific_symbol", { length: 255 }),
 
-    status: mysqlEnum("status", invoiceStatusSchema._def.values)
+    status: invoiceStatusEnum("status").notNull(),
+
+    issueDate: timestamp("issue_date").notNull().defaultNow(),
+    dueDate: timestamp("due_date")
       .notNull()
-      .default("draft"),
+      .$defaultFn(() => addDays(new Date(), 14)),
+    supplyDate: timestamp("supply_date"),
 
-    issueDate: timestamp("issueDate").notNull(),
-    dueDate: timestamp("dueDate").notNull(),
-    supplyDate: timestamp("supplyDate"),
-    dateOfPayment: timestamp("dateOfPayment"),
+    /** we are storing template reference,
+     * but also a copy of the template so we can prevent unwanted invoice mutation in case the template was mutated */
+    templateId: bigint("template_id"),
+    templateData: typedJson<InvoiceTemplateData>("template_data"),
 
-    currency: varchar("currency", { length: 16 }).notNull(),
-
-    templateId: bigint("templateId").notNull(),
-    templateData: typedJson<InvoiceTemplateData>("templateData").notNull(),
-
-    createdAt: timestamp("createdAt").notNull(),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+    paidAt: timestamp("paid_at"),
   },
   (it) => ({
-    compoundKey: uniqueIndex("organizationIdNumberIdx").on(
-      it.organizationId,
-      it.number,
-    ),
-    organizationIdIdx: index("organizationIdIdx").on(it.organizationId),
+    compoundKey: uniqueIndex().on(it.organizationId, it.number),
+    organizationIdIdx: index().on(it.organizationId),
   }),
 );
 
@@ -129,23 +134,23 @@ export const invoicesRelations = relations(invoicesTable, ({ one }) => ({
 export type Invoice = typeof invoicesTable.$inferSelect;
 export type InvoiceInsert = typeof invoicesTable.$inferInsert;
 
-export const insertInvoice = createInsertSchema(invoicesTable);
+export const insertInvoiceSchema = createInsertSchema(invoicesTable);
 
-export const invoiceTemplatesTable = mysqlTable(
-  "invoiceTemplate",
+export const invoiceTemplatesTable = pgTable(
+  "invoice_templates",
   {
-    id: bigint("id").notNull().primaryKey().autoincrement(),
-    organizationId: bigint("organizationId").notNull(),
+    id: bigserial("id").notNull().primaryKey(),
+    organizationId: bigint("organization_id")
+      .notNull()
+      .references(() => organizationsTable.id),
     name: varchar("name", { length: 255 }).notNull(),
     template: typedJson<InvoiceTemplateData>("template")
       .notNull()
       .$default(() => DEFAULT_TEMPLATE),
   },
   (it) => ({
-    compoundKey: uniqueIndex("organizationIdNameIdx").on(
-      it.organizationId,
-      it.name,
-    ),
+    compoundKey: uniqueIndex().on(it.organizationId, it.name),
+    organizationIdIdx: index().on(it.organizationId),
   }),
 );
 
@@ -162,15 +167,20 @@ export const invoiceTemplatesRelations = relations(
 export type InvoiceTemplate = typeof invoiceTemplatesTable.$inferSelect;
 export type InvoiceTemplateInsert = typeof invoiceTemplatesTable.$inferInsert;
 
-export const insertInvoiceTemplate = createInsertSchema(invoiceTemplatesTable, {
-  template: invoiceTemplateDataSchema,
-});
-
-export const customersTable = mysqlTable(
-  "customer",
+export const insertInvoiceTemplateSchema = createInsertSchema(
+  invoiceTemplatesTable,
   {
-    id: bigint("id").notNull().primaryKey().autoincrement(),
-    organizationId: bigint("organizationId").notNull(),
+    template: invoiceTemplateDataSchema,
+  },
+);
+
+export const customersTable = pgTable(
+  "customers",
+  {
+    id: bigserial("id").notNull().primaryKey(),
+    organizationId: bigint("organization_id")
+      .notNull()
+      .references(() => organizationsTable.id),
     name: varchar("name", { length: 255 }).notNull(),
     street: varchar("address", { length: 255 }),
     city: varchar("city", { length: 255 }),
@@ -178,18 +188,16 @@ export const customersTable = mysqlTable(
     country: varchar("country", { length: 255 }),
     phone: varchar("phone", { length: 255 }),
     email: varchar("email", { length: 255 }),
-    businessId: varchar("businessId", { length: 255 }),
-    taxId: varchar("taxId", { length: 255 }),
-    vatId: varchar("vatId", { length: 255 }),
-    bankAccount: varchar("bankAccount", { length: 255 }),
-    bankCode: varchar("bankCode", { length: 255 }),
+    businessId: varchar("business_id", { length: 255 }),
+    taxId: varchar("tax_id", { length: 255 }),
+    vatId: varchar("vat_id", { length: 255 }),
+    bankAccount: varchar("bank_account", { length: 255 }),
+    bankCode: varchar("bank_code", { length: 255 }),
   },
   (c) => ({
-    compoundKey: uniqueIndex("organizationIdNameIdx").on(
-      c.organizationId,
-      c.name,
-    ),
-    nameIdx: index("nameIdx").on(c.name),
+    compoundKey: uniqueIndex().on(c.organizationId, c.name),
+    nameIdx: index().on(c.name),
+    organizationIdIdx: index().on(c.organizationId),
   }),
 );
 
@@ -207,17 +215,33 @@ export const customersRelations = relations(
 export type Customer = typeof customersTable.$inferSelect;
 export type CustomerInsert = typeof customersTable.$inferInsert;
 
-export const insertCustomer = createInsertSchema(customersTable);
+export const insertCustomerSchema = createInsertSchema(customersTable);
 
-export const organizationUsersTable = mysqlTable(
-  "organizationUser",
+export const organizationUserRoleEnum = pgEnum("organization_user_role", [
+  "owner",
+  "editor",
+  "reader",
+]);
+
+export const organizationUsersTable = pgTable(
+  "organization_users",
   {
-    organizationId: bigint("organizationId").notNull(),
-    userId: varchar("userId", { length: 255 }).notNull(),
-    role: mysqlEnum("role", ["owner", "editor", "reader"]).notNull(),
+    organizationId: bigint("organization_id")
+      .notNull()
+      .references(() => organizationsTable.id),
+    userId: varchar("user_id", { length: 255 })
+      .notNull()
+      .references(() => usersTable.id),
+
+    role: organizationUserRoleEnum("role").notNull(),
   },
+
   (ou) => ({
-    compoundKey: primaryKey(ou.organizationId, ou.userId),
+    compoundKey: primaryKey({
+      columns: [ou.organizationId, ou.userId],
+    }),
+    organizationIdIdx: index().on(ou.organizationId),
+    userIdIdx: index().on(ou.userId),
   }),
 );
 
@@ -238,21 +262,23 @@ export const organizationUsersRelations = relations(
 export type OrganizationUser = typeof organizationUsersTable.$inferSelect;
 export type OrganizationUserInsert = typeof organizationUsersTable.$inferInsert;
 
-export const insertOrganizationUser = createInsertSchema(
+export const insertOrganizationUserSchema = createInsertSchema(
   organizationUsersTable,
 );
 
-export const organizationsTable = mysqlTable(
-  "organization",
+export const invoiceNumberingEnum = pgEnum("invoice_numbering", [
+  "sequential",
+  "yearly",
+  "monthly",
+]);
+
+export const organizationsTable = pgTable(
+  "organizations",
   {
-    id: bigint("id").notNull().primaryKey().autoincrement(),
+    id: bigserial("id").notNull().primaryKey(),
     name: varchar("name", { length: 255 }).notNull(),
     slug: varchar("slug", { length: 255 }).notNull(),
-    invoiceNumbering: mysqlEnum("invoiceNumbering", [
-      "sequential",
-      "yearly",
-      "monthly",
-    ])
+    invoiceNumbering: invoiceNumberingEnum("invoice_numbering")
       .notNull()
       .default("sequential"),
 
@@ -262,14 +288,14 @@ export const organizationsTable = mysqlTable(
     country: varchar("country", { length: 255 }),
     phone: varchar("phone", { length: 255 }),
     email: varchar("email", { length: 255 }),
-    bankAccount: varchar("bankAccount", { length: 255 }),
-    bankCode: varchar("bankCode", { length: 255 }),
-    businessId: varchar("businessId", { length: 255 }),
-    taxId: varchar("taxId", { length: 255 }),
-    vatId: varchar("vatId", { length: 255 }),
+    bankAccount: varchar("bank_account", { length: 255 }),
+    bankCode: varchar("bank_code", { length: 255 }),
+    businessId: varchar("business_id", { length: 255 }),
+    taxId: varchar("tax_id", { length: 255 }),
+    vatId: varchar("vat_id", { length: 255 }),
   },
   (org) => ({
-    slugIdx: index("slugIdx").on(org.slug),
+    slugIdx: index().on(org.slug),
   }),
 );
 
@@ -284,25 +310,21 @@ export const organizationsRelations = relations(
 export type Organization = typeof organizationsTable.$inferSelect;
 export type OrganizationInsert = typeof organizationsTable.$inferInsert;
 
-export const insertOrganization = createInsertSchema(organizationsTable);
+export const insertOrganizationSchema = createInsertSchema(organizationsTable);
 
 /**
  * Personal access tokens are used for API authentication. They are created by the user and can be
  * revoked by the user at any time.
  */
-export const personalAccessTokensTable = mysqlTable(
-  "personalAccessToken",
-  {
-    id: bigint("id").notNull().primaryKey().autoincrement(),
-    name: varchar("name", { length: 255 }).notNull(),
-    token: varchar("token", { length: 255 }).notNull(),
-    expires: timestamp("expires").notNull(),
-    userId: varchar("userId", { length: 255 }).notNull(),
-  },
-  (pat) => ({
-    userIdIdx: index("userIdIdx").on(pat.userId),
-  }),
-);
+export const personalAccessTokensTable = pgTable("personal_access_tokens", {
+  id: bigserial("id").notNull().primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  token: varchar("token", { length: 255 }).notNull(),
+  expires: timestamp("expires").notNull(),
+  userId: varchar("user_id", { length: 255 })
+    .notNull()
+    .references(() => usersTable.id),
+});
 
 export const personalAccessTokensRelations = relations(
   personalAccessTokensTable,
@@ -318,11 +340,11 @@ export type PersonalAccessToken = typeof personalAccessTokensTable.$inferSelect;
 export type PersonalAccessTokenInsert =
   typeof personalAccessTokensTable.$inferInsert;
 
-export const insertPersonalAccessToken = createInsertSchema(
+export const insertPersonalAccessTokenSchema = createInsertSchema(
   personalAccessTokensTable,
 );
 
-export const usersTable = mysqlTable("user", {
+export const usersTable = pgTable("user", {
   id: varchar("id", { length: 255 }).notNull().primaryKey(),
   name: varchar("name", { length: 255 }),
   email: varchar("email", { length: 255 }).notNull(),
@@ -342,7 +364,7 @@ export const usersRelations = relations(usersTable, ({ many }) => ({
   personalAccessTokens: many(personalAccessTokensTable),
 }));
 
-export const accountsTable = mysqlTable(
+export const accountsTable = pgTable(
   "account",
   {
     userId: varchar("userId", { length: 255 }).notNull(),
@@ -355,15 +377,17 @@ export const accountsTable = mysqlTable(
     }).notNull(),
     refresh_token: text("refresh_token"),
     access_token: text("access_token"),
-    expires_at: int("expires_at"),
+    expires_at: integer("expires_at"),
     token_type: varchar("token_type", { length: 255 }),
     scope: varchar("scope", { length: 255 }),
     id_token: text("id_token"),
     session_state: varchar("session_state", { length: 255 }),
   },
   (account) => ({
-    compoundKey: primaryKey(account.provider, account.providerAccountId),
-    userIdIdx: index("userIdIdx").on(account.userId),
+    compoundKey: primaryKey({
+      columns: [account.provider, account.providerAccountId],
+    }),
+    userIdIdx: index().on(account.userId),
   }),
 );
 
@@ -374,7 +398,7 @@ export const accountsRelations = relations(accountsTable, ({ one }) => ({
   }),
 }));
 
-export const sessionsTable = mysqlTable(
+export const sessionsTable = pgTable(
   "session",
   {
     sessionToken: varchar("sessionToken", { length: 255 })
@@ -384,7 +408,7 @@ export const sessionsTable = mysqlTable(
     expires: timestamp("expires").notNull(),
   },
   (session) => ({
-    userIdIdx: index("userIdIdx").on(session.userId),
+    userIdIdx: index().on(session.userId),
   }),
 );
 
@@ -395,7 +419,7 @@ export const sessionsRelations = relations(sessionsTable, ({ one }) => ({
   }),
 }));
 
-export const verificationTokensTable = mysqlTable(
+export const verificationTokensTable = pgTable(
   "verificationToken",
   {
     identifier: varchar("identifier", { length: 255 }).notNull(),
@@ -403,6 +427,6 @@ export const verificationTokensTable = mysqlTable(
     expires: timestamp("expires").notNull(),
   },
   (vt) => ({
-    compoundKey: primaryKey(vt.identifier, vt.token),
+    compoundKey: primaryKey({ columns: [vt.identifier, vt.token] }),
   }),
 );

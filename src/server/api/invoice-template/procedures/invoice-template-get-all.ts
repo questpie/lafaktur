@@ -1,11 +1,9 @@
-import { and, eq, getTableColumns } from "drizzle-orm";
+import { getTableColumns, sql } from "drizzle-orm";
 import { z } from "zod";
+import { withOrganizationAccess } from "~/server/api/organization/organization-queries";
 import { protectedProcedure } from "~/server/api/trpc";
-import {
-  invoiceTemplatesTable,
-  organizationUsersTable,
-  organizationsTable,
-} from "~/server/db/schema";
+import { withPagination } from "~/server/db/helper-queries";
+import { invoiceTemplatesTable } from "~/server/db/schema";
 
 export const invoiceTemplateGetAll = protectedProcedure
   .input(
@@ -13,31 +11,38 @@ export const invoiceTemplateGetAll = protectedProcedure
       organizationId: z.number(),
       cursor: z.number().default(0),
       limit: z.number().min(1).max(100).default(10),
+      filter: z
+        .object({
+          name: z.string().optional(),
+        })
+        .default({}),
     }),
   )
   .query(async ({ ctx, input }) => {
     // search for invoiceTemplate by id that has relation to organization
-    const data = await ctx.db
+    const qb = ctx.db
       .select({
         ...getTableColumns(invoiceTemplatesTable),
       })
       .from(invoiceTemplatesTable)
-      .innerJoin(
-        organizationsTable,
-        eq(organizationsTable.id, invoiceTemplatesTable.organizationId),
-      )
-      .innerJoin(
-        organizationUsersTable,
-        eq(organizationUsersTable.organizationId, organizationsTable.id),
-      )
-      .where(
-        and(
-          eq(organizationsTable.id, input.organizationId),
-          eq(organizationUsersTable.userId, ctx.session.user.id),
-        ),
-      )
-      .offset(input.cursor)
-      .limit(input.limit);
+      .$dynamic();
+
+    const data = await withPagination(
+      withOrganizationAccess(qb, {
+        column: invoiceTemplatesTable.organizationId,
+        userId: ctx.session.user.id,
+        organizationId: input.organizationId,
+      }),
+      input,
+    ).where(
+      input.filter.name
+        ? sql`replace(lower(${
+            invoiceTemplatesTable.name
+          }), ' ', '') like ${`%${input.filter.name
+            .toLowerCase()
+            .replace(" ", "")}%`}`
+        : undefined,
+    );
 
     return {
       data,

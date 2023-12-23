@@ -1,6 +1,6 @@
 import { isServer } from "@tanstack/react-query";
 import { atom, useAtom } from "jotai";
-import { useRouter } from "next/navigation";
+import { useRouter } from "next-nprogress-bar";
 import { type PropsWithChildren } from "react";
 import { api } from "~/trpc/react";
 

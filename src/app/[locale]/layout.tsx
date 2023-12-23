@@ -8,7 +8,7 @@ import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { NextAuthProvider } from "~/app/[locale]/auth/_components/next-auth-provider";
-import { StoreProvider } from "~/app/[locale]/store-provider";
+import { AppProvider } from "~/app/[locale]/app-provider";
 import { ThemeProvider } from "~/app/_components/theme/theme-provider";
 import { cn } from "~/app/_utils/styles-utils";
 import { setRequestLocale } from "~/i18n/server";
@@ -45,7 +45,7 @@ export default async function RootLayout({
   if (!isValidLocale) notFound();
   setRequestLocale(locale);
 
-  const messages = await getMessages(locale);
+  const messages = await getMessages({ locale });
 
   return (
     <html lang={locale}>
@@ -64,7 +64,7 @@ export default async function RootLayout({
           >
             <NextAuthProvider>
               <TRPCReactProvider headers={headers()}>
-                <StoreProvider>{children}</StoreProvider>
+                <AppProvider>{children}</AppProvider>
               </TRPCReactProvider>
             </NextAuthProvider>
           </ThemeProvider>

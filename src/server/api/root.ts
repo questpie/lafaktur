@@ -1,6 +1,7 @@
 import { authRouter } from "~/server/api/auth/auth-router";
-import { invoiceTemplateRouter } from "~/server/api/invoice-template/invoice-template.router";
-import { organizationRouter } from "~/server/api/organization/organization.router";
+import { invoiceTemplateRouter } from "~/server/api/invoice-template/invoice-template-router";
+import { invoiceRouter } from "~/server/api/invoice/invoice-router";
+import { organizationRouter } from "~/server/api/organization/organization-router";
 import { createTRPCRouter } from "~/server/api/trpc";
 
 /**
@@ -10,6 +11,7 @@ import { createTRPCRouter } from "~/server/api/trpc";
  */
 export const appRouter = createTRPCRouter({
   auth: authRouter,
+  invoice: invoiceRouter,
   invoiceTemplate: invoiceTemplateRouter,
   organization: organizationRouter,
 });

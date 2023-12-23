@@ -65,6 +65,9 @@
       "invoiceTemplates": "Invoice Templates",
       "invoiceTemplatesAll": "All Templates",
       "invoiceTemplatesAdd": "Add Template"
+    },
+    "breadcrumbs": {
+      "dashboard": "Dashboard"
     }
   },
   "themeToggle": {
@@ -74,11 +77,58 @@
   },
   "invoiceTemplate": {
     "err": {
-      "notFound": "Invoice Template not found"
+      "notFound": "Invoice Template not found",
+      "invalidOrganization": "You don't have access to this organization",
+      "createFailed": "Failed to create invoice template"
     },
-    "newTemplate": "New Template"
+    "newTemplate": "New Template",
+    "editor": {
+      "addComponent": "Add component",
+      "addListItem": "Create item prefab"
+    },
+    "breadcrumbs": {
+      "invoiceTemplates": "Invoice Templates"
+    },
+    "invoiceTemplatePage": {
+      "title": "Invoice templates",
+      "mainAction": "Add invoice template"
+    }
   },
   "dataTable": {
     "noResults": "No results."
+  },
+  "common": {
+    "add": "Add"
+  },
+  "invoice": {
+    "err": {
+      "notFound": "No invoice found",
+      "createFailed": "Failed to create invoice"
+    },
+    "invoicePage": {
+      "title": "Your invoices",
+      "mainAction": "Add invoice"
+    },
+    "dataTable": {
+      "deleteAction": {
+        "title": "Delete invoice",
+        "description": "Are you sure you want to delete this invoice ?",
+        "confirm": "Delete",
+        "cancel": "Cancel"
+      },
+      "loadMore": "Load more",
+      "dueDate": "Due date",
+      "currency": "Currency",
+      "number": "Invoice no.",
+      "status": "Status"
+    },
+    "breadcrumbs": {
+      "invoices": "Invoices"
+    }
+  },
+  "organization": {
+    "err": {
+      "createFailed": "Failed to create organization"
+    }
   }
 }

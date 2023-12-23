@@ -1,7 +1,6 @@
 "use client";
 import { atom, useAtom } from "jotai";
 import { useTranslations } from "next-intl";
-import { usePathname } from "next-intl/client";
 import { useCallback, useState } from "react";
 import {
   LuBookTemplate,
@@ -21,6 +20,7 @@ import {
 } from "~/app/_components/ui/collapsible";
 import { cn } from "~/app/_utils/styles-utils";
 import { $t } from "~/i18n/dummy";
+import { usePathname } from "~/i18n/navigation";
 
 type SidebarProps = React.HTMLAttributes<HTMLDivElement>;
 
@@ -133,8 +133,11 @@ export function SidebarListItem({ item }: SidebarListItemProps) {
     return (
       <LinkButton
         variant={isActive ? "secondary" : "ghost"}
-        className="w-full justify-start gap-4"
-        href={item.href}
+        className={cn(
+          "w-full justify-start gap-4",
+          isActive && "pointer-events-none cursor-default",
+        )}
+        href={!isActive ? item.href : undefined}
         onClick={() => setSidebarOpen(false)}
       >
         {item.icon} {t(item.name as any)}
@@ -159,8 +162,13 @@ export function SidebarListItem({ item }: SidebarListItemProps) {
             <LinkButton
               key={i}
               variant={isActive ? "secondary" : "ghost"}
-              className={cn("justify-start gap-4", i == 0 && "mt-2")}
-              href={child.href}
+              className={cn(
+                "justify-start gap-4",
+                i == 0 && "mt-2",
+                isActive && "pointer-events-none cursor-default",
+              )}
+              href={!isActive ? child.href : undefined}
+              disabled={isActive}
               onClick={() => setSidebarOpen(false)}
             >
               {child.icon} {t(child.name as any)}
