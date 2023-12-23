@@ -57,15 +57,25 @@ export const invoiceCreate = protectedProcedure
         lastInvoice?.number ?? null,
       );
 
-      const [newInvoice] = await trx.insert(invoicesTable).values({
-        organizationId: input.organizationId,
-        number,
-        reference: number,
-        status: "draft",
-      });
+      const [newInvoice] = await trx
+        .insert(invoicesTable)
+        .values({
+          organizationId: input.organizationId,
+          number,
+          reference: number,
+          status: "draft",
+        })
+        .returning({ id: invoicesTable.id });
+
+      if (!newInvoice) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: $t("invoice.err.createFailed"),
+        });
+      }
 
       return {
-        id: newInvoice.insertId,
+        id: newInvoice.id,
       };
     });
   });

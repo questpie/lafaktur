@@ -1,9 +1,9 @@
-import { customType } from "drizzle-orm/mysql-core";
+import { customType } from "drizzle-orm/pg-core";
 
 export const typedJson = <TData, TName extends string = string>(name: TName) =>
   customType<{ data: TData; default: true }>({
     dataType() {
-      return "json";
+      return "jsonb";
     },
     toDriver(value: TData) {
       if (!value) return null;

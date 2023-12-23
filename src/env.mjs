@@ -19,13 +19,10 @@ export const env = createEnv({
       .string()
       .url()
       .refine(
-        (str) => !str.includes("YOUR_MYSQL_URL_HERE"),
+        (str) => !str.includes("YOUR_PG_URL_HERE"),
         "You forgot to change the default URL",
       ),
-    DATABASE_MODE: z
-      .literal("default")
-      .or(z.literal("planetscale"))
-      .default("default"),
+    DATABASE_VERBOSE: zBoolean().default("false"),
     NODE_ENV: z
       .enum(["development", "test", "production"])
       .default("development"),
@@ -73,7 +70,7 @@ export const env = createEnv({
    */
   runtimeEnv: {
     DATABASE_URL: process.env.DATABASE_URL,
-    DATABASE_MODE: process.env.DATABASE_MODE,
+    DATABASE_VERBOSE: process.env.DATABASE_VERBOSE,
     NODE_ENV: process.env.NODE_ENV,
     NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
     NEXTAUTH_URL: process.env.NEXTAUTH_URL,

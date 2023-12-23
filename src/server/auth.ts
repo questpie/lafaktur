@@ -9,7 +9,7 @@ import GoogleProvider from "next-auth/providers/google";
 
 import { compare } from "bcrypt";
 import { eq } from "drizzle-orm";
-import { mysqlTable } from "drizzle-orm/mysql-core";
+import { pgTable } from "drizzle-orm/pg-core";
 import { env } from "~/env.mjs";
 import { db } from "~/server/db";
 import { usersTable } from "~/server/db/schema";
@@ -62,7 +62,7 @@ export const authOptions: NextAuthOptions = {
     error: "/auth/error",
     // verifyRequest: "/auth/verify-request",k
   },
-  adapter: DrizzleAdapter(db, mysqlTable),
+  adapter: DrizzleAdapter(db, pgTable),
   providers: [
     ...(env.GOOGLE_CLIENT_ID && env.GOOGLE_CLIENT_SECRET
       ? [

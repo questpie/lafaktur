@@ -78,7 +78,8 @@
   "invoiceTemplate": {
     "err": {
       "notFound": "Invoice Template not found",
-      "invalidOrganization": "You don't have access to this organization"
+      "invalidOrganization": "You don't have access to this organization",
+      "createFailed": "Failed to create invoice template"
     },
     "newTemplate": "New Template",
     "editor": {
@@ -101,7 +102,8 @@
   },
   "invoice": {
     "err": {
-      "notFound": "No invoice found"
+      "notFound": "No invoice found",
+      "createFailed": "Failed to create invoice"
     },
     "invoicePage": {
       "title": "Your invoices",
@@ -122,6 +124,11 @@
     },
     "breadcrumbs": {
       "invoices": "Invoices"
+    }
+  },
+  "organization": {
+    "err": {
+      "createFailed": "Failed to create organization"
     }
   }
 }

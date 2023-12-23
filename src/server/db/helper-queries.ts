@@ -1,10 +1,10 @@
-import { type MySqlSelect } from "drizzle-orm/mysql-core";
+import { type PgSelect } from "drizzle-orm/pg-core";
 
 export type WithPaginationOptions = {
   cursor: number;
   limit: number;
 };
-export function withPagination<T extends MySqlSelect>(
+export function withPagination<T extends PgSelect>(
   qb: T,
   options: WithPaginationOptions,
 ) {

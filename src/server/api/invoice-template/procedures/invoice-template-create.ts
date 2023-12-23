@@ -1,3 +1,5 @@
+import { TRPCError } from "@trpc/server";
+import { $t } from "~/i18n/dummy";
 import { protectedProcedure } from "~/server/api/trpc";
 import {
   insertInvoiceTemplateSchema,
@@ -10,8 +12,16 @@ export const invoiceTemplateCreate = protectedProcedure
     return ctx.db.transaction(async (trx) => {
       const [newInvoiceTemplate] = await trx
         .insert(invoiceTemplatesTable)
-        .values(input);
+        .values(input)
+        .returning({ id: invoiceTemplatesTable.id });
 
-      return { id: newInvoiceTemplate.insertId };
+      if (!newInvoiceTemplate) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: $t("invoiceTemplate.err.createFailed"),
+        });
+      }
+
+      return { id: newInvoiceTemplate.id };
     });
   });

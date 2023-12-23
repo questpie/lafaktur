@@ -1,5 +1,5 @@
 import { and, eq, inArray } from "drizzle-orm";
-import { type MySqlColumn, type MySqlSelect } from "drizzle-orm/mysql-core";
+import { type PgColumn, type PgSelect } from "drizzle-orm/pg-core";
 import {
   organizationUsersTable,
   organizationsTable,
@@ -14,7 +14,7 @@ export type WithOrganizationAccessOptions = {
   /**
    * FK column pointing at organization
    */
-  column: MySqlColumn;
+  column: PgColumn;
   /**
    * This is needed if you want to check access to specific organization,
    * by default we are just checking whether user has access to any organization related to given resource
@@ -42,7 +42,7 @@ const ROLE_MAPPER: Record<
 /**
  * Adds constraints to given dynamic query that makes sure user has access to given resource (e.g is a member of related organization)
  */
-export function withOrganizationAccess<T extends MySqlSelect>(
+export function withOrganizationAccess<T extends PgSelect>(
   qb: T,
   options: WithOrganizationAccessOptions,
 ) {
@@ -70,7 +70,7 @@ export type GetOrganizationOptions = {
   organizationId: number;
 };
 
-export function getOrganization<T extends MySqlSelect>(
+export function getOrganization<T extends PgSelect>(
   qb: T,
   opts: GetOrganizationOptions,
 ) {

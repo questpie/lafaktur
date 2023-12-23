@@ -1,19 +1,15 @@
 version: "3.8"
 services:
   db:
-    image: mysql:latest
-    restart: always
-    environment:
-      MYSQL_DATABASE: "lafaktur"
-      MYSQL_USER: "lafaktur"
-      MYSQL_PASSWORD: "lafaktur"
-      MYSQL_ROOT_PASSWORD: "lafaktur"
+    image: postgres:16
     ports:
-      - "3306:3306"
-    expose:
-      - "3306"
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=lafaktur
+      - POSTGRES_PASSWORD=lafaktur
+      - POSTGRES_DB=lafaktur-db
     volumes:
-      - lafaktur-db:/var/lib/mysql
+      - "lafaktur-db:/var/lib/postgresql/data"
 
   minio:
     image: "minio/minio:latest"
