@@ -64,3 +64,25 @@ export function withOrganizationAccess<T extends MySqlSelect>(
       ),
     );
 }
+
+export type GetOrganizationOptions = {
+  userId: string;
+  organizationId: number;
+};
+
+export function getOrganization<T extends MySqlSelect>(
+  qb: T,
+  opts: GetOrganizationOptions,
+) {
+  return qb
+    .innerJoin(
+      organizationUsersTable,
+      eq(organizationsTable.id, organizationUsersTable.organizationId),
+    )
+    .where(
+      and(
+        eq(organizationsTable.id, opts.organizationId),
+        eq(organizationUsersTable.userId, opts.userId),
+      ),
+    );
+}

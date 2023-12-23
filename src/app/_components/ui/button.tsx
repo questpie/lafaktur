@@ -97,7 +97,7 @@ const LinkButton = React.forwardRef<
   }
 
   return (
-    <Button asChild ref={ref} {...props}>
+    <Button asChild={!props.isLoading} ref={ref} {...props}>
       <Link href={href}>{props.children}</Link>
     </Button>
   );

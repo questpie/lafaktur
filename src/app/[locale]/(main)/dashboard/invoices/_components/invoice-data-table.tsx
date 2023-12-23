@@ -55,10 +55,10 @@ const DeleteAction: ColumnDef<Invoice>["cell"] = (props) => {
 
   const { open } = useConfirmDialog();
 
-  const deleteMutation = api.invoiceTemplate.deleteById.useMutation({
+  const deleteMutation = api.invoice.deleteById.useMutation({
     onSettled: async () => {
       const key = getQueryKey(
-        api.invoiceTemplate.getAll,
+        api.invoice.getAll,
         { organizationId: organization.id },
         "infinite",
       );
@@ -107,8 +107,8 @@ const columns: ColumnDef<Invoice>[] = [
     },
   },
   {
-    accessorKey: "name",
-    header: "Name",
+    accessorKey: "number",
+    header: "Number",
     cell: ({ getValue }) => (
       <span className="line-clamp-1 text-ellipsis">{String(getValue())}</span>
     ),
@@ -116,11 +116,16 @@ const columns: ColumnDef<Invoice>[] = [
   {
     accessorKey: "dueDate",
     header: () => <Translate name={"invoice.dataTable.dueDate"} />,
+    cell: ({ getValue }) => {
+      const date = getValue() as Date;
+
+      return date.toLocaleDateString();
+    },
   },
-  {
-    accessorKey: "currency",
-    header: () => <Translate name={"invoice.dataTable.currency"} />,
-  },
+  // {
+  //   accessorKey: "currency",
+  //   header: () => <Translate name={"invoice.dataTable.currency"} />,
+  // },
   {
     id: "actions",
     cell: DeleteAction,

@@ -25,15 +25,6 @@ export const invoiceTemplateGetAll = protectedProcedure
         ...getTableColumns(invoiceTemplatesTable),
       })
       .from(invoiceTemplatesTable)
-      .where(
-        input.filter.name
-          ? sql`replace(lower(${
-              invoiceTemplatesTable.name
-            }), ' ', '') like ${`%${input.filter.name
-              .toLowerCase()
-              .replace(" ", "")}%`}`
-          : undefined,
-      )
       .$dynamic();
 
     const data = await withPagination(
@@ -43,6 +34,14 @@ export const invoiceTemplateGetAll = protectedProcedure
         organizationId: input.organizationId,
       }),
       input,
+    ).where(
+      input.filter.name
+        ? sql`replace(lower(${
+            invoiceTemplatesTable.name
+          }), ' ', '') like ${`%${input.filter.name
+            .toLowerCase()
+            .replace(" ", "")}%`}`
+        : undefined,
     );
 
     return {

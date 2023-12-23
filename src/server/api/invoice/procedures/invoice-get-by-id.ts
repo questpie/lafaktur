@@ -16,14 +16,15 @@ export const invoiceGetById = protectedProcedure
           ...getTableColumns(invoicesTable),
         })
         .from(invoicesTable)
-        .where(and(eq(invoicesTable.id, input.id)))
         .limit(1)
         .$dynamic(),
       {
         column: invoicesTable.organizationId,
         userId: ctx.session.user.id,
       },
-    );
+    ).where(and(eq(invoicesTable.id, input.id)));
+
+    console.log(foundInvoice);
 
     if (!foundInvoice) {
       throw new TRPCError({

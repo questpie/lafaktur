@@ -77,7 +77,8 @@
   },
   "invoiceTemplate": {
     "err": {
-      "notFound": "Invoice Template not found"
+      "notFound": "Invoice Template not found",
+      "invalidOrganization": "You don't have access to this organization"
     },
     "newTemplate": "New Template",
     "editor": {

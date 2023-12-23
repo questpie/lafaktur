@@ -19,13 +19,14 @@ export const invoiceTemplateDeleteById = protectedProcedure
             id: invoiceTemplatesTable.id,
           })
           .from(invoiceTemplatesTable)
-          .where(and(eq(invoiceTemplatesTable.id, input.id)))
           .$dynamic(),
         {
           userId: ctx.session.user.id,
           column: invoiceTemplatesTable.organizationId,
         },
-      ).limit(1);
+      )
+        .where(and(eq(invoiceTemplatesTable.id, input.id)))
+        .limit(1);
 
       if (!foundInvoiceTemplate) {
         throw new TRPCError({

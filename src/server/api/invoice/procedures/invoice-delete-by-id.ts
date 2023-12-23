@@ -16,7 +16,6 @@ export const invoiceDeleteById = protectedProcedure
             id: invoicesTable.id,
           })
           .from(invoicesTable)
-          .where(and(eq(invoicesTable.id, input.id)))
           .limit(1)
           .$dynamic(),
         {
@@ -25,7 +24,7 @@ export const invoiceDeleteById = protectedProcedure
           organizationId: input.organizationId,
           role: "editor",
         },
-      );
+      ).where(and(eq(invoicesTable.id, input.id)));
 
       if (!foundInvoice) {
         throw new TRPCError({

@@ -77,10 +77,8 @@ export const invoicesTable = mysqlTable(
   "invoice",
   {
     id: bigint("id").notNull().primaryKey().autoincrement(),
-    customerId: bigint("customer_id")
-      .notNull()
-      .references(() => customersTable.id),
 
+    customerId: bigint("customer_id").references(() => customersTable.id),
     organizationId: bigint("organization_id")
       .notNull()
       .references(() => organizationsTable.id),
@@ -102,14 +100,13 @@ export const invoicesTable = mysqlTable(
       .$defaultFn(() => addDays(new Date(), 14)),
     supplyDate: timestamp("supply_date"),
 
-    dateOfPayment: timestamp("date_of_payment"),
-
-    currency: varchar("currency", { length: 16 }).notNull(),
-
-    templateId: bigint("template_id").notNull(),
-    templateData: typedJson<InvoiceTemplateData>("template_data").notNull(),
+    /** we are storing template reference,
+     * but also a copy of the template so we can prevent unwanted invoice mutation in case the template was mutated */
+    templateId: bigint("template_id"),
+    templateData: typedJson<InvoiceTemplateData>("template_data"),
 
     createdAt: timestamp("created_at").notNull().defaultNow(),
+    paidAt: timestamp("paid_at"),
   },
   (it) => ({
     compoundKey: uniqueIndex("organization_id_number_idx").on(
