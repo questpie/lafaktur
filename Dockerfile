@@ -19,9 +19,12 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# ENV NEXT_TELEMETRY_DISABLED 1
+ENV NEXT_TELEMETRY_DISABLED 1
 
-RUN yarn global add pnpm && SKIP_ENV_VALIDATION=1 pnpm run build
+RUN yarn global add pnpm
+# if database_url is set run migrations
+RUN if [ -n "$DATABASE_URL" ]; then pnpm migration:up; fi
+RUN SKIP_ENV_VALIDATION=1 pnpm run build;
 
 
 ##### RUNNER
@@ -31,7 +34,7 @@ WORKDIR /app
 
 ENV NODE_ENV production
 
-# ENV NEXT_TELEMETRY_DISABLED 1
+ENV NEXT_TELEMETRY_DISABLED 1
 
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
