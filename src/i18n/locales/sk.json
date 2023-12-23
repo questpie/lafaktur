@@ -108,8 +108,10 @@
         "description": "Naozaj chcete odstrániť túto faktúru?",
         "title": "Vymazať faktúru"
       },
-      "dueDate": "Do dátumu",
-      "loadMore": "Načítať viac"
+      "dueDate": "Dátum splatnosti",
+      "loadMore": "Načítať viac",
+      "number": "Faktúra č.",
+      "status": "Postavenie"
     },
     "err": {
       "notFound": "Nenašla sa žiadna faktúra"

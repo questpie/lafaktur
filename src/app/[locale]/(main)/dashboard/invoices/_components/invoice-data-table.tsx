@@ -11,6 +11,7 @@ import { useConfirmDialog } from "~/app/_components/ui/alert-dialog";
 import { Button } from "~/app/_components/ui/button";
 import { DataTable } from "~/app/_components/ui/data-table";
 import { Translate } from "~/app/_components/ui/translate";
+import { $t } from "~/i18n/dummy";
 import { api } from "~/trpc/react";
 import { type RouterOutputs } from "~/trpc/shared";
 
@@ -108,14 +109,21 @@ const columns: ColumnDef<Invoice>[] = [
   },
   {
     accessorKey: "number",
-    header: "Number",
+    header: () => <Translate name={$t("invoice.dataTable.number")} />,
+    cell: ({ getValue }) => (
+      <span className="line-clamp-1 text-ellipsis">{String(getValue())}</span>
+    ),
+  },
+  {
+    accessorKey: "status",
+    header: () => <Translate name={$t("invoice.dataTable.status")} />,
     cell: ({ getValue }) => (
       <span className="line-clamp-1 text-ellipsis">{String(getValue())}</span>
     ),
   },
   {
     accessorKey: "dueDate",
-    header: () => <Translate name={"invoice.dataTable.dueDate"} />,
+    header: () => <Translate name={$t("invoice.dataTable.dueDate")} />,
     cell: ({ getValue }) => {
       const date = getValue() as Date;
 

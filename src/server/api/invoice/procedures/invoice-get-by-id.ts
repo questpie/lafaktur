@@ -24,8 +24,6 @@ export const invoiceGetById = protectedProcedure
       },
     ).where(and(eq(invoicesTable.id, input.id)));
 
-    console.log(foundInvoice);
-
     if (!foundInvoice) {
       throw new TRPCError({
         code: "NOT_FOUND",

@@ -116,7 +116,9 @@
       },
       "loadMore": "Load more",
       "dueDate": "Due date",
-      "currency": "Currency"
+      "currency": "Currency",
+      "number": "Invoice no.",
+      "status": "Status"
     },
     "breadcrumbs": {
       "invoices": "Invoices"
