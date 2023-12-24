@@ -41,7 +41,7 @@ declare module "next-auth" {
  */
 export const authOptions: NextAuthOptions = {
   secret: env.NEXTAUTH_SECRET,
-  useSecureCookies: env.NEXTAUTH_URL.startsWith("https://"),
+  useSecureCookies: env.NEXTAUTH_URL?.startsWith("https://"),
   session: {
     /**
      * Force db even with credentials provider
