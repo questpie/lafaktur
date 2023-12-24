@@ -13,6 +13,7 @@ import { pgTable } from "drizzle-orm/pg-core";
 import { env } from "~/env.mjs";
 import { db } from "~/server/db";
 import { usersTable } from "~/server/db/schema";
+import { type Adapter } from "next-auth/adapters";
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
  * object and keep type safety.
@@ -62,7 +63,7 @@ export const authOptions: NextAuthOptions = {
     error: "/auth/error",
     // verifyRequest: "/auth/verify-request",k
   },
-  adapter: DrizzleAdapter(db, pgTable),
+  adapter: DrizzleAdapter(db, pgTable) as Adapter,
   providers: [
     ...(env.GOOGLE_CLIENT_ID && env.GOOGLE_CLIENT_SECRET
       ? [
