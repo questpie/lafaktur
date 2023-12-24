@@ -27,8 +27,6 @@ const modifiedAuthOptions = (opts: {
   const cookiePrefix = authOptions.useSecureCookies ? "__Secure-" : "";
   const sessionTokenCookieName = `${cookiePrefix}next-auth.session-token`;
 
-  console.log(sessionTokenCookieName);
-
   return {
     ...authOptions,
     jwt: {
@@ -68,7 +66,9 @@ const modifiedAuthOptions = (opts: {
             });
 
             opts.cookies.push(
-              `${sessionTokenCookieName}=${sessionToken}; Path=/; Expires=${sessionExpiry.toUTCString()}; HttpOnly; SameSite=Lax`,
+              `${sessionTokenCookieName}=${sessionToken}; Path=/; Expires=${sessionExpiry.toUTCString()}; HttpOnly; SameSite=Lax; ${
+                authOptions.useSecureCookies ? "Secure;" : ""
+              }`,
             );
           }
         }
