@@ -53,6 +53,12 @@ export const env = createEnv({
     S3_USE_SSL: zBoolean().default(
       process.env.NODE_ENV === "production" ? "true" : "false",
     ),
+
+    MAIL_FROM: z.string().default("noreply@example.com <Lafaktur>"),
+    RESEND_KEY:
+      process.env.NODE_ENV === "production"
+        ? z.string()
+        : z.string().optional(),
   },
 
   /**
@@ -84,6 +90,9 @@ export const env = createEnv({
     S3_REGION: process.env.S3_REGION,
     S3_USE_PATH_STYLE: process.env.S3_USE_PATH_STYLE,
     S3_USE_SSL: process.env.S3_USE_SSL,
+
+    MAIL_FROM: process.env.MAIL_FROM,
+    RESEND_KEY: process.env.RESEND_KEY,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially
