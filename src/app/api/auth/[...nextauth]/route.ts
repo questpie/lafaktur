@@ -27,6 +27,8 @@ const modifiedAuthOptions = (opts: {
   const cookiePrefix = authOptions.useSecureCookies ? "__Secure-" : "";
   const sessionTokenCookieName = `${cookiePrefix}next-auth.session-token`;
 
+  console.log(sessionTokenCookieName);
+
   return {
     ...authOptions,
     jwt: {
