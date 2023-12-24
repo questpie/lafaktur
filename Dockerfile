@@ -24,7 +24,7 @@ COPY . .
 RUN yarn global add pnpm
 # if database_url is set run migrations
 RUN if [ -n "$DATABASE_URL" ]; then SKIP_ENV_VALIDATION=1 pnpm migration:up; fi
-RUN SKIP_ENV_VALIDATION=1 pnpm build;
+RUN SKIP_ENV_VALIDATION=1 pnpm build
 
 
 ##### RUNNER
