@@ -63,10 +63,21 @@
           "description": "Ďalšie pokyny nájdete vo svojom e-maile.",
           "message": "E-mail na obnovenie hesla bol odoslaný"
         }
+      },
+      "resetPassword": {
+        "success": {
+          "description": "Prihláste sa do svojho účtu.",
+          "message": "Vaše heslo bolo úspešne zmenené."
+        }
       }
     },
     "resetPasswordEmail": {
       "subject": "Lafaktur - Obnoviť heslo"
+    },
+    "resetPassword": {
+      "description": "Zadajte nové heslo nižšie, aby ste ho mohli resetovať.",
+      "submit": "Resetovať",
+      "title": "Obnoviť heslo"
     }
   },
   "homepage": {},

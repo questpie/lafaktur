@@ -101,7 +101,11 @@ export default function ResetPasswordForm({ token }: ResetPasswordFormProps) {
                   <FormItem>
                     <FormLabel>{t("auth.signUp.password.label")}</FormLabel>
                     <FormControl>
-                      <Input {...field} type="email" placeholder={"*******"} />
+                      <Input
+                        {...field}
+                        type="password"
+                        placeholder={"*******"}
+                      />
                     </FormControl>
                     <FormDescription />
                     <FormMessage />
@@ -119,7 +123,11 @@ export default function ResetPasswordForm({ token }: ResetPasswordFormProps) {
                       {t("auth.signUp.confirmPassword.label")}
                     </FormLabel>
                     <FormControl>
-                      <Input {...field} type="email" placeholder={"*******"} />
+                      <Input
+                        {...field}
+                        type="password"
+                        placeholder={"*******"}
+                      />
                     </FormControl>
                     <FormDescription />
                     <FormMessage />

@@ -95,6 +95,10 @@ class ResendMailClient extends MailClient {
       to: opts.to,
       subject: opts.subject,
       react: <opts.component {...(opts.props as any)} />,
+      /* we have to render plaintext manually, resend doesn't do this for us  */
+      text: render(<opts.component {...(opts.props as any)} />, {
+        plainText: true,
+      }),
     });
 
     if (!result.data || result.error) {

@@ -56,7 +56,7 @@ export const forgotPassword = publicProcedure
         });
       }
 
-      const resetPasswordLink = `${env.NEXT_PUBLIC_APP_URL}/reset-password?token=${verificationToken.token}`;
+      const resetPasswordLink = `${env.NEXT_PUBLIC_APP_URL}/auth/reset-password?token=${verificationToken.token}`;
 
       const mailClient = await getMailClient();
       const res = await mailClient.sendEmail({
