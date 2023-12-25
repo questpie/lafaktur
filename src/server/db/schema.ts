@@ -419,12 +419,19 @@ export const sessionsRelations = relations(sessionsTable, ({ one }) => ({
   }),
 }));
 
+export const verificationTokenTypeEnum = pgEnum("verification_token_type", [
+  "reset-password",
+  "other",
+]);
+
 export const verificationTokensTable = pgTable(
   "verificationToken",
   {
     identifier: varchar("identifier", { length: 255 }).notNull(),
     token: varchar("token", { length: 255 }).notNull(),
     expires: timestamp("expires").notNull(),
+    /** our custom enum we are using to determine the origin of the token */
+    type: verificationTokenTypeEnum("type").default("other"),
   },
   (vt) => ({
     compoundKey: primaryKey({ columns: [vt.identifier, vt.token] }),

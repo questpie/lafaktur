@@ -1,14 +1,14 @@
 import { TRPCError } from "@trpc/server";
 import { hash } from "bcrypt";
 import { randomUUID } from "crypto";
-import { and, eq } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { ZodError } from "zod";
 import { $t } from "~/i18n/dummy";
 import { publicProcedure } from "~/server/api/trpc";
 import { accountsTable, usersTable, type UserInsert } from "~/server/db/schema";
 import { signUpSchema } from "~/shared/auth/auth-schemas";
 
-export const signUpMutation = publicProcedure
+export const signUp = publicProcedure
   .input(signUpSchema)
   .mutation(async ({ input, ctx }) => {
     return ctx.db.transaction(async (trx) => {
@@ -47,20 +47,15 @@ export const signUpMutation = publicProcedure
         });
       }
 
-      await trx.insert(accountsTable).values({
-        userId: createdUser.id,
-        type: "credentials",
-        provider: "credentials",
-        providerAccountId: createdUser.id,
-      });
-
-      const createdAccount = await trx.query.accountsTable.findFirst({
-        where: () =>
-          and(
-            eq(accountsTable.userId, createdUser.id),
-            eq(accountsTable.provider, "credentials"),
-          ),
-      });
+      const createdAccount = await trx
+        .insert(accountsTable)
+        .values({
+          userId: createdUser.id,
+          type: "credentials",
+          provider: "credentials",
+          providerAccountId: createdUser.id,
+        })
+        .returning();
 
       if (!createdAccount) {
         throw new TRPCError({

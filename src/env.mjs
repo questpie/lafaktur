@@ -59,6 +59,16 @@ export const env = createEnv({
       process.env.NODE_ENV === "production"
         ? z.string()
         : z.string().optional(),
+
+    /**
+     * Config values overridable by env variables
+     */
+
+    /**
+     * How long should the reset password token be valid for in milliseconds.
+     * @default 1hour
+     */
+    RESET_PASSWORD_EXPIRES_IN_MS: z.number().default(1000 * 60 * 60),
   },
 
   /**
@@ -67,7 +77,7 @@ export const env = createEnv({
    * `NEXT_PUBLIC_`.
    */
   client: {
-    // NEXT_PUBLIC_CLIENTVAR: z.string(),
+    NEXT_PUBLIC_APP_URL: z.string().min(1),
   },
 
   /**
@@ -93,6 +103,10 @@ export const env = createEnv({
 
     MAIL_FROM: process.env.MAIL_FROM,
     RESEND_KEY: process.env.RESEND_KEY,
+
+    RESET_PASSWORD_EXPIRES_IN_MS: process.env.RESET_PASSWORD_EXPIRES_IN_MS,
+
+    NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

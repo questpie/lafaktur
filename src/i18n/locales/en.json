@@ -8,10 +8,13 @@
       "invalidEmail": "Invalid email address",
       "passwordTooShort": "Password must be at least 8 characters long",
       "signInFailed": "Sign in failed.",
-      "pleaseCheckYourCredentials": "Please check your credentials."
+      "pleaseCheckYourCredentials": "Please check your credentials.",
+      "invalidToken": "Invalid token",
+      "resetPasswordFailed": "Password reset failed",
+      "emailNotFound": "User not found"
     },
     "signIn": {
-      "title": "Welcome back!",
+      "title": "Welcome back !",
       "description": "Enter your email below to sign in to your account!",
       "email": {
         "label": "Email",
@@ -44,6 +47,37 @@
       },
       "haveAnAccountLogIn": "Have an account already? <link>Sign in</link>.",
       "submit": "Create account"
+    },
+    "forgotPassword": {
+      "title": "Forgot password ?",
+      "description": "To reset your password enter your email below.",
+      "email": {
+        "label": "Email"
+      },
+      "submit": "Reset Password",
+      "login": "Do you remember your password? <link>Sign in</link>."
+    },
+    "toast": {
+      "forgotPassword": {
+        "success": {
+          "message": "Reset password email sent",
+          "description": "Please check your email for further instructions."
+        }
+      },
+      "resetPassword": {
+        "success": {
+          "message": "Your password was changed successfully.",
+          "description": "Please login to your account."
+        }
+      }
+    },
+    "resetPasswordEmail": {
+      "subject": "Lafaktur - Reset password"
+    },
+    "resetPassword": {
+      "title": "Reset your password",
+      "description": "Please enter new password below to reset it.",
+      "submit": "Reset"
     }
   },
   "dashboard": {

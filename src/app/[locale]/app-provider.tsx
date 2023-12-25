@@ -4,6 +4,7 @@ import { AppProgressBar } from "next-nprogress-bar";
 import { type PropsWithChildren } from "react";
 import { ConfirmDialogProvider } from "~/app/_components/ui/alert-dialog";
 import { DialogProvider } from "~/app/_components/ui/dialog";
+import { Toaster } from "~/app/_components/ui/sonner";
 
 export const rootStore = createStore();
 
@@ -18,6 +19,7 @@ export function AppProvider(props: PropsWithChildren) {
           showSpinner: false,
         }}
       />
+      <Toaster />
       <DialogProvider>
         <ConfirmDialogProvider>{props.children}</ConfirmDialogProvider>
       </DialogProvider>

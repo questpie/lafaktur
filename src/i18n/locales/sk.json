@@ -8,7 +8,10 @@
       "passwordTooShort": "Heslo musí mať aspoň 8 znakov",
       "passwordsDontMatch": "Heslá sa nezhodujú",
       "signInFailed": "Prihlásenie zlyhalo.",
-      "pleaseCheckYourCredentials": "Skontrolujte, či ste zadali správne údaje."
+      "pleaseCheckYourCredentials": "Skontrolujte, či ste zadali správne údaje.",
+      "invalidToken": "Neplatný Token",
+      "resetPasswordFailed": "Obnovenie hesla zlyhalo",
+      "emailNotFound": "Užívateľ Nenájdený"
     },
     "signIn": {
       "orCreateAnAccountHere": "Nemáte ešte účet ? <link>Zaregistrujte sa</link> !",
@@ -22,7 +25,7 @@
         "label": "Heslo"
       },
       "submit": "Prihlásiť sa",
-      "title": "Vitaj späť!"
+      "title": "Vitajte späť !"
     },
     "signUp": {
       "haveAnAccountLogIn": "Už máte účet? \n<link>Prihláste sa</link>.",
@@ -44,7 +47,27 @@
       "submit": "Vytvoriť účet",
       "title": "Vytvoriť účet"
     },
-    "orContinueWith": "Alebo pokračujte s"
+    "orContinueWith": "Alebo pokračujte s",
+    "forgotPassword": {
+      "description": "Ak chcete obnoviť heslo, zadajte svoj e-mail nižšie.",
+      "email": {
+        "label": "Email"
+      },
+      "login": "Pamätáte si svoje heslo? \n<link>Prihláste sa</link>.",
+      "submit": "Obnoviť heslo",
+      "title": "Zabudli ste heslo ?"
+    },
+    "toast": {
+      "forgotPassword": {
+        "success": {
+          "description": "Ďalšie pokyny nájdete vo svojom e-maile.",
+          "message": "E-mail na obnovenie hesla bol odoslaný"
+        }
+      }
+    },
+    "resetPasswordEmail": {
+      "subject": "Lafaktur - Obnoviť heslo"
+    }
   },
   "homepage": {},
   "dashboard": {
@@ -78,7 +101,9 @@
   },
   "invoiceTemplate": {
     "err": {
-      "notFound": "Šablóna faktúry sa nenašla"
+      "notFound": "Šablóna faktúry sa nenašla",
+      "createFailed": "Nepodarilo sa vytvoriť šablónu faktúry",
+      "invalidOrganization": "K tejto organizácii nemáte prístup"
     },
     "newTemplate": "Nová šablóna",
     "editor": {
@@ -114,7 +139,8 @@
       "status": "Postavenie"
     },
     "err": {
-      "notFound": "Nenašla sa žiadna faktúra"
+      "notFound": "Nenašla sa žiadna faktúra",
+      "createFailed": "Vytvorenie faktúry zlyhalo"
     },
     "invoicePage": {
       "mainAction": "Pridať faktúru",
@@ -122,6 +148,11 @@
     },
     "breadcrumbs": {
       "invoices": "Faktúry"
+    }
+  },
+  "organization": {
+    "err": {
+      "createFailed": "Nepodarilo sa vytvoriť organizáciu"
     }
   }
 }

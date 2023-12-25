@@ -7,12 +7,15 @@ import type SMTPTransport from "nodemailer/lib/smtp-transport";
 import { Resend } from "resend";
 import { env } from "~/env.mjs";
 
-export type SendEmailOptions<TProps extends JSX.IntrinsicAttributes> = {
+export type SendEmailOptions<
+  TCmp extends React.ElementType,
+  TProps = React.ComponentPropsWithoutRef<TCmp>,
+> = {
   from?: string;
   to: string;
   subject: string;
 
-  component: React.ComponentType<TProps>;
+  component: TCmp;
   props: TProps;
 };
 
@@ -30,9 +33,10 @@ class MailSendError extends Error {
 }
 
 abstract class MailClient {
-  abstract sendEmail<TProps extends JSX.IntrinsicAttributes>(
-    opts: SendEmailOptions<TProps>,
-  ): Promise<SendMailResult>;
+  abstract sendEmail<
+    TCmp extends React.ElementType,
+    TProps = React.ComponentPropsWithoutRef<TCmp>,
+  >(opts: SendEmailOptions<TCmp, TProps>): Promise<SendMailResult>;
 }
 
 //just a scoped cache
@@ -43,38 +47,38 @@ class SmtpMailClient extends MailClient {
     super();
   }
 
-  async sendEmail<TProps extends JSX.IntrinsicAttributes>(
-    opts: SendEmailOptions<TProps>,
-  ): Promise<SendMailResult> {
-    const html = render(<opts.component {...opts.props} />);
+  async sendEmail<
+    TCmp extends React.ElementType,
+    TProps = React.ComponentPropsWithoutRef<TCmp>,
+  >(opts: SendEmailOptions<TCmp, TProps>): Promise<SendMailResult> {
+    const html = render(<opts.component {...(opts.props as any)} />);
+    const text = render(<opts.component {...(opts.props as any)} />, {
+      plainText: true,
+    });
 
-    const result = (await this.testTransport.sendMail({
-      from: opts.from ?? env.MAIL_FROM,
-      to: opts.to,
-      subject: opts.subject,
-      html,
-    })) as {
-      err?: Error;
-      info?: SMTPTransport.SentMessageInfo | SESTransport.SentMessageInfo;
-    };
+    try {
+      const result = (await this.testTransport.sendMail({
+        from: opts.from ?? env.MAIL_FROM,
+        sender: opts.from ?? env.MAIL_FROM,
+        to: opts.to,
+        subject: opts.subject,
+        html,
+        text,
+      })) as SMTPTransport.SentMessageInfo | SESTransport.SentMessageInfo;
 
-    if (!result.info || result.err) {
+      if (env.NODE_ENV !== "production") {
+        // eslint-disable-next-line no-console
+        console.debug("Preview URL: %s", nodemailer.getTestMessageUrl(result));
+      }
+
       return {
-        error: new MailSendError(result.err?.message ?? "Unknown error"),
+        id: result.messageId,
+      };
+    } catch (err) {
+      return {
+        error: new MailSendError((err as Error).message ?? "Unknown error"),
       };
     }
-
-    if (env.NODE_ENV !== "production") {
-      // eslint-disable-next-line no-console
-      console.debug(
-        "Preview URL: %s",
-        nodemailer.getTestMessageUrl(result.info),
-      );
-    }
-
-    return {
-      id: result.info.messageId,
-    };
   }
 }
 
@@ -82,14 +86,15 @@ class ResendMailClient extends MailClient {
   constructor(private readonly resend: Resend) {
     super();
   }
-  async sendEmail<TProps extends JSX.IntrinsicAttributes>(
-    opts: SendEmailOptions<TProps>,
-  ): Promise<SendMailResult> {
+  async sendEmail<
+    TCmp extends React.ElementType,
+    TProps = React.ComponentPropsWithoutRef<TCmp>,
+  >(opts: SendEmailOptions<TCmp, TProps>): Promise<SendMailResult> {
     const result = await this.resend.emails.send({
       from: opts.from ?? env.MAIL_FROM,
       to: opts.to,
       subject: opts.subject,
-      react: <opts.component {...opts.props} />,
+      react: <opts.component {...(opts.props as any)} />,
     });
 
     if (!result.data || result.error) {
