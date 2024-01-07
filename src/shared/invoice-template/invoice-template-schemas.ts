@@ -256,10 +256,6 @@ export const invoiceTemplateDataSchema = z.object({
   paymentTypeLabels: z.record(invoicePaymentTypeSchema, z.string()).optional(),
 
   /**
-   * integer value in range 0 - 100
-   */
-  vatRate: z.number().int().min(0).max(100).optional(),
-  /**
    * If true, we will calculate VAT from price
    * so total = price_with_vat + price_with_vat * vatRate
    * If false, we will calculate VAT from price

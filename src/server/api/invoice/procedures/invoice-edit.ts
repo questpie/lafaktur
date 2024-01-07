@@ -1,17 +1,11 @@
 import { TRPCError } from "@trpc/server";
 import { eq } from "drizzle-orm";
 import { $t } from "~/i18n/dummy";
-import {
-  getOrganization,
-  withOrganizationAccess,
-} from "~/server/api/organization/organization-queries";
+import { withOrganizationAccess } from "~/server/api/organization/organization-queries";
 import { protectedProcedure } from "~/server/api/trpc";
-import {
-  insertInvoiceSchema,
-  invoicesTable,
-  organizationsTable,
-} from "~/server/db/schema";
+import { insertInvoiceSchema, invoicesTable } from "~/server/db/schema";
 
+// TODO: not finished
 export const invoiceEdit = protectedProcedure
   .input(
     insertInvoiceSchema.partial().required({ organizationId: true, id: true }),

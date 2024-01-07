@@ -1,6 +1,8 @@
+import { zodResolver } from "@hookform/resolvers/zod";
+import { addDays } from "date-fns";
 import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useState } from "react";
-import { useForm, useFormContext } from "react-hook-form";
+import { useFieldArray, useForm, useFormContext } from "react-hook-form";
 import { LuUser } from "react-icons/lu";
 import { useSelectedOrganization } from "~/app/[locale]/(main)/dashboard/_components/organization-guard";
 import {
@@ -22,28 +24,73 @@ import {
 } from "~/app/_components/ui/form";
 import { Input } from "~/app/_components/ui/input";
 import { MultiSelectAsyncCreatable } from "~/app/_components/ui/multi-select-async-creatable";
-import { debounce, useDebounce } from "~/app/_hooks/use-debounce";
+import { createInvoiceSchema } from "~/shared/invoice/invoice-schema";
 import { api } from "~/trpc/react";
-import { type RouterOutputs } from "~/trpc/shared";
+import { type RouterInputs } from "~/trpc/shared";
 
-export type EditInvoiceFormValues = RouterOutputs["invoice"]["getById"];
+export type CreateInvoiceFormValues = RouterInputs["invoice"]["create"];
 export type EditInvoiceFormProps = {
-  invoice: RouterOutputs["invoice"]["getById"];
+  invoiceNumber?: string;
 };
 
-export function EditInvoiceForm(props: EditInvoiceFormProps) {
-  const form = useForm<EditInvoiceFormValues>({
+export function CreateInvoiceForm(props: EditInvoiceFormProps) {
+  const selectedOrganization = useSelectedOrganization();
+  const form = useForm<CreateInvoiceFormValues>({
+    resolver: zodResolver(createInvoiceSchema),
     defaultValues: {
-      ...props.invoice,
+      number: props.invoiceNumber,
+      reference: props.invoiceNumber,
+      variableSymbol: props.invoiceNumber,
+      specificSymbol: "",
+      constantSymbol: "",
+
+      issueDate: new Date(),
+      dueDate: addDays(new Date(), 14),
+      supplyDate: undefined,
+
+      currency: "EUR",
+
+      // TODO: we should probably make some sort of enum or something
+      paymentMethod: "Bank transfer",
+      organizationId: selectedOrganization.id,
+      supplierBankAccount: selectedOrganization.bankAccount ?? "",
+      supplierBankCode: selectedOrganization.bankCode ?? "",
+      supplierName: selectedOrganization.name,
+      supplierBusinessId: selectedOrganization.businessId ?? "",
+      supplierTaxId: selectedOrganization.taxId ?? "",
+      supplierVatId: selectedOrganization.vatId ?? "",
+      supplierStreet: selectedOrganization.street ?? "",
+      supplierCity: selectedOrganization.city ?? "",
+      supplierZip: selectedOrganization.zip ?? "",
+      supplierCountry: "",
+
+      customerId: undefined,
+      customerName: "",
+      customerBusinessId: "",
+      customerTaxId: "",
+      customerVatId: "",
+      customerStreet: "",
+      customerCity: "",
+      customerZip: "",
+      customerCountry: "",
+      customerBankAccount: "",
+      customerBankCode: "",
+
+      invoiceItems: [],
+
+      total: 0,
+      totalWithoutVat: 0,
+
+      templateId: undefined,
     },
   });
 
-  const editMutation = api.invoice.edit.useMutation();
+  const createMutation = api.invoice.create.useMutation();
 
   const t = useTranslations();
 
   const handleSubmit = form.handleSubmit((values) => {
-    editMutation.mutate(values);
+    createMutation.mutate(values);
   });
 
   return (
@@ -235,7 +282,7 @@ export function EditInvoiceForm(props: EditInvoiceFormProps) {
         </Accordion>
         <div className="sticky bottom-0 bg-background py-4">
           <div className="flex max-w-3xl flex-row items-center justify-end">
-            <Button type="submit" isLoading={editMutation.isLoading}>
+            <Button type="submit" isLoading={createMutation.isLoading}>
               Save
             </Button>
           </div>
@@ -248,13 +295,13 @@ export function EditInvoiceForm(props: EditInvoiceFormProps) {
 function CustomerFields() {
   const selectedOrganization = useSelectedOrganization();
 
-  const form = useFormContext<EditInvoiceFormValues>();
+  const form = useFormContext<CreateInvoiceFormValues>();
 
   const customerId = form.watch("customerId");
   const createCustomerMutation = api.customer.create.useMutation();
   const selectedCustomerQuery = api.customer.getById.useQuery(
     {
-      id: customerId!,
+      id: customerId,
       organizationId: selectedOrganization.id,
     },
     {
@@ -472,7 +519,7 @@ function CustomerFields() {
 }
 
 function SupplierFields() {
-  const form = useFormContext<EditInvoiceFormValues>();
+  const form = useFormContext<CreateInvoiceFormValues>();
 
   return (
     <>
@@ -596,4 +643,18 @@ function SupplierFields() {
       />
     </>
   );
+}
+
+function InvoiceItems() {
+  const form = useFormContext<CreateInvoiceFormValues>();
+  const invoiceItems = useFieldArray({
+    name: "invoiceItems",
+    control: form.control,
+  });
+
+  function handleCreateItem() {
+    // optimistic update then invalidate
+  }
+
+  return <div className="col-span-12 flex flex-col gap-4"></div>;
 }

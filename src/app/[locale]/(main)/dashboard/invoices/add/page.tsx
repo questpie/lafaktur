@@ -11,23 +11,22 @@ export type InvoicePageProps = {
   params: { id: string };
 };
 
-export default function InvoicePage(props: InvoicePageProps) {
+export default function AddInvoicePage(props: InvoicePageProps) {
   const selectedOrganization = useSelectedOrganization();
 
-  const [invoice] = api.invoice.getById.useSuspenseQuery({
-    id: Number(props.params.id),
+  const [nextInvoice] = api.invoice.getNextNumber.useSuspenseQuery({
     organizationId: selectedOrganization.id,
   });
 
   useHeader({
-    title: `Invoice #${invoice.number}`,
+    title: `Create invoice`,
   });
 
   useBreadcrumbSegment({
-    label: `Invoice #${invoice.number}`,
+    label: `Create invoice`,
     href: "/dashboard/invoices/add",
     level: 2,
   });
 
-  return <CreateInvoiceForm invoice={invoice} />;
+  return <CreateInvoiceForm invoiceNumber={nextInvoice.number} />;
 }

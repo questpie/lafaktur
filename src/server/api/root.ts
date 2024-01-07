@@ -12,10 +12,10 @@ import { createTRPCRouter } from "~/server/api/trpc";
  */
 export const appRouter = createTRPCRouter({
   auth: authRouter,
+  customer: customerRouter,
   invoice: invoiceRouter,
   invoiceTemplate: invoiceTemplateRouter,
   organization: organizationRouter,
-  customer: customerRouter,
 });
 
 // export type definition of API

@@ -44,9 +44,14 @@ export const invoicesItemsTable = pgTable(
       .references(() => invoicesTable.id),
     name: varchar("name", { length: 255 }).notNull(),
     quantity: integer("quantity").notNull(),
+
     unit: varchar("unit", { length: 255 }).notNull(),
+
+    vatRate: integer("vat_rate").notNull().default(0),
+
     unitPrice: integer("unit_price").notNull(),
     unitPriceWithoutVat: integer("unit_price_without_vat").notNull(),
+
     total: integer("total").notNull(),
     totalWithoutVat: integer("total_without_vat").notNull(),
   },
@@ -132,6 +137,9 @@ export const invoicesTable = pgTable(
      * but also a copy of the template so we can prevent unwanted invoice mutation in case the template was mutated */
     templateId: bigint("template_id"),
     templateData: typedJson<InvoiceTemplateData>("template_data"),
+
+    total: integer("total").notNull().default(0),
+    totalWithoutVat: integer("total_without_vat").notNull().default(0),
 
     createdAt: timestamp("created_at").notNull().defaultNow(),
     paidAt: timestamp("paid_at"),
