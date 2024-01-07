@@ -26,7 +26,7 @@ export const customerGetById = protectedProcedure
     if (!foundCustomer) {
       throw new TRPCError({
         code: "NOT_FOUND",
-        message: $t("invoiceTemplate.err.notFound"),
+        message: $t("customer.err.notFound"),
       });
     }
 

@@ -1,5 +1,4 @@
-import { getTableColumns, ilike, sql } from "drizzle-orm";
-import { type PgColumn } from "drizzle-orm/pg-core";
+import { getTableColumns, ilike } from "drizzle-orm";
 import { z } from "zod";
 import { withOrganizationAccess } from "~/server/api/organization/organization-queries";
 import { protectedProcedure } from "~/server/api/trpc";

@@ -16,18 +16,19 @@ export const invoiceGetById = protectedProcedure
           ...getTableColumns(invoicesTable),
         })
         .from(invoicesTable)
-        .limit(1)
         .$dynamic(),
       {
         column: invoicesTable.organizationId,
         userId: ctx.session.user.id,
       },
-    ).where(and(eq(invoicesTable.id, input.id)));
+    )
+      .where(and(eq(invoicesTable.id, input.id)))
+      .limit(1);
 
     if (!foundInvoice) {
       throw new TRPCError({
         code: "NOT_FOUND",
-        message: $t("invoiceTemplate.err.notFound"),
+        message: $t("invoice.err.notFound"),
       });
     }
 

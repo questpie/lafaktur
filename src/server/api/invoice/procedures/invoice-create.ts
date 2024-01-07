@@ -35,7 +35,7 @@ export const invoiceCreate = protectedProcedure
       if (!organization) {
         throw new TRPCError({
           code: "FORBIDDEN",
-          message: $t("invoiceTemplate.err.invalidOrganization"),
+          message: $t("common.err.invalidOrganization"),
         });
       }
 
@@ -46,14 +46,13 @@ export const invoiceCreate = protectedProcedure
           })
           .from(invoicesTable)
           .orderBy(desc(invoicesTable.issueDate))
-          .limit(1)
           .$dynamic(),
         {
           column: invoicesTable.organizationId,
           userId: ctx.session.user.id,
           organizationId: input.organizationId,
         },
-      );
+      ).limit(1);
 
       const number = getNextInvoiceNumber(
         organization.invoiceNumbering,

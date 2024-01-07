@@ -1,20 +1,20 @@
 import { TRPCError } from "@trpc/server";
-import { eq } from "drizzle-orm";
+import { desc, eq } from "drizzle-orm";
+import { z } from "zod";
 import { $t } from "~/i18n/dummy";
-import {
-  getOrganization,
-  withOrganizationAccess,
-} from "~/server/api/organization/organization-queries";
+import { withOrganizationAccess } from "~/server/api/organization/organization-queries";
 import { protectedProcedure } from "~/server/api/trpc";
 import {
-  insertInvoiceSchema,
+  insertInvoiceItemSchema,
+  invoicesItemsTable,
   invoicesTable,
-  organizationsTable,
 } from "~/server/db/schema";
 
-export const invoiceEdit = protectedProcedure
+export const invoiceItemCreate = protectedProcedure
   .input(
-    insertInvoiceSchema.partial().required({ organizationId: true, id: true }),
+    insertInvoiceItemSchema.extend({
+      organizationId: z.number(),
+    }),
   )
   .mutation(async ({ ctx, input }) => {
     return ctx.db.transaction(async (trx) => {
@@ -30,7 +30,10 @@ export const invoiceEdit = protectedProcedure
           userId: ctx.session.user.id,
           organizationId: input.organizationId,
         },
-      ).where(eq(invoicesTable.id, input.id));
+      )
+        .where(eq(invoicesTable.id, input.invoiceId))
+        .orderBy(desc(invoicesTable.issueDate))
+        .limit(1);
 
       if (!invoice) {
         throw new TRPCError({
@@ -39,14 +42,22 @@ export const invoiceEdit = protectedProcedure
         });
       }
 
-      const [updatedInvoice] = await trx
-        .update(invoicesTable)
-        .set({
+      const [newInvoiceItem] = await trx
+        .insert(invoicesItemsTable)
+        .values({
           ...input,
         })
-        .where(eq(invoicesTable.id, input.id))
-        .returning();
+        .returning({ id: invoicesTable.id });
 
-      return updatedInvoice;
+      if (!newInvoiceItem) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: $t("invoiceItem.err.createFailed"),
+        });
+      }
+
+      return {
+        id: newInvoiceItem.id,
+      };
     });
   });

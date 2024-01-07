@@ -132,7 +132,10 @@
     "noResults": "No results."
   },
   "common": {
-    "add": "Add"
+    "add": "Add",
+    "err": {
+      "invalidOrganization": "You don't have access to this organization"
+    }
   },
   "invoice": {
     "err": {
@@ -164,6 +167,19 @@
   "organization": {
     "err": {
       "createFailed": "Failed to create organization"
+    }
+  },
+  "invoiceItem": {
+    "err": {
+      "notFound": "No invoice item found",
+      "invoiceItemNotFound": "Invoice item not found",
+      "createFailed": "Failed to create invoice item"
+    }
+  },
+  "customer": {
+    "err": {
+      "notFound": "Customer was not found",
+      "createFailed": "Failed to create customer"
     }
   }
 }

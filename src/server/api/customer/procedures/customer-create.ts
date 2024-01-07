@@ -25,7 +25,7 @@ export const customerCreate = protectedProcedure
       if (!organization) {
         throw new TRPCError({
           code: "FORBIDDEN",
-          message: $t("invoiceTemplate.err.invalidOrganization"),
+          message: $t("common.err.invalidOrganization"),
         });
       }
 
@@ -39,7 +39,7 @@ export const customerCreate = protectedProcedure
       if (!newCustomer) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
-          message: $t("invoice.err.createFailed"),
+          message: $t("customer.err.createFailed"),
         });
       }
 
