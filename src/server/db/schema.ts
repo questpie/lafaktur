@@ -87,6 +87,32 @@ export const invoicesTable = pgTable(
       .notNull()
       .references(() => organizationsTable.id),
 
+    // we need to keep the supplier data in the invoice because the supplier can change
+    supplierName: varchar("supplier_name", { length: 255 }).notNull(),
+    supplierStreet: varchar("supplier_street", { length: 255 }),
+    supplierCity: varchar("supplier_city", { length: 255 }),
+    supplierZip: varchar("supplier_zip", { length: 255 }),
+    supplierCountry: varchar("supplier_country", { length: 255 }),
+    supplierBusinessId: varchar("supplier_business_id", { length: 255 }),
+    supplierTaxId: varchar("supplier_tax_id", { length: 255 }),
+    supplierVatId: varchar("supplier_vat_id", { length: 255 }),
+    supplierBankAccount: varchar("supplier_bank_account", { length: 255 }),
+    supplierBankCode: varchar("supplier_bank_code", { length: 255 }),
+
+    // we need to keep the customer data in the invoice because the customer can change
+    customerName: varchar("customer_name", { length: 255 }).notNull(),
+    customerStreet: varchar("customer_street", { length: 255 }),
+    customerCity: varchar("customer_city", { length: 255 }),
+    customerZip: varchar("customer_zip", { length: 255 }),
+    customerCountry: varchar("customer_country", { length: 255 }),
+    customerBusinessId: varchar("customer_business_id", { length: 255 }),
+    customerTaxId: varchar("customer_tax_id", { length: 255 }),
+    customerVatId: varchar("customer_vat_id", { length: 255 }),
+    customerBankAccount: varchar("customer_bank_account", { length: 255 }),
+    customerBankCode: varchar("customer_bank_code", { length: 255 }),
+
+    paymentMethod: varchar("payment_method", { length: 255 }),
+
     number: varchar("number", { length: 255 }).notNull(),
     reference: varchar("reference", { length: 255 }),
 

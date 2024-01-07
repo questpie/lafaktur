@@ -4,6 +4,7 @@ import {
   useHeader,
 } from "~/app/[locale]/(main)/dashboard/_components/header";
 import { useSelectedOrganization } from "~/app/[locale]/(main)/dashboard/_components/organization-guard";
+import { EditInvoiceForm } from "~/app/[locale]/(main)/dashboard/invoices/_components/edit-invoice-form";
 import { api } from "~/trpc/react";
 
 export type InvoicePageProps = {
@@ -28,5 +29,5 @@ export default function InvoicePage(props: InvoicePageProps) {
     level: 2,
   });
 
-  return <div></div>;
+  return <EditInvoiceForm invoice={invoice} />;
 }

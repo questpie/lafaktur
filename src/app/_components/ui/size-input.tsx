@@ -74,9 +74,9 @@ export function SizeInput({
     }
 
     // set cursor to sw-resize
-    document.body.style.cursor = "ew-resize";
 
     const onMouseMove = (e: MouseEvent) => {
+      document.body.style.cursor = "ew-resize";
       if (!value) return;
       if (startX === null) {
         return;

@@ -62,6 +62,24 @@ function Calendar({
         IconLeft: ({ ...props }) => <ChevronLeftIcon className="h-4 w-4" />,
         IconRight: ({ ...props }) => <ChevronRightIcon className="h-4 w-4" />,
       }}
+      // TODO: localize the week start day somehow
+      weekStartsOn={1}
+      formatters={{
+        formatMonthCaption: (month) =>
+          month?.toLocaleDateString(undefined, {
+            month: "long",
+            year: "numeric",
+          }),
+        formatWeekdayName: (weekday) =>
+          weekday?.toLocaleDateString(undefined, {
+            weekday: "short",
+          }),
+        formatCaption: (month) =>
+          month?.toLocaleDateString(undefined, {
+            month: "long",
+            year: "numeric",
+          }),
+      }}
       {...props}
     />
   );

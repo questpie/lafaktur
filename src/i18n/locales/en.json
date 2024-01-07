@@ -137,7 +137,8 @@
   "invoice": {
     "err": {
       "notFound": "No invoice found",
-      "createFailed": "Failed to create invoice"
+      "createFailed": "Failed to create invoice",
+      "invoiceNotFound": "Invoice not found"
     },
     "invoicePage": {
       "title": "Your invoices",

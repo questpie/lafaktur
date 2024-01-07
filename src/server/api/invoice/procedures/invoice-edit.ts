@@ -1,5 +1,5 @@
 import { TRPCError } from "@trpc/server";
-import { desc } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { $t } from "~/i18n/dummy";
 import {
   getOrganization,
@@ -11,21 +11,17 @@ import {
   invoicesTable,
   organizationsTable,
 } from "~/server/db/schema";
-import { getNextInvoiceNumber } from "~/shared/invoice/invoice-numbering";
 
-export const invoiceCreate = protectedProcedure
+export const invoiceEdit = protectedProcedure
   .input(
-    insertInvoiceSchema.pick({
-      organizationId: true,
-    }),
+    insertInvoiceSchema.partial().required({ organizationId: true, id: true }),
   )
   .mutation(async ({ ctx, input }) => {
     return ctx.db.transaction(async (trx) => {
       const [organization] = await getOrganization(
         trx
           .select({
-            invoiceNumbering: organizationsTable.invoiceNumbering,
-            name: organizationsTable.name,
+            id: organizationsTable.id,
           })
           .from(organizationsTable)
           .$dynamic(),
@@ -39,14 +35,13 @@ export const invoiceCreate = protectedProcedure
         });
       }
 
-      const [lastInvoice] = await withOrganizationAccess(
+      const [invoice] = await withOrganizationAccess(
         trx
           .select({
             number: invoicesTable.number,
           })
           .from(invoicesTable)
-          .orderBy(desc(invoicesTable.issueDate))
-          .limit(1)
+          .where(eq(invoicesTable.id, input.id))
           .$dynamic(),
         {
           column: invoicesTable.organizationId,
@@ -55,32 +50,21 @@ export const invoiceCreate = protectedProcedure
         },
       );
 
-      const number = getNextInvoiceNumber(
-        organization.invoiceNumbering,
-        lastInvoice?.number ?? null,
-      );
-
-      const [newInvoice] = await trx
-        .insert(invoicesTable)
-        .values({
-          organizationId: input.organizationId,
-          number,
-          reference: number,
-          status: "draft",
-          customerName: "",
-          supplierName: organization.name,
-        })
-        .returning({ id: invoicesTable.id });
-
-      if (!newInvoice) {
+      if (!invoice) {
         throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: $t("invoice.err.createFailed"),
+          code: "FORBIDDEN",
+          message: $t("invoice.err.invoiceNotFound"),
         });
       }
 
-      return {
-        id: newInvoice.id,
-      };
+      const [updatedInvoice] = await trx
+        .update(invoicesTable)
+        .set({
+          ...input,
+        })
+        .where(eq(invoicesTable.id, input.id))
+        .returning();
+
+      return updatedInvoice;
     });
   });

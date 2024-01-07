@@ -31,9 +31,9 @@ export default function DashboardLayout(props: PropsWithChildren) {
 
   return (
     <OrganizationGuard>
-      <div className="mx-auto flex h-full min-h-screen w-full max-w-screen-2xl flex-row border-e border-s">
+      <div className="mx-auto flex h-screen w-full max-w-screen-2xl flex-row overflow-hidden border-e border-s">
         <Sidebar />
-        <div className="flex w-full flex-col">
+        <div className="flex min-h-screen w-full flex-col overflow-auto">
           <Navbar />
           <div className="flex w-full flex-col gap-6 px-4 py-2 md:px-8 md:py-3">
             <Header />
