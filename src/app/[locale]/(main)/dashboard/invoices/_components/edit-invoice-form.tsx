@@ -22,6 +22,7 @@ import {
 } from "~/app/_components/ui/form";
 import { Input } from "~/app/_components/ui/input";
 import { MultiSelectAsyncCreatable } from "~/app/_components/ui/multi-select-async-creatable";
+import { debounce, useDebounce } from "~/app/_hooks/use-debounce";
 import { api } from "~/trpc/react";
 import { type RouterOutputs } from "~/trpc/shared";
 
@@ -214,6 +215,7 @@ export function EditInvoiceForm(props: EditInvoiceFormProps) {
               />
             </AccordionContent>
           </AccordionItem>
+
           <AccordionItem value="customer">
             <AccordionTrigger className="text-muted-foreground">
               Customer details
@@ -231,7 +233,6 @@ export function EditInvoiceForm(props: EditInvoiceFormProps) {
             </AccordionContent>
           </AccordionItem>
         </Accordion>
-
         <div className="sticky bottom-0 bg-background py-4">
           <div className="flex max-w-3xl flex-row items-center justify-end">
             <Button type="submit" isLoading={editMutation.isLoading}>
@@ -323,6 +324,8 @@ function CustomerFields() {
             <FormControl>
               <MultiSelectAsyncCreatable
                 value={selectedValue}
+                cacheOptions
+                defaultOptions
                 onChange={(option) => {
                   if (!option) return;
                   if (option.value === selectedValue?.value) return;

@@ -90,15 +90,23 @@ export function MultiSelectAsyncCreatable<T>({
               cn("cursor-pointer hover:text-muted-foreground/80"),
             input: ({}) => cn("h-full w-auto flex-1 flex cursor-text"),
             menu: ({}) =>
-              cn("left-0 bg-popover border p-1 rounded-sm my-1 shadow-md"),
-            noOptionsMessage: ({}) => cn("text-sm text-muted-foreground"),
-            menuList: ({}) => cn("cursor-pointer"),
-            option: ({}) =>
               cn(
-                "text-sm px-2 py-2 hover:bg-secondary rounded hover:cursor-pointer text-sm",
+                "left-0 bg-popover border p-1 rounded-sm my-1 shadow-md transition-all duration-200",
               ),
-            multiValue: ({}) =>
-              cn("bg-secondary rounded px-2 py-1  rounded-md"),
+            noOptionsMessage: ({}) =>
+              cn("text-sm text-muted-foreground py-2 px-2"),
+            menuList: ({}) => cn("gap-1 flex flex-col"),
+            option: ({ isFocused, isDisabled, isSelected }) =>
+              cn(
+                "text-sm px-2 py-2 rounded hover:cursor-pointer active:bg-secondary",
+                isFocused && "bg-secondary/50",
+                isDisabled && "bg-muted text-muted-foreground",
+                isSelected && "bg-secondary",
+              ),
+
+            multiValue: ({}) => cn("bg-secondary rounded px-2 py-1 rounded-md"),
+            loadingMessage: ({}) =>
+              cn("text-sm text-muted-foreground py-2 px-2"),
           }}
           styles={{
             control: () => ({ minHeight: "0" }),

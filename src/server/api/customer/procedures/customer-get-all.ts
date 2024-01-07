@@ -1,4 +1,5 @@
-import { getTableColumns } from "drizzle-orm";
+import { getTableColumns, ilike, sql } from "drizzle-orm";
+import { type PgColumn } from "drizzle-orm/pg-core";
 import { z } from "zod";
 import { withOrganizationAccess } from "~/server/api/organization/organization-queries";
 import { protectedProcedure } from "~/server/api/trpc";
@@ -16,7 +17,7 @@ export const customerGetAll = protectedProcedure
   )
   .query(async ({ ctx, input }) => {
     // search for invoiceTemplate by id that has relation to organization
-    const data = await withPagination(
+    let query = withPagination(
       withOrganizationAccess(
         ctx.db
           .select({
@@ -32,6 +33,12 @@ export const customerGetAll = protectedProcedure
       ),
       input,
     );
+
+    if (input.search) {
+      query = query.where(ilike(customersTable.name, `${input.search}%`));
+    }
+
+    const data = await query;
 
     return {
       data,
