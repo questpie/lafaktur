@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { addDays } from "date-fns";
 import { useTranslations } from "next-intl";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useFieldArray, useForm, useFormContext } from "react-hook-form";
 import { LuUser } from "react-icons/lu";
 import { useSelectedOrganization } from "~/app/[locale]/(main)/dashboard/_components/organization-guard";
@@ -23,7 +23,8 @@ import {
   FormMessage,
 } from "~/app/_components/ui/form";
 import { Input } from "~/app/_components/ui/input";
-import { MultiSelectAsyncCreatable } from "~/app/_components/ui/multi-select-async-creatable";
+import { MultiSelectCreatable } from "~/app/_components/ui/multi-select-creatable";
+import { useDebouncedValue } from "~/app/_hooks/use-debounce";
 import { createInvoiceSchema } from "~/shared/invoice/invoice-schema";
 import { api } from "~/trpc/react";
 import { type RouterInputs } from "~/trpc/shared";
@@ -310,23 +311,23 @@ function CustomerFields() {
   );
 
   const [didCustomerChange, setDidCustomerChange] = useState(false);
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const debouncedSearchQuery = useDebouncedValue(searchQuery, 500);
 
-  const queryUtils = api.useUtils();
+  const customersQuery = api.customer.getAll.useQuery({
+    organizationId: selectedOrganization.id,
+    search: debouncedSearchQuery,
+    limit: 10,
+  });
 
-  const loadCustomers = useCallback(
-    async (inputValue: string) => {
-      const customers = await queryUtils.customer.getAll.fetch({
-        organizationId: selectedOrganization.id,
-        search: inputValue,
-      });
-
-      return customers.data.map((customer) => ({
-        label: customer.name,
-        value: customer.id,
-      }));
-    },
-    [queryUtils.customer.getAll, selectedOrganization.id],
-  );
+  const customerOptions = useMemo(() => {
+    return (
+      customersQuery.data?.data.map((c) => ({
+        value: c.id,
+        label: c.name,
+      })) ?? []
+    );
+  }, [customersQuery.data]);
 
   const handleCreateCustomer = useCallback(
     async (name: string) => {
@@ -369,10 +370,11 @@ function CustomerFields() {
           <FormItem className="col-span-12 flex flex-col ">
             <FormLabel>Customer</FormLabel>
             <FormControl>
-              <MultiSelectAsyncCreatable
+              <MultiSelectCreatable
                 value={selectedValue}
-                cacheOptions
-                defaultOptions
+                options={customerOptions}
+                inputValue={searchQuery}
+                onInputChange={setSearchQuery}
                 onChange={(option) => {
                   if (!option) return;
                   if (option.value === selectedValue?.value) return;
@@ -381,12 +383,12 @@ function CustomerFields() {
                 }}
                 placeholder="Select a customer"
                 before={<LuUser />}
-                loadOptions={loadCustomers}
                 onCreateOption={handleCreateCustomer}
                 isDisabled={selectedCustomerQuery.isInitialLoading}
                 isLoading={
-                  createCustomerMutation.isLoading ??
-                  selectedCustomerQuery.isFetching
+                  createCustomerMutation.isLoading ||
+                  selectedCustomerQuery.isInitialLoading ||
+                  customersQuery.isInitialLoading
                 }
               />
             </FormControl>

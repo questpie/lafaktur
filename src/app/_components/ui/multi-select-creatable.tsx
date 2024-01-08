@@ -17,7 +17,7 @@ const multiSelectVariants = cva(
   },
 );
 
-export type MultiSelectAsyncCreatableProps<T> = Omit<
+export type MultiSelectCreatableProps<T> = Omit<
   React.ComponentPropsWithoutRef<typeof AsyncCreatableSelect<T>>,
   "classNames" | "unstyled"
 > &
@@ -35,7 +35,7 @@ export type MultiSelectAsyncCreatableProps<T> = Omit<
     afterOuter?: React.ReactNode;
   };
 
-export function MultiSelectAsyncCreatable<T>({
+export function MultiSelectCreatable<T>({
   before,
   after,
   className,
@@ -43,7 +43,7 @@ export function MultiSelectAsyncCreatable<T>({
   afterOuter,
   variant,
   ...props
-}: MultiSelectAsyncCreatableProps<T>) {
+}: MultiSelectCreatableProps<T>) {
   return (
     <>
       {beforeOuter}

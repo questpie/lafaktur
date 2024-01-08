@@ -1,6 +1,6 @@
 // use debounce
 
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 export type DebouncedFunction<T extends (...args: any[]) => any> = ((
   ...args: Parameters<T>
@@ -42,4 +42,18 @@ export function useDebounce<TFn extends (...args: any[]) => any>(
   const debouncedFn = useMemo(() => debounce(fn, delay), [fn, delay]);
   useEffect(() => () => debouncedFn.cancel(), [debouncedFn]);
   return debouncedFn;
+}
+
+export function useDebouncedValue<T>(value: T, delay: number) {
+  const [debouncedValue, setDebouncedValue] = useState<T>(value);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedValue(value), delay || 500);
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [value, delay]);
+
+  return debouncedValue;
 }
