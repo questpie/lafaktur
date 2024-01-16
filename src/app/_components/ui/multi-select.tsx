@@ -1,5 +1,5 @@
 import { cva, type VariantProps } from "class-variance-authority";
-import AsyncCreatableSelect from "react-select/creatable";
+import Select from "react-select";
 import { cn } from "~/app/_utils/styles-utils";
 
 const multiSelectVariants = cva(
@@ -8,7 +8,7 @@ const multiSelectVariants = cva(
     variants: {
       variant: {
         outlined: "border border-input bg-transparent",
-        filled: "bg-secondary",
+      filled: "bg-secondary",
       },
     },
     defaultVariants: {
@@ -18,7 +18,7 @@ const multiSelectVariants = cva(
 );
 
 export type MultiSelectCreatableProps<T> = Omit<
-  React.ComponentPropsWithoutRef<typeof AsyncCreatableSelect<T>>,
+  React.ComponentPropsWithoutRef<typeof Select<T>>,
   "classNames" | "unstyled"
 > &
   VariantProps<typeof multiSelectVariants> & {
@@ -67,7 +67,7 @@ export function MultiSelectCreatable<T>({
         >
           {before}
         </span>
-        <AsyncCreatableSelect
+        <Select
           unstyled
           classNames={{
             container: ({}) =>

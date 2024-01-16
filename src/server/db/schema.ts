@@ -33,7 +33,7 @@ export const bigint = (name: string) => bigintOi(name, { mode: "number" });
 export const timestamp = <TMode extends "string" | "date" = "date">(
   name: string,
   options?: PgTimestampConfig<TMode>,
-) => timestampOI(name, { mode: "date", precision: 3, ...options });
+) => timestampOI(name, { mode: "date", ...options });
 
 export const invoicesItemsTable = pgTable(
   "invoice_items",
@@ -43,6 +43,9 @@ export const invoicesItemsTable = pgTable(
       .notNull()
       .references(() => invoicesTable.id),
     name: varchar("name", { length: 255 }).notNull(),
+
+    order: integer("order").notNull(),
+
     quantity: integer("quantity").notNull(),
 
     unit: varchar("unit", { length: 255 }).notNull(),

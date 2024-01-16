@@ -103,6 +103,7 @@ export default function ResetPasswordForm({ token }: ResetPasswordFormProps) {
                     <FormControl>
                       <Input
                         {...field}
+                        variant="outlined"
                         type="password"
                         placeholder={"*******"}
                       />
@@ -125,6 +126,7 @@ export default function ResetPasswordForm({ token }: ResetPasswordFormProps) {
                     <FormControl>
                       <Input
                         {...field}
+                        variant="outlined"
                         type="password"
                         placeholder={"*******"}
                       />

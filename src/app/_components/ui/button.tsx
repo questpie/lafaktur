@@ -23,9 +23,9 @@ const buttonVariants = cva(
         link: "text-primary underline-offset-4 hover:underline",
       },
       size: {
-        default: "h-9 px-4 py-2",
-        sm: "h-8 rounded-md px-3 text-xs",
-        lg: "h-10 rounded-md px-8",
+        default: "h-9 px-4 py-2 min-w-[6rem]",
+        sm: "h-8 rounded-md px-3 text-xs min-w-[5rem]",
+        lg: "h-10 rounded-md px-8 min-w-[7rem]",
         icon: "h-9 w-9",
         iconXs: "h-6 w-6",
         iconSm: "h-8 w-8",
@@ -97,7 +97,7 @@ const LinkButton = React.forwardRef<
   }
 
   return (
-    <Button asChild={!props.isLoading} ref={ref} {...props}>
+    <Button asChild={!props.isLoading} type="button" ref={ref} {...props}>
       <Link href={href}>{props.children}</Link>
     </Button>
   );

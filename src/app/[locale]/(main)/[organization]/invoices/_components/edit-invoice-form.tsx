@@ -1,8 +1,8 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslations } from "next-intl";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useFieldArray, useForm, useFormContext } from "react-hook-form";
-import { LuUser } from "react-icons/lu";
+import { LuBookTemplate, LuUser, LuX } from "react-icons/lu";
 import { useSelectedOrganization } from "~/app/[locale]/(main)/[organization]/_components/organization-provider";
 import {
   Accordion,
@@ -11,6 +11,7 @@ import {
   AccordionTrigger,
 } from "~/app/_components/ui/accordion";
 import { Button } from "~/app/_components/ui/button";
+import { Card, CardContent } from "~/app/_components/ui/card";
 import { DatePicker } from "~/app/_components/ui/date-picker";
 import {
   Form,
@@ -23,8 +24,12 @@ import {
 } from "~/app/_components/ui/form";
 import { Input } from "~/app/_components/ui/input";
 import { MultiSelectCreatable } from "~/app/_components/ui/multi-select-creatable";
+import { NumberInput } from "~/app/_components/ui/number-input";
+import { Separator } from "~/app/_components/ui/separator";
+import { Textarea } from "~/app/_components/ui/textarea";
 import { useDebouncedValue } from "~/app/_hooks/use-debounce";
-import { createInvoiceSchema } from "~/shared/invoice/invoice-schema";
+import { roundTo } from "~/app/_utils/misc-utils";
+import { editInvoiceSchema } from "~/shared/invoice/invoice-schema";
 import { api } from "~/trpc/react";
 import { type RouterInputs, type RouterOutputs } from "~/trpc/shared";
 
@@ -35,10 +40,12 @@ export type EditInvoiceFormProps = {
 
 export function EditInvoiceForm(props: EditInvoiceFormProps) {
   const selectedOrganization = useSelectedOrganization();
+
   const form = useForm<EditInvoiceFormValues>({
-    resolver: zodResolver(createInvoiceSchema),
+    resolver: zodResolver(editInvoiceSchema),
     defaultValues: {
-      ...props.invoice,
+      ...(props.invoice as EditInvoiceFormValues),
+      organizationId: selectedOrganization.id,
     },
   });
 
@@ -50,13 +57,23 @@ export function EditInvoiceForm(props: EditInvoiceFormProps) {
     editMutation.mutate(values);
   });
 
+  const invoiceItems = form.watch("invoiceItems");
+  const total = useMemo(() => {
+    return roundTo(
+      invoiceItems?.reduce((acc, item) => {
+        return acc + item.total;
+      }, 0) ?? 0,
+      2,
+    );
+  }, [invoiceItems]);
+
   return (
     <Form {...form}>
       <form onSubmit={handleSubmit} className="relative flex flex-col gap-6">
         <Accordion
           type="multiple"
-          className="max-w-3xl"
-          defaultValue={["general"]}
+          className="max-w-4xl"
+          defaultValue={["general", "items"]}
         >
           <AccordionItem value="general" className="">
             <AccordionTrigger className="text-muted-foreground">
@@ -91,6 +108,8 @@ export function EditInvoiceForm(props: EditInvoiceFormProps) {
                   </FormItem>
                 )}
               />
+
+              <InvoiceTemplatePicker />
 
               <FormField
                 control={form.control}
@@ -236,10 +255,25 @@ export function EditInvoiceForm(props: EditInvoiceFormProps) {
               <SupplierFields />
             </AccordionContent>
           </AccordionItem>
+          <AccordionItem value="items">
+            <AccordionTrigger className="text-muted-foreground">
+              Items
+            </AccordionTrigger>
+            <AccordionContent className="grid w-full grid-cols-12 gap-4">
+              <InvoiceItems />
+              <Card className="col-span-12 max-w-4xl">
+                <CardContent className="flex flex-row justify-end p-4">
+                  <h4 className="text-2xl font-bold text-foreground">
+                    Total: {total} €
+                  </h4>
+                </CardContent>
+              </Card>
+            </AccordionContent>
+          </AccordionItem>
         </Accordion>
         <div className="sticky bottom-0 bg-background py-4">
-          <div className="flex max-w-3xl flex-row items-center justify-end">
-            <Button type="submit" isLoading={createMutation.isLoading}>
+          <div className="flex max-w-4xl flex-row items-center justify-end">
+            <Button type="submit" isLoading={editMutation.isLoading}>
               Save
             </Button>
           </div>
@@ -258,12 +292,10 @@ function CustomerFields() {
   const createCustomerMutation = api.customer.create.useMutation();
   const selectedCustomerQuery = api.customer.getById.useQuery(
     {
-      id: customerId,
+      id: customerId!,
       organizationId: selectedOrganization.id,
     },
-    {
-      enabled: !!customerId,
-    },
+    { enabled: !!customerId },
   );
 
   const [didCustomerChange, setDidCustomerChange] = useState(false);
@@ -287,6 +319,7 @@ function CustomerFields() {
 
   const handleCreateCustomer = useCallback(
     async (name: string) => {
+      // TODO: open dialog to create the customer
       const customer = await createCustomerMutation.mutateAsync({
         name,
         organizationId: selectedOrganization.id,
@@ -306,13 +339,28 @@ function CustomerFields() {
     if (!selectedCustomerQuery.data || !didCustomerChange) return;
 
     form.setValue("customerName", selectedCustomerQuery.data.name);
-    form.setValue("customerBusinessId", selectedCustomerQuery.data.businessId);
-    form.setValue("customerTaxId", selectedCustomerQuery.data.taxId);
-    form.setValue("customerVatId", selectedCustomerQuery.data.vatId);
-    form.setValue("customerStreet", selectedCustomerQuery.data.street);
-    form.setValue("customerCity", selectedCustomerQuery.data.city);
-    form.setValue("customerZip", selectedCustomerQuery.data.zip);
-    form.setValue("customerCountry", selectedCustomerQuery.data.country);
+    form.setValue(
+      "customerBusinessId",
+      selectedCustomerQuery.data.businessId ?? undefined,
+    );
+    form.setValue(
+      "customerTaxId",
+      selectedCustomerQuery.data.taxId ?? undefined,
+    );
+    form.setValue(
+      "customerVatId",
+      selectedCustomerQuery.data.vatId ?? undefined,
+    );
+    form.setValue(
+      "customerStreet",
+      selectedCustomerQuery.data.street ?? undefined,
+    );
+    form.setValue("customerCity", selectedCustomerQuery.data.city ?? undefined);
+    form.setValue("customerZip", selectedCustomerQuery.data.zip ?? undefined);
+    form.setValue(
+      "customerCountry",
+      selectedCustomerQuery.data.country ?? undefined,
+    );
     setDidCustomerChange(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedCustomerQuery.data?.id, didCustomerChange]);
@@ -328,8 +376,8 @@ function CustomerFields() {
             <FormControl>
               <MultiSelectCreatable
                 value={selectedValue}
-                options={customerOptions}
                 inputValue={searchQuery}
+                options={customerOptions}
                 onInputChange={setSearchQuery}
                 onChange={(option) => {
                   if (!option) return;
@@ -339,8 +387,10 @@ function CustomerFields() {
                 }}
                 placeholder="Select a customer"
                 before={<LuUser />}
+                createOptionPosition="last"
                 onCreateOption={handleCreateCustomer}
                 isDisabled={selectedCustomerQuery.isInitialLoading}
+                allowCreateWhileLoading={false}
                 isLoading={
                   createCustomerMutation.isLoading ||
                   selectedCustomerQuery.isInitialLoading ||
@@ -487,7 +537,7 @@ function SupplierFields() {
         name="supplierName"
         render={({ field }) => (
           <FormItem className="col-span-12 flex flex-col md:col-span-6">
-            <FormLabel>Customer name</FormLabel>
+            <FormLabel>Supplier name</FormLabel>
             <FormControl>
               <Input {...field} value={field.value ?? ""} />
             </FormControl>
@@ -612,8 +662,231 @@ function InvoiceItems() {
   });
 
   function handleCreateItem() {
-    // optimistic update then invalidate
+    invoiceItems.append({
+      total: 0,
+      totalWithoutVat: 0,
+      unitPrice: 0,
+      unitPriceWithoutVat: 0,
+      vatRate: 0,
+      quantity: 1,
+      order: invoiceItems.fields.length,
+      unit: "ks",
+      name: "",
+    });
   }
 
-  return <div className="col-span-12 flex flex-col gap-4"></div>;
+  return (
+    <div className="col-span-12 flex flex-col gap-6">
+      {invoiceItems.fields.map((item, i) => {
+        return (
+          <React.Fragment key={item.id}>
+            {i > 0 && <Separator />}
+            <InvoiceItem
+              i={i}
+              onRemoveClick={() => {
+                invoiceItems.remove(i);
+              }}
+            />
+          </React.Fragment>
+        );
+      })}
+
+      <div className="flex flex-row items-center justify-end">
+        <Button type="button" variant={"outline"} onClick={handleCreateItem}>
+          Add item
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+type InvoiceItemProps = {
+  i: number;
+  onRemoveClick?: () => void;
+};
+
+function InvoiceItem({ i, onRemoveClick }: InvoiceItemProps) {
+  const form = useFormContext<EditInvoiceFormValues>();
+  const unitPrice = form.watch(`invoiceItems.${i}.unitPrice`);
+  const quantity = form.watch(`invoiceItems.${i}.quantity`);
+
+  useEffect(() => {
+    if (unitPrice === undefined || quantity === undefined) return;
+
+    form.setValue(
+      `invoiceItems.${i}.total`,
+      roundTo(Number(unitPrice) * Number(quantity), 2),
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [unitPrice, quantity, i]);
+
+  return (
+    <div className="grid grid-cols-12 gap-2">
+      <FormField
+        control={form.control}
+        name={`invoiceItems.${i}.quantity`}
+        render={({ field: { ref: _, ...field } }) => (
+          <FormItem className="col-span-6 flex flex-col md:col-span-3 lg:col-span-2">
+            <FormLabel>Quantity</FormLabel>
+            <FormControl>
+              <NumberInput {...field} min={0} onValueChange={field.onChange} />
+            </FormControl>
+            <FormDescription />
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+      <FormField
+        control={form.control}
+        name={`invoiceItems.${i}.unit`}
+        render={({ field }) => (
+          <FormItem className="col-span-6 flex flex-col md:col-span-3 lg:col-span-1">
+            <FormLabel>Unit</FormLabel>
+            <FormControl>
+              <Input {...field} value={field.value ?? ""} />
+            </FormControl>
+            <FormDescription />
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+      <FormField
+        control={form.control}
+        name={`invoiceItems.${i}.name`}
+        render={({ field }) => (
+          <FormItem className="col-span-12 flex flex-col md:col-span-6 lg:col-span-5">
+            <FormLabel>Name</FormLabel>
+            <FormControl>
+              <Textarea {...field} rows={1} value={field.value ?? ""} />
+            </FormControl>
+            <FormDescription />
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+      <FormField
+        control={form.control}
+        name={`invoiceItems.${i}.unitPrice`}
+        render={({ field: { ref: _, ...field } }) => (
+          <FormItem className="col-span-6 flex flex-col lg:col-span-2">
+            <FormLabel>Price</FormLabel>
+            <FormControl>
+              <NumberInput
+                {...field}
+                min={0}
+                onValueChange={(num) => {
+                  field.onChange(num);
+                }}
+              />
+            </FormControl>
+            <FormDescription />
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+      <FormField
+        control={form.control}
+        name={`invoiceItems.${i}.total`}
+        render={({ field }) => (
+          <FormItem className="col-span-6 flex flex-col lg:col-span-2">
+            <FormLabel>Total</FormLabel>
+            <div className="flex flex-row items-center  gap-2">
+              <FormControl>
+                <Input readOnly value={field.value ?? ""} />
+              </FormControl>
+              <Button
+                variant="ghost"
+                size="iconXs"
+                type="button"
+                className="min-w-6"
+                onClick={() => {
+                  onRemoveClick?.();
+                }}
+              >
+                <LuX />
+              </Button>
+            </div>
+            <FormDescription />
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+    </div>
+  );
+}
+
+function InvoiceTemplatePicker() {
+  const form = useFormContext<EditInvoiceFormValues>();
+  const selectedOrganization = useSelectedOrganization();
+
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const debouncedSearchQuery = useDebouncedValue(searchQuery, 500);
+
+  const invoiceTemplateQuery = api.invoiceTemplate.getAll.useQuery({
+    organizationId: selectedOrganization.id,
+    filter: {
+      name: debouncedSearchQuery,
+    },
+  });
+
+  const templateId = form.watch("templateId");
+  const selectedTemplateQuery = api.invoiceTemplate.getById.useQuery(
+    {
+      id: templateId!,
+      organizationId: selectedOrganization.id,
+    },
+    { enabled: !!templateId },
+  );
+
+  const selectedValue = selectedTemplateQuery.data && {
+    value: selectedTemplateQuery.data.id,
+    label: selectedTemplateQuery.data.name,
+  };
+
+  const templateOptions = useMemo(() => {
+    return (
+      invoiceTemplateQuery.data?.data.map((c) => ({
+        value: c.id,
+        label: c.name,
+      })) ?? []
+    );
+  }, [invoiceTemplateQuery.data]);
+
+  return (
+    <FormField
+      control={form.control}
+      name="templateId"
+      render={({ field }) => (
+        <FormItem className="col-span-12 flex flex-col md:col-span-6">
+          <FormLabel>Invoice template</FormLabel>
+          <FormControl>
+            <MultiSelectCreatable
+              value={selectedValue}
+              inputValue={searchQuery}
+              options={templateOptions}
+              onInputChange={setSearchQuery}
+              onChange={(option) => {
+                if (!option) return;
+                if (option.value === selectedValue?.value) return;
+                field.onChange(option?.value);
+              }}
+              placeholder="Select invoice template"
+              before={<LuBookTemplate />}
+              createOptionPosition="last"
+              isDisabled={selectedTemplateQuery.isInitialLoading}
+              allowCreateWhileLoading={false}
+              isLoading={
+                selectedTemplateQuery.isInitialLoading ||
+                invoiceTemplateQuery.isInitialLoading
+              }
+            />
+          </FormControl>
+          <FormDescription>
+            Pick one of your predefined invoice templates.
+          </FormDescription>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
+  );
 }

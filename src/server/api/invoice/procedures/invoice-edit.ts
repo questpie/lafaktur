@@ -3,13 +3,11 @@ import { eq } from "drizzle-orm";
 import { $t } from "~/i18n/dummy";
 import { withOrganizationAccess } from "~/server/api/organization/organization-queries";
 import { protectedProcedure } from "~/server/api/trpc";
-import { insertInvoiceSchema, invoicesTable } from "~/server/db/schema";
+import { invoicesItemsTable, invoicesTable } from "~/server/db/schema";
+import { editInvoiceSchema } from "~/shared/invoice/invoice-schema";
 
-// TODO: not finished
 export const invoiceEdit = protectedProcedure
-  .input(
-    insertInvoiceSchema.partial().required({ organizationId: true, id: true }),
-  )
+  .input(editInvoiceSchema)
   .mutation(async ({ ctx, input }) => {
     return ctx.db.transaction(async (trx) => {
       const [invoice] = await withOrganizationAccess(
@@ -33,14 +31,34 @@ export const invoiceEdit = protectedProcedure
         });
       }
 
+      const { invoiceItems, ...invoiceData } = input;
       const [updatedInvoice] = await trx
         .update(invoicesTable)
-        .set({
-          ...input,
-        })
+        .set({ ...invoiceData })
         .where(eq(invoicesTable.id, input.id))
         .returning();
 
-      return updatedInvoice;
+      if (invoiceItems) {
+        // remove all previous invoice items
+        await trx
+          .delete(invoicesItemsTable)
+          .where(eq(invoicesItemsTable.invoiceId, input.id));
+
+        // insert new invoice items, with normalized order
+        await trx
+          .insert(invoicesItemsTable)
+          .values(
+            invoiceItems
+              .toSorted((a, b) => a.order - b.order)
+              .map((item, index) => ({
+                ...item,
+                order: index,
+                invoiceId: input.id,
+              })),
+          )
+          .returning();
+      }
+
+      return { ...updatedInvoice, invoiceItems };
     });
   });

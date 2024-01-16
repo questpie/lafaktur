@@ -1,21 +1,17 @@
 import { TRPCError } from "@trpc/server";
 import { desc } from "drizzle-orm";
+import { z } from "zod";
 import { $t } from "~/i18n/dummy";
 import {
   getOrganization,
   withOrganizationAccess,
 } from "~/server/api/organization/organization-queries";
 import { protectedProcedure } from "~/server/api/trpc";
-import {
-  invoicesItemsTable,
-  invoicesTable,
-  organizationsTable,
-} from "~/server/db/schema";
+import { invoicesTable, organizationsTable } from "~/server/db/schema";
 import { getNextInvoiceNumber } from "~/shared/invoice/invoice-numbering";
-import { createInvoiceSchema } from "~/shared/invoice/invoice-schema";
 
 export const invoiceCreate = protectedProcedure
-  .input(createInvoiceSchema)
+  .input(z.object({ organizationId: z.number() }))
   .mutation(async ({ ctx, input }) => {
     return ctx.db.transaction(async (trx) => {
       const [organization] = await getOrganization(
@@ -74,13 +70,6 @@ export const invoiceCreate = protectedProcedure
           message: $t("invoice.err.createFailed"),
         });
       }
-
-      const invoiceItems = input.invoiceItems.map((item) => ({
-        ...item,
-        invoiceId: newInvoice.id,
-      }));
-
-      await trx.insert(invoicesItemsTable).values(invoiceItems);
 
       return {
         id: newInvoice.id,

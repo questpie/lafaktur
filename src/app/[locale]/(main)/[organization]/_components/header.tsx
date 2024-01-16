@@ -19,7 +19,7 @@ import { usePathname } from "~/i18n/navigation";
 export type HeaderActionItem<TForceIcon extends boolean = false> = {
   label: string;
   icon?: React.ReactNode;
-  onClick?: () => void;
+  onClick?: (event: any) => void;
   href?: string;
   isLoading?: boolean;
   Wrapper?: React.ComponentType;

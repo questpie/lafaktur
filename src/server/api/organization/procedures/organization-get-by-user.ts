@@ -14,6 +14,6 @@ export const organizationGetByUser = protectedProcedure.query(
         organizationUsersTable,
         eq(organizationsTable.id, organizationUsersTable.organizationId),
       )
-      .where(eq(organizationUsersTable.userId, ctx.session!.user.id));
+      .where(eq(organizationUsersTable.userId, ctx.session.user.id));
   },
 );

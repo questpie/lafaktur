@@ -2,7 +2,7 @@ import { z } from "zod";
 import { type InvoiceInsert, type InvoiceItemInsert } from "~/server/db/schema";
 import { invoiceCurrencySchema } from "~/shared/invoice-template/invoice-template-schemas";
 
-export const createInvoiceItemSchema = z.object({
+export const invoiceItemSchema = z.object({
   name: z.string(),
   quantity: z.number().min(0),
   unit: z.string(),
@@ -15,11 +15,12 @@ export const createInvoiceItemSchema = z.object({
 
   vatRate: z.number().min(0),
 
+  order: z.number().min(0),
+
   invoiceId: z.number(),
-  // TODO: probably rework vat system and make it per item not per invoice
 }) satisfies z.ZodType<InvoiceItemInsert>;
 
-export const createInvoiceSchema = z.object({
+export const invoiceSchema = z.object({
   customerId: z.number(),
   customerName: z.string(),
   customerStreet: z.string().nullable(),
@@ -28,39 +29,46 @@ export const createInvoiceSchema = z.object({
   customerCountry: z.string().nullable(),
   customerBankAccount: z.string().nullable(),
   customerBankCode: z.string().nullable(),
-  customerBusinessId: z.string().nullable(),
-  customerTaxId: z.string().nullable(),
-  customerVatId: z.string().nullable(),
+  customerBusinessId: z.string().nullish(),
+  customerTaxId: z.string().nullish(),
+  customerVatId: z.string().nullish(),
 
   issueDate: z.date(),
   dueDate: z.date(),
-  supplyDate: z.date().nullable(),
+  supplyDate: z.date().nullish(),
 
   number: z.string(),
   reference: z.string(),
-  specificSymbol: z.string().nullable(),
-  variableSymbol: z.string().nullable(),
-  constantSymbol: z.string().nullable(),
+  specificSymbol: z.string().nullish(),
+  variableSymbol: z.string().nullish(),
+  constantSymbol: z.string().nullish(),
   paymentMethod: z.string(),
 
   currency: invoiceCurrencySchema.default("EUR"),
 
   organizationId: z.number(),
   supplierName: z.string(),
-  supplierStreet: z.string().nullable(),
-  supplierCity: z.string().nullable(),
-  supplierZip: z.string().nullable(),
-  supplierCountry: z.string().nullable(),
-  supplierVatId: z.string().nullable(),
-  supplierBankAccount: z.string().nullable(),
-  supplierBankCode: z.string().nullable(),
-  supplierBusinessId: z.string().nullable(),
-  supplierTaxId: z.string().nullable(),
+  supplierStreet: z.string().nullish(),
+  supplierCity: z.string().nullish(),
+  supplierZip: z.string().nullish(),
+  supplierCountry: z.string().nullish(),
+  supplierVatId: z.string().nullish(),
+  supplierBankAccount: z.string().nullish(),
+  supplierBankCode: z.string().nullish(),
+  supplierBusinessId: z.string().nullish(),
+  supplierTaxId: z.string().nullish(),
 
-  templateId: z.number().nullable(),
+  templateId: z.number(),
 
   total: z.number().min(0),
   totalWithoutVat: z.number().min(0),
 
-  invoiceItems: z.array(createInvoiceItemSchema.omit({ invoiceId: true })),
+  invoiceItems: z.array(invoiceItemSchema.omit({ invoiceId: true })),
 }) satisfies z.ZodType<Omit<InvoiceInsert, "status">>;
+
+export const editInvoiceSchema = invoiceSchema
+  .partial()
+  .required({ organizationId: true })
+  .extend({
+    id: z.number(),
+  });

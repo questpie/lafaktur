@@ -93,6 +93,7 @@ export default function SignInPage() {
                     <FormControl>
                       <Input
                         {...field}
+                        variant="outlined"
                         type="email"
                         placeholder={t("auth.signIn.email.placeholder")}
                       />
@@ -114,6 +115,7 @@ export default function SignInPage() {
                       <Input
                         {...field}
                         type="password"
+                        variant="outlined"
                         placeholder="********"
                       />
                     </FormControl>

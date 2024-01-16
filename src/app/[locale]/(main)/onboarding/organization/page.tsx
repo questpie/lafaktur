@@ -8,6 +8,7 @@ import { useState } from "react";
 import { Button } from "~/app/_components/ui/button";
 import { Input } from "~/app/_components/ui/input";
 import { Label } from "~/app/_components/ui/label";
+import { normalizeOrganizationName } from "~/shared/organization/organization-utils";
 import { api } from "~/trpc/react";
 
 export default function OrganizationOnboardingPage() {
@@ -29,7 +30,7 @@ export default function OrganizationOnboardingPage() {
 
   const [orgName, setName] = useState<string>(me.name ?? "");
 
-  const slug = orgName.toLowerCase().replace(/\s/g, "-");
+  const slug = normalizeOrganizationName(orgName);
 
   const handleOrgCreate = () => {
     createOrganization.mutate({

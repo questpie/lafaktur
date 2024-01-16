@@ -87,6 +87,7 @@ export default function SignUpPage() {
                     <FormControl>
                       <Input
                         {...field}
+                        variant="outlined"
                         type="text"
                         placeholder={t("auth.signUp.name.placeholder")}
                       />
@@ -107,6 +108,7 @@ export default function SignUpPage() {
                     <FormControl>
                       <Input
                         {...field}
+                        variant="outlined"
                         type="email"
                         placeholder={t("auth.signUp.email.placeholder")}
                       />
@@ -127,6 +129,7 @@ export default function SignUpPage() {
                     <FormControl>
                       <Input
                         {...field}
+                        variant="outlined"
                         type="password"
                         placeholder="********"
                       />
@@ -149,6 +152,7 @@ export default function SignUpPage() {
                     <FormControl>
                       <Input
                         {...field}
+                        variant="outlined"
                         type="password"
                         placeholder="********"
                       />

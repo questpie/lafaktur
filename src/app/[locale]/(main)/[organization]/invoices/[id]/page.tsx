@@ -5,7 +5,7 @@ import {
   HeaderSegment,
 } from "~/app/[locale]/(main)/[organization]/_components/header";
 import { useSelectedOrganization } from "~/app/[locale]/(main)/[organization]/_components/organization-provider";
-import { EditInvoiceForm } from "~/app/[locale]/(main)/[organization]/invoices/_components/create-invoice-form";
+import { EditInvoiceForm } from "~/app/[locale]/(main)/[organization]/invoices/_components/edit-invoice-form";
 import { api } from "~/trpc/react";
 
 export type InvoicePageProps = {

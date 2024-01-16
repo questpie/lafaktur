@@ -1,9 +1,9 @@
 "use client";
 
 import { CalendarIcon } from "@radix-ui/react-icons";
-import { format } from "date-fns";
+import { PopoverPortal } from "@radix-ui/react-popover";
 import * as React from "react";
-import { Button } from "~/app/_components/ui/button";
+import { Button, type ButtonProps } from "~/app/_components/ui/button";
 import { Calendar } from "~/app/_components/ui/calendar";
 import {
   Popover,
@@ -17,6 +17,7 @@ export type DatePickerProps = {
   setValue: (date: Date | undefined) => void;
   calendarProps?: React.ComponentProps<typeof Calendar>;
   triggerProps?: React.ComponentProps<typeof Button>;
+  variant?: ButtonProps["variant"];
 };
 
 export function DatePicker(props: DatePickerProps) {
@@ -24,7 +25,7 @@ export function DatePicker(props: DatePickerProps) {
     <Popover>
       <PopoverTrigger asChild>
         <Button
-          variant={"outline"}
+          variant={props.variant ?? "secondary"}
           className={cn(
             "w-full justify-start text-left font-normal",
             !props.value && "text-muted-foreground",
@@ -38,14 +39,16 @@ export function DatePicker(props: DatePickerProps) {
           )}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-auto p-0" align="start">
-        <Calendar
-          mode="single"
-          selected={props.value}
-          onSelect={props.setValue}
-          initialFocus
-        />
-      </PopoverContent>
+      <PopoverPortal>
+        <PopoverContent className="w-auto p-0" align="start">
+          <Calendar
+            mode="single"
+            selected={props.value}
+            onSelect={props.setValue}
+            initialFocus
+          />
+        </PopoverContent>
+      </PopoverPortal>
     </Popover>
   );
 }

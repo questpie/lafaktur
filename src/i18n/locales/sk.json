@@ -158,7 +158,7 @@
       "invoiceNotFound": "Faktúra sa nenašla"
     },
     "invoicePage": {
-      "title": "Faktúra"
+      "title": "Faktúra #{number}"
     },
     "breadcrumbs": {
       "invoices": "Faktúry"

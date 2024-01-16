@@ -1,4 +1,5 @@
 import { TRPCError } from "@trpc/server";
+import { z } from "zod";
 import { $t } from "~/i18n/dummy";
 import { protectedProcedure } from "~/server/api/trpc";
 import {
@@ -6,9 +7,14 @@ import {
   organizationUsersTable,
   organizationsTable,
 } from "~/server/db/schema";
+import { normalizeOrganizationName } from "~/shared/organization/organization-utils";
 
 export const organizationCreate = protectedProcedure
-  .input(insertOrganizationSchema)
+  .input(
+    insertOrganizationSchema.extend({
+      slug: z.string().min(3).transform(normalizeOrganizationName),
+    }),
+  )
   .mutation(async ({ ctx, input }) => {
     return ctx.db.transaction(async (trx) => {
       const [newOrganization] = await trx
@@ -28,7 +34,7 @@ export const organizationCreate = protectedProcedure
 
       await trx.insert(organizationUsersTable).values({
         organizationId: Number(newOrganization?.id),
-        userId: ctx.session!.user.id,
+        userId: ctx.session.user.id,
         role: "owner",
       });
 

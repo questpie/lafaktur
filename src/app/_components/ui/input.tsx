@@ -9,7 +9,7 @@ export const inputVariants = cva(
     variants: {
       variant: {
         outlined: "border border-input bg-transparent",
-        filled: "bg-input",
+        filled: "bg-secondary",
       },
       size: {
         default: "h-9",
@@ -18,7 +18,7 @@ export const inputVariants = cva(
       },
     },
     defaultVariants: {
-      variant: "outlined",
+      variant: "filled",
     },
   },
 );
@@ -59,7 +59,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           <input
             type={type}
             className={cn(
-              "h-full w-full flex-1 bg-transparent px-3 py-1 hover:outline-none focus:outline-none",
+              "h-full w-full flex-1 bg-transparent px-3 py-1 hover:outline-none focus:outline-none  disabled:opacity-50",
               "file:h-full file:cursor-pointer file:rounded-md file:border-none file:border-input file:bg-secondary file:outline-none file:hover:bg-secondary/90",
               {
                 ["px-3 py-1"]: size === "default",
