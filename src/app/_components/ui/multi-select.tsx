@@ -8,7 +8,7 @@ const multiSelectVariants = cva(
     variants: {
       variant: {
         outlined: "border border-input bg-transparent",
-      filled: "bg-secondary",
+        filled: "bg-secondary",
       },
     },
     defaultVariants: {
