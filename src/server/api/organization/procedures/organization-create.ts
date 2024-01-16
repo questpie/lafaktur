@@ -14,7 +14,10 @@ export const organizationCreate = protectedProcedure
       const [newOrganization] = await trx
         .insert(organizationsTable)
         .values(input)
-        .returning({ id: organizationsTable.id });
+        .returning({
+          id: organizationsTable.id,
+          slug: organizationsTable.slug,
+        });
 
       if (!newOrganization) {
         throw new TRPCError({
@@ -36,6 +39,6 @@ export const organizationCreate = protectedProcedure
         });
       }
 
-      return { id: newOrganization.id };
+      return { id: newOrganization.id, slug: newOrganization.slug };
     });
   });

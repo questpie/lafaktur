@@ -144,8 +144,7 @@
       "invoiceNotFound": "Invoice not found"
     },
     "invoicePage": {
-      "title": "Your invoices",
-      "mainAction": "Add invoice"
+      "title": "Invoice #{0}"
     },
     "dataTable": {
       "deleteAction": {
@@ -162,11 +161,16 @@
     },
     "breadcrumbs": {
       "invoices": "Invoices"
+    },
+    "invoicesPage": {
+      "title": "Your invoices",
+      "mainAction": "Add invoice"
     }
   },
   "organization": {
     "err": {
-      "createFailed": "Failed to create organization"
+      "createFailed": "Failed to create organization",
+      "notFound": "Organization not found"
     }
   },
   "invoiceItem": {
@@ -180,6 +184,18 @@
     "err": {
       "notFound": "Customer was not found",
       "createFailed": "Failed to create customer"
+    },
+    "customerPage": {
+      "mainAction": {}
+    },
+    "customersPage": {
+      "title": "Your customers",
+      "mainAction": {
+        "label": "Add customer"
+      }
+    },
+    "addCustomerPage": {
+      "title": "Add customer"
     }
   }
 }

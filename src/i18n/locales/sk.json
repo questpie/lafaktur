@@ -130,7 +130,10 @@
     }
   },
   "common": {
-    "add": "Pridať"
+    "add": "Pridať",
+    "err": {
+      "invalidOrganization": "K tejto organizácii nemáte prístup"
+    }
   },
   "dataTable": {
     "noResults": "Žiadne výsledky."
@@ -151,19 +154,46 @@
     },
     "err": {
       "notFound": "Nenašla sa žiadna faktúra",
-      "createFailed": "Vytvorenie faktúry zlyhalo"
+      "createFailed": "Vytvorenie faktúry zlyhalo",
+      "invoiceNotFound": "Faktúra sa nenašla"
     },
     "invoicePage": {
-      "mainAction": "Pridať faktúru",
-      "title": "Vaše faktúry"
+      "title": "Faktúra"
     },
     "breadcrumbs": {
       "invoices": "Faktúry"
+    },
+    "invoicesPage": {
+      "title": "Vaše faktúry",
+      "mainAction": "Pridať faktúru"
     }
   },
   "organization": {
     "err": {
       "createFailed": "Nepodarilo sa vytvoriť organizáciu"
+    }
+  },
+  "customer": {
+    "customerPage": {},
+    "customersPage": {
+      "title": "Vaši zákazníci",
+      "mainAction": {
+        "label": "Pridať zákazníka"
+      }
+    },
+    "addCustomerPage": {
+      "title": "Pridať zákazníka"
+    },
+    "err": {
+      "createFailed": "Nepodarilo sa vytvoriť zákazníka",
+      "notFound": "Zákazník nebol nájdený"
+    }
+  },
+  "invoiceItem": {
+    "err": {
+      "createFailed": "Nepodarilo sa vytvoriť položku faktúry",
+      "invoiceItemNotFound": "Položka faktúry sa nenašla",
+      "notFound": "Nenašla sa žiadna položka faktúry"
     }
   }
 }

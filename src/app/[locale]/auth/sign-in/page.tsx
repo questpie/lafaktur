@@ -2,8 +2,8 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signIn } from "next-auth/react";
 import { useTranslations } from "next-intl";
-import Link from "next/link";
 import { useRouter } from "next-nprogress-bar";
+import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { FaGithub, FaGoogle } from "react-icons/fa";
 import { LuAlertTriangle } from "react-icons/lu";
@@ -54,7 +54,7 @@ export default function SignInPage() {
       password: data.password,
     });
     if (signInResp?.ok) {
-      return router.replace("/dashboard");
+      return router.replace(`/`);
     }
 
     // This error is for CredentialsSignin, TODO: handle other errors

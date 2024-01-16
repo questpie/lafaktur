@@ -1,17 +1,12 @@
-"use client";
-import { useSession } from "next-auth/react";
-import { useRouter } from "next-nprogress-bar";
+import { redirect } from "next/navigation";
 import { type PropsWithChildren } from "react";
+import { getServerAuthSession } from "~/server/auth";
 
-export default function MainLayout(props: PropsWithChildren) {
-  const session = useSession();
-  const router = useRouter();
+export default async function MainLayout(props: PropsWithChildren) {
+  const session = await getServerAuthSession();
 
-  if (session.status === "loading") return null;
-
-  if (session.status === "unauthenticated") {
-    router.replace("/auth/sign-in");
-    return null;
+  if (!session) {
+    redirect("/auth/sign-in");
   }
 
   return <>{props.children}</>;

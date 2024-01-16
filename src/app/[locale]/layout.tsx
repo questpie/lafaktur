@@ -61,6 +61,7 @@ export default async function RootLayout({
             defaultTheme="system"
             enableSystem
             disableTransitionOnChange
+            enableColorScheme
           >
             <NextAuthProvider>
               <TRPCReactProvider headers={headers()}>
