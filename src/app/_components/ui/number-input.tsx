@@ -4,6 +4,7 @@ import { useState } from "react";
 import { LuChevronDown, LuChevronUp } from "react-icons/lu";
 import { Button } from "~/app/_components/ui/button";
 import { Input } from "~/app/_components/ui/input";
+import { floorTo, roundTo } from "~/app/_utils/misc-utils";
 
 type NumberInputProps = {
   value?: number;
@@ -11,6 +12,7 @@ type NumberInputProps = {
   step?: number;
   min?: number;
   max?: number;
+  maxDecimalPlaces?: number;
 } & Omit<
   React.ComponentProps<typeof Input>,
   "value" | "onChange" | "type" | "step" | "min" | "max"
@@ -70,6 +72,13 @@ export function NumberInput({
           return;
         }
 
+        if (props.maxDecimalPlaces !== undefined) {
+          const rounded = floorTo(parsedValue, props.maxDecimalPlaces);
+          onValueChange(rounded);
+          setInputValue(String(rounded));
+          return;
+        }
+
         onValueChange(parsedValue);
       }}
       onBlur={() => {
@@ -82,6 +91,13 @@ export function NumberInput({
         const parsedValue = Number(inputValue);
         if (isNaN(parsedValue)) {
           setInputValue(String(value ?? ""));
+          return;
+        }
+
+        if (props.maxDecimalPlaces !== undefined) {
+          const rounded = floorTo(parsedValue, props.maxDecimalPlaces);
+          onValueChange(rounded);
+          setInputValue(String(rounded));
           return;
         }
 

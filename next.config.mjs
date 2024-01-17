@@ -1,5 +1,4 @@
 import million from "million/compiler";
-import pattycake from "pattycake";
 /**
  * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially useful
  * for Docker builds.
@@ -24,8 +23,5 @@ const config = {
 };
 
 export default withBundleAnalyzer(
-  million.next(
-    withNextIntl(pattycake.next(config, { disableOptionalChaining: true })),
-    { auto: { rsc: true } },
-  ),
+  million.next(withNextIntl(config), { auto: { rsc: true } }),
 );

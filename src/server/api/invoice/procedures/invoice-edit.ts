@@ -4,6 +4,10 @@ import { $t } from "~/i18n/dummy";
 import { withOrganizationAccess } from "~/server/api/organization/organization-queries";
 import { protectedProcedure } from "~/server/api/trpc";
 import { invoicesItemsTable, invoicesTable } from "~/server/db/db-schema";
+import {
+  computeInvoiceItemAmounts,
+  computeInvoiceTotals,
+} from "~/shared/invoice/invoice-items-utils";
 import { editInvoiceSchema } from "~/shared/invoice/invoice-schema";
 
 export const invoiceEdit = protectedProcedure
@@ -34,7 +38,10 @@ export const invoiceEdit = protectedProcedure
       const { invoiceItems, ...invoiceData } = input;
       const [updatedInvoice] = await trx
         .update(invoicesTable)
-        .set({ ...invoiceData })
+        .set({
+          ...invoiceData,
+          ...(invoiceItems && computeInvoiceTotals(invoiceItems)),
+        })
         .where(eq(invoicesTable.id, input.id))
         .returning();
 
@@ -52,6 +59,7 @@ export const invoiceEdit = protectedProcedure
               .toSorted((a, b) => a.order - b.order)
               .map((item, index) => ({
                 ...item,
+                ...computeInvoiceItemAmounts(item),
                 order: index,
                 invoiceId: input.id,
               })),

@@ -1,5 +1,4 @@
 import { type PropsWithChildren } from "react";
-import { match } from "ts-pattern";
 import { useSelectedComponent } from "~/app/[locale]/(main)/[organization]/templates/[id]/_atoms/template-editor-atoms";
 import { ColorEditor } from "~/app/[locale]/(main)/[organization]/templates/[id]/_components/template-editor/editors/color-editor";
 import { ComponentTreeEditor } from "~/app/[locale]/(main)/[organization]/templates/[id]/_components/template-editor/editors/component-tree-editor";
@@ -39,17 +38,11 @@ export function TemplateEditorSidebar() {
           <ComponentTypeEditor />
           <SizeEditor type="width" />
           <SizeEditor type="height" />
-          {match(selectedComponent)
-            .with({ type: "root" }, () => <LayoutEditor />)
-            .with({ type: "view" }, () => <LayoutEditor />)
-            .with({ type: "list" }, () => (
-              <>
-                <LayoutEditor />
-                <ListMapByEditor />
-              </>
-            ))
-            .with({ type: "text" }, () => <TextContentEditor />)
-            .otherwise(() => null)}
+          {["root", "view", "list"].includes(selectedComponent.type) && (
+            <LayoutEditor />
+          )}
+          {selectedComponent.type === "list" && <ListMapByEditor />}
+          {selectedComponent.type === "text" && <TextContentEditor />}
         </AccordionContent>
       </AccordionItem>
 

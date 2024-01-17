@@ -3,7 +3,6 @@ import { nanoid } from "nanoid";
 import { useTranslations } from "next-intl";
 import { Fragment, useMemo, useState, type SyntheticEvent } from "react";
 import { LuPlus, LuX } from "react-icons/lu";
-import { match } from "ts-pattern";
 import {
   highlightedComponentIdAtom,
   invoiceTemplateAtom,
@@ -147,19 +146,11 @@ export function ComponentTreeEditor() {
                     </Badge>
                   );
                 })}
-                {match(sibling)
-                  .with(
-                    {
-                      type: "list",
-                    },
-                    (val) => !val.item,
-
-                    (val) => <AddComponentButton parent={val} />,
-                  )
-                  .with({ type: "root" }, { type: "view" }, (val) => (
-                    <AddComponentButton parent={val} />
-                  ))
-                  .otherwise(() => null)}
+                {sibling.type === "root" ||
+                  sibling.type === "view" ||
+                  (sibling.type === "list" && !sibling.item && (
+                    <AddComponentButton parent={sibling} />
+                  ))}
               </>
             )}
           </Fragment>

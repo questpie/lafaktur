@@ -30,6 +30,10 @@ import { Separator } from "~/app/_components/ui/separator";
 import { Textarea } from "~/app/_components/ui/textarea";
 import { useDebouncedValue } from "~/app/_hooks/use-debounce";
 import { roundTo } from "~/app/_utils/misc-utils";
+import {
+  computeInvoiceItemAmounts,
+  computeInvoiceTotals,
+} from "~/shared/invoice/invoice-items-utils";
 import { editInvoiceSchema } from "~/shared/invoice/invoice-schema";
 import { api } from "~/trpc/react";
 import { type RouterInputs, type RouterOutputs } from "~/trpc/shared";
@@ -46,6 +50,9 @@ export function EditInvoiceForm(props: EditInvoiceFormProps) {
     resolver: zodResolver(editInvoiceSchema),
     defaultValues: {
       ...(props.invoice as EditInvoiceFormValues),
+      invoiceItems: props.invoice.invoiceItems.length
+        ? props.invoice.invoiceItems
+        : [getNewInvoiceItem(0)],
       organizationId: selectedOrganization.id,
     },
   });
@@ -58,16 +65,6 @@ export function EditInvoiceForm(props: EditInvoiceFormProps) {
     editMutation.mutate(values);
   });
 
-  const invoiceItems = form.watch("invoiceItems");
-  const total = useMemo(() => {
-    return roundTo(
-      invoiceItems?.reduce((acc, item) => {
-        return acc + item.total;
-      }, 0) ?? 0,
-      2,
-    );
-  }, [invoiceItems]);
-
   const templateId = form.watch("templateId");
   const selectedTemplateQuery = api.invoiceTemplate.getById.useQuery(
     {
@@ -76,6 +73,9 @@ export function EditInvoiceForm(props: EditInvoiceFormProps) {
     },
     { enabled: !!templateId },
   );
+
+  const total = form.watch("total");
+  const totalWithoutVat = form.watch("totalWithoutVat");
 
   return (
     <Form {...form}>
@@ -680,6 +680,20 @@ function SupplierFields() {
   );
 }
 
+function getNewInvoiceItem(order: number) {
+  return {
+    total: 0,
+    totalWithoutVat: 0,
+    unitPrice: 0,
+    unitPriceWithoutVat: 0,
+    vatRate: 0,
+    quantity: 1,
+    order,
+    unit: "ks",
+    name: "",
+  };
+}
+
 function InvoiceItems() {
   const form = useFormContext<EditInvoiceFormValues>();
   const invoiceItems = useFieldArray({
@@ -688,17 +702,7 @@ function InvoiceItems() {
   });
 
   function handleCreateItem() {
-    invoiceItems.append({
-      total: 0,
-      totalWithoutVat: 0,
-      unitPrice: 0,
-      unitPriceWithoutVat: 0,
-      vatRate: 0,
-      quantity: 1,
-      order: invoiceItems.fields.length,
-      unit: "ks",
-      name: "",
-    });
+    invoiceItems.append(getNewInvoiceItem(invoiceItems.fields.length));
   }
 
   return (
@@ -710,6 +714,7 @@ function InvoiceItems() {
             <InvoiceItem
               i={i}
               onRemoveClick={() => {
+                if (i === 0) return;
                 invoiceItems.remove(i);
               }}
             />
@@ -733,18 +738,45 @@ type InvoiceItemProps = {
 
 function InvoiceItem({ i, onRemoveClick }: InvoiceItemProps) {
   const form = useFormContext<EditInvoiceFormValues>();
-  const unitPrice = form.watch(`invoiceItems.${i}.unitPrice`);
+  const unitPriceWithoutVat = form.watch(
+    `invoiceItems.${i}.unitPriceWithoutVat`,
+  );
   const quantity = form.watch(`invoiceItems.${i}.quantity`);
+  const vatRate = form.watch(`invoiceItems.${i}.vatRate`) ?? 0;
 
   useEffect(() => {
-    if (unitPrice === undefined || quantity === undefined) return;
+    if (unitPriceWithoutVat === undefined || quantity === undefined) return;
+
+    const invoiceItemAmounts = computeInvoiceItemAmounts({
+      quantity: quantity,
+      unitPriceWithoutVat: unitPriceWithoutVat,
+      vatRate,
+    });
 
     form.setValue(
       `invoiceItems.${i}.total`,
-      roundTo(Number(unitPrice) * Number(quantity), 2),
+      roundTo(invoiceItemAmounts.total, 2),
     );
+    form.setValue(
+      `invoiceItems.${i}.totalWithoutVat`,
+      roundTo(invoiceItemAmounts.totalWithoutVat, 2),
+    );
+    form.setValue(
+      `invoiceItems.${i}.unitPrice`,
+      roundTo(invoiceItemAmounts.unitPrice, 2),
+    );
+    form.setValue(
+      `invoiceItems.${i}.vatRate`,
+      roundTo(invoiceItemAmounts.vatRate, 2),
+    );
+
+    const invoiceTotal = computeInvoiceTotals(
+      form.getValues().invoiceItems ?? [],
+    );
+    form.setValue(`total`, roundTo(invoiceTotal.total, 2));
+    form.setValue(`totalWithoutVat`, roundTo(invoiceTotal.totalWithoutVat, 2));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [unitPrice, quantity, i]);
+  }, [unitPriceWithoutVat, quantity, i, vatRate]);
 
   return (
     <div className="grid grid-cols-12 gap-2">
@@ -755,7 +787,12 @@ function InvoiceItem({ i, onRemoveClick }: InvoiceItemProps) {
           <FormItem className="col-span-6 flex flex-col md:col-span-3 lg:col-span-2">
             <FormLabel>Quantity</FormLabel>
             <FormControl>
-              <NumberInput {...field} min={0} onValueChange={field.onChange} />
+              <NumberInput
+                {...field}
+                min={0}
+                onValueChange={field.onChange}
+                maxDecimalPlaces={2}
+              />
             </FormControl>
             <FormDescription />
             <FormMessage />
@@ -792,7 +829,7 @@ function InvoiceItem({ i, onRemoveClick }: InvoiceItemProps) {
       />
       <FormField
         control={form.control}
-        name={`invoiceItems.${i}.unitPrice`}
+        name={`invoiceItems.${i}.unitPriceWithoutVat`}
         render={({ field: { ref: _, ...field } }) => (
           <FormItem className="col-span-6 flex flex-col lg:col-span-2">
             <FormLabel>Price</FormLabel>
@@ -803,6 +840,7 @@ function InvoiceItem({ i, onRemoveClick }: InvoiceItemProps) {
                 onValueChange={(num) => {
                   field.onChange(num);
                 }}
+                maxDecimalPlaces={2}
               />
             </FormControl>
             <FormDescription />
@@ -820,17 +858,19 @@ function InvoiceItem({ i, onRemoveClick }: InvoiceItemProps) {
               <FormControl>
                 <Input readOnly value={field.value ?? ""} />
               </FormControl>
-              <Button
-                variant="ghost"
-                size="iconXs"
-                type="button"
-                className="min-w-6"
-                onClick={() => {
-                  onRemoveClick?.();
-                }}
-              >
-                <LuX />
-              </Button>
+              {i > 0 && (
+                <Button
+                  variant="ghost"
+                  size="iconXs"
+                  type="button"
+                  className="min-w-6"
+                  onClick={() => {
+                    onRemoveClick?.();
+                  }}
+                >
+                  <LuX />
+                </Button>
+              )}
             </div>
             <FormDescription />
             <FormMessage />
