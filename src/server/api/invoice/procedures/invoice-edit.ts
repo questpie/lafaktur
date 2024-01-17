@@ -3,7 +3,7 @@ import { eq } from "drizzle-orm";
 import { $t } from "~/i18n/dummy";
 import { withOrganizationAccess } from "~/server/api/organization/organization-queries";
 import { protectedProcedure } from "~/server/api/trpc";
-import { invoicesItemsTable, invoicesTable } from "~/server/db/schema";
+import { invoicesItemsTable, invoicesTable } from "~/server/db/db-schema";
 import { editInvoiceSchema } from "~/shared/invoice/invoice-schema";
 
 export const invoiceEdit = protectedProcedure

@@ -11,8 +11,8 @@ import { compare } from "bcrypt";
 import { eq } from "drizzle-orm";
 import { pgTable } from "drizzle-orm/pg-core";
 import { env } from "~/env.mjs";
-import { db } from "~/server/db";
-import { usersTable } from "~/server/db/schema";
+import { db } from "~/server/db/db-client";
+import { usersTable } from "~/server/db/db-schema";
 import { type Adapter } from "next-auth/adapters";
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`

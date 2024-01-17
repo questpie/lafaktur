@@ -6,7 +6,7 @@ import {
   insertOrganizationSchema,
   organizationUsersTable,
   organizationsTable,
-} from "~/server/db/schema";
+} from "~/server/db/db-schema";
 import { normalizeOrganizationName } from "~/shared/organization/organization-utils";
 
 export const organizationCreate = protectedProcedure

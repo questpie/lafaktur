@@ -6,7 +6,7 @@ import {
   customersTable,
   insertCustomerSchema,
   organizationsTable,
-} from "~/server/db/schema";
+} from "~/server/db/db-schema";
 
 export const customerCreate = protectedProcedure
   .input(insertCustomerSchema)

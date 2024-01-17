@@ -1,6 +1,9 @@
 import { eq, getTableColumns } from "drizzle-orm";
 import { protectedProcedure } from "~/server/api/trpc";
-import { organizationUsersTable, organizationsTable } from "~/server/db/schema";
+import {
+  organizationUsersTable,
+  organizationsTable,
+} from "~/server/db/db-schema";
 
 export const organizationGetByUser = protectedProcedure.query(
   async ({ ctx }) => {

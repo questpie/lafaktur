@@ -1,4 +1,4 @@
-import { type Organization } from "~/server/db/schema";
+import { type Organization } from "~/server/db/db-schema";
 
 export class TooManyInvoices extends Error {
   constructor() {

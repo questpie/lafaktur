@@ -1,5 +1,8 @@
 import { z } from "zod";
-import { type InvoiceInsert, type InvoiceItemInsert } from "~/server/db/schema";
+import {
+  type InvoiceInsert,
+  type InvoiceItemInsert,
+} from "~/server/db/db-schema";
 import { invoiceCurrencySchema } from "~/shared/invoice-template/invoice-template-schemas";
 
 export const invoiceItemSchema = z.object({

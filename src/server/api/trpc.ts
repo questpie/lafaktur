@@ -14,7 +14,7 @@ import { ZodError } from "zod";
 import { $t } from "~/i18n/dummy";
 
 import { getServerAuthSession } from "~/server/auth";
-import { db } from "~/server/db";
+import { db } from "~/server/db/db-client";
 
 /**
  * 1. CONTEXT

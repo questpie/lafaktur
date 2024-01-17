@@ -3,7 +3,10 @@ import { and, eq, getTableColumns } from "drizzle-orm";
 import { z } from "zod";
 import { $t } from "~/i18n/dummy";
 import { protectedProcedure } from "~/server/api/trpc";
-import { organizationUsersTable, organizationsTable } from "~/server/db/schema";
+import {
+  organizationUsersTable,
+  organizationsTable,
+} from "~/server/db/db-schema";
 
 export const organizationGetBySlug = protectedProcedure
   .input(z.string())
@@ -20,7 +23,7 @@ export const organizationGetBySlug = protectedProcedure
       )
       .where(
         and(
-          eq(organizationUsersTable.userId, ctx.session!.user.id),
+          eq(organizationUsersTable.userId, ctx.session.user.id),
           eq(organizationsTable.slug, input),
         ),
       )

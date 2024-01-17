@@ -4,7 +4,7 @@ import { protectedProcedure } from "~/server/api/trpc";
 import {
   insertInvoiceTemplateSchema,
   invoiceTemplatesTable,
-} from "~/server/db/schema";
+} from "~/server/db/db-schema";
 
 export const invoiceTemplateCreate = protectedProcedure
   .input(insertInvoiceTemplateSchema)

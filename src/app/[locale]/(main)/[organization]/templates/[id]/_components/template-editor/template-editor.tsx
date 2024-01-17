@@ -14,7 +14,7 @@ import { Spinner } from "~/app/_components/ui/spinner";
 import { useDebounce } from "~/app/_hooks/use-debounce";
 import { useDimensions } from "~/app/_hooks/use-dimensions";
 import { cn } from "~/app/_utils/styles-utils";
-import { type InvoiceTemplate } from "~/server/db/schema";
+import { type InvoiceTemplate } from "~/server/db/db-schema";
 import { INVOICE_VARIABLE_LABELS } from "~/shared/invoice-template/invoice-template-constants";
 import { parseTemplateTextValue } from "~/shared/invoice-template/invoice-template-helpers";
 import { type InvoiceVariable } from "~/shared/invoice-template/invoice-template-schemas";

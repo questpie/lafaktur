@@ -4,7 +4,7 @@ import {
   organizationUsersTable,
   organizationsTable,
   type OrganizationUser,
-} from "~/server/db/schema";
+} from "~/server/db/db-schema";
 
 export type WithOrganizationAccessOptions = {
   /**

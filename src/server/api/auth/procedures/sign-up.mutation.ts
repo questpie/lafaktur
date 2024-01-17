@@ -5,7 +5,11 @@ import { eq } from "drizzle-orm";
 import { ZodError } from "zod";
 import { $t } from "~/i18n/dummy";
 import { publicProcedure } from "~/server/api/trpc";
-import { accountsTable, usersTable, type UserInsert } from "~/server/db/schema";
+import {
+  accountsTable,
+  usersTable,
+  type UserInsert,
+} from "~/server/db/db-schema";
 import { signUpSchema } from "~/shared/auth/auth-schemas";
 
 export const signUp = publicProcedure

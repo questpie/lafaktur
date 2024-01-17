@@ -4,7 +4,7 @@ import { z } from "zod";
 import { $t } from "~/i18n/dummy";
 import { withOrganizationAccess } from "~/server/api/organization/organization-queries";
 import { protectedProcedure } from "~/server/api/trpc";
-import { customersTable } from "~/server/db/schema";
+import { customersTable } from "~/server/db/db-schema";
 
 export const customerGetById = protectedProcedure
   .input(z.object({ id: z.number(), organizationId: z.number() }))

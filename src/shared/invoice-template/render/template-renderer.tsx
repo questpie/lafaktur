@@ -1,4 +1,4 @@
-import { type InvoiceTemplate } from "~/server/db/schema";
+import { type InvoiceTemplate } from "~/server/db/db-schema";
 import {
   type TemplateRenderMap,
   type TemplateVariableResolver,
