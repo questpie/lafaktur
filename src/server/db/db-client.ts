@@ -2,7 +2,7 @@ import { type DrizzleConfig } from "drizzle-orm";
 import { drizzle, type PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 import { env } from "~/env.mjs";
-import * as schema from "./schema";
+import * as schema from "./db-schema";
 // for migrations
 
 // for query purposes

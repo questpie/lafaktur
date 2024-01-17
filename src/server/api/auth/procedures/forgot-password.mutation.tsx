@@ -6,7 +6,7 @@ import { ZodError } from "zod";
 import { env } from "~/env.mjs";
 import { $t } from "~/i18n/dummy";
 import { publicProcedure } from "~/server/api/trpc";
-import { usersTable, verificationTokensTable } from "~/server/db/schema";
+import { usersTable, verificationTokensTable } from "~/server/db/db-schema";
 import { getMailClient } from "~/server/mail/mail-client";
 import { forgotPasswordSchema } from "~/shared/auth/auth-schemas";
 import ResetPasswordEmail from "~emails/reset-password-email";

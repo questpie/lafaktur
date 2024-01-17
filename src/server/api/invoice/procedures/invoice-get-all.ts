@@ -3,7 +3,7 @@ import { z } from "zod";
 import { withOrganizationAccess } from "~/server/api/organization/organization-queries";
 import { protectedProcedure } from "~/server/api/trpc";
 import { withPagination } from "~/server/db/helper-queries";
-import { invoicesTable } from "~/server/db/schema";
+import { invoicesTable } from "~/server/db/db-schema";
 
 export const invoiceGetAll = protectedProcedure
   .input(

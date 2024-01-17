@@ -3,7 +3,7 @@ import { hash } from "bcrypt";
 import { and, eq, lte } from "drizzle-orm";
 import { $t } from "~/i18n/dummy";
 import { publicProcedure } from "~/server/api/trpc";
-import { usersTable, verificationTokensTable } from "~/server/db/schema";
+import { usersTable, verificationTokensTable } from "~/server/db/db-schema";
 import { resetPasswordSchema } from "~/shared/auth/auth-schemas";
 
 export const resetPassword = publicProcedure

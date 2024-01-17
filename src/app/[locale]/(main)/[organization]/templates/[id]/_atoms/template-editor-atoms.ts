@@ -2,7 +2,7 @@ import { atom, useAtomValue, useSetAtom } from "jotai";
 import { withImmer } from "jotai-immer";
 import { atomWithListeners } from "~/app/_atoms/atom-with-listener";
 import { invariant } from "~/app/_utils/misc-utils";
-import { type InvoiceTemplate } from "~/server/db/schema";
+import { type InvoiceTemplate } from "~/server/db/db-schema";
 import {
   getAllTemplateIds,
   getTemplateComponentById,

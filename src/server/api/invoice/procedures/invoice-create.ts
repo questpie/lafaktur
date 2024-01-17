@@ -7,7 +7,7 @@ import {
   withOrganizationAccess,
 } from "~/server/api/organization/organization-queries";
 import { protectedProcedure } from "~/server/api/trpc";
-import { invoicesTable, organizationsTable } from "~/server/db/schema";
+import { invoicesTable, organizationsTable } from "~/server/db/db-schema";
 import { getNextInvoiceNumber } from "~/shared/invoice/invoice-numbering";
 
 export const invoiceCreate = protectedProcedure
