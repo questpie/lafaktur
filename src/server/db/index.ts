@@ -8,10 +8,6 @@ import * as schema from "./schema";
 // for query purposes
 
 // Fix for "sorry, too many clients already"
-declare global {
-  // eslint-disable-next-line no-var -- only var works here
-  var db: PostgresJsDatabase<typeof schema> | undefined;
-}
 
 let db: PostgresJsDatabase<typeof schema>;
 const options: DrizzleConfig<typeof schema> = {
@@ -22,9 +18,11 @@ const options: DrizzleConfig<typeof schema> = {
 if (env.NODE_ENV === "production") {
   db = drizzle(postgres(env.DATABASE_URL), options);
 } else {
+  // @ts-expect-error we don't want to declare global db type, because it is not consistent per environment
   if (!global.db) global.db = drizzle(postgres(env.DATABASE_URL), options);
 
-  db = global.db;
+  // @ts-expect-error we don't want to declare global db type, because it is not through per environment
+  db = global.db as PostgresJsDatabase<typeof schema>;
 }
 
 export { db };

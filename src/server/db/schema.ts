@@ -15,6 +15,7 @@ import {
   type PgTimestampConfig,
 } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
+import { nanoid } from "nanoid";
 import { type AdapterAccount } from "next-auth/adapters";
 import { typedJson } from "~/server/db/types/typed-json";
 import { DEFAULT_TEMPLATE } from "~/shared/invoice-template/invoice-template-constants";
@@ -34,6 +35,28 @@ export const timestamp = <TMode extends "string" | "date" = "date">(
   name: string,
   options?: PgTimestampConfig<TMode>,
 ) => timestampOI(name, { mode: "date", ...options });
+
+export const assetsTable = pgTable("assets", {
+  id: varchar("id", { length: 32 })
+    .$defaultFn(() => nanoid(32))
+    .primaryKey(),
+  name: varchar("name", { length: 255 }),
+  size: bigint("size").notNull(),
+  mime: varchar("mime", { length: 255 }).notNull(),
+  createdAt: timestamp("createdAt").notNull().defaultNow(),
+  userId: varchar("user_id", { length: 255 })
+    .notNull()
+    .references(() => usersTable.id),
+});
+
+export type Asset = typeof assetsTable.$inferSelect;
+
+export const assetsRelations = relations(assetsTable, ({ one }) => ({
+  user: one(usersTable, {
+    fields: [assetsTable.userId],
+    references: [usersTable.id],
+  }),
+}));
 
 export const invoicesItemsTable = pgTable(
   "invoice_items",

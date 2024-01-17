@@ -12,4 +12,8 @@ const s3Client = new Minio.Client({
   useSSL: env.S3_USE_SSL,
 });
 
+export enum S3BucketNames {
+  ASSETS = "assets",
+}
+
 export { s3Client };
