@@ -8,12 +8,13 @@ type InvoiceTemplateRenderer = {
   invoiceTemplate: InvoiceTemplate;
   renderMap: TemplateRenderMap;
   resolver: TemplateVariableResolver;
+  context?: Record<string, unknown>;
 };
 
 export function TemplateRenderer(props: InvoiceTemplateRenderer) {
   return props.renderMap.root({
     cmp: props.invoiceTemplate.template.content,
     resolver: props.resolver,
-    // context: props.invoiceTemplate,
+    context: props.context,
   });
 }

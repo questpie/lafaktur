@@ -5,7 +5,7 @@ export type InvoiceRenderFn<T extends InvoiceTemplateComponent["type"]> =
   (props: {
     cmp: FromUnion<InvoiceTemplateComponent, "type", T>;
     resolver: TemplateVariableResolver;
-    context?: any;
+    context?: Record<string, unknown>;
   }) => React.ReactNode;
 
 export type TemplateRenderMap = {
@@ -15,7 +15,7 @@ export type TemplateRenderMap = {
 export type TemplateVariableResolver = <TResolveAs extends "value" | "node">(
   textWithVariable: string,
   resolveAs: TResolveAs,
-  context?: any,
+  context?: Record<string, unknown>,
 ) => TResolveAs extends "value" ? unknown : React.ReactNode;
 
 type TemplateComponentRendererProps = {
@@ -24,7 +24,7 @@ type TemplateComponentRendererProps = {
    * pass here the logic to resolve variables from the template
    */
   resolver: TemplateVariableResolver;
-  context?: any;
+  context?: Record<string, unknown>;
   renderMap: TemplateRenderMap;
 };
 
@@ -32,6 +32,7 @@ export function TemplateComponentRenderer({
   component,
   resolver,
   renderMap,
+  context,
 }: TemplateComponentRendererProps) {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const renderer = renderMap[component.type] as any;
@@ -45,5 +46,6 @@ export function TemplateComponentRenderer({
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     cmp: component as unknown as any,
     resolver,
+    context,
   });
 }

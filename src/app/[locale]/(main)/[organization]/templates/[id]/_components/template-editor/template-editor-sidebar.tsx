@@ -40,9 +40,15 @@ export function TemplateEditorSidebar() {
           <SizeEditor type="width" />
           <SizeEditor type="height" />
           {match(selectedComponent)
-            .with({ type: "root" }, { type: "view" }, () => <LayoutEditor />)
+            .with({ type: "root" }, () => <LayoutEditor />)
+            .with({ type: "view" }, () => <LayoutEditor />)
+            .with({ type: "list" }, () => (
+              <>
+                <LayoutEditor />
+                <ListMapByEditor />
+              </>
+            ))
             .with({ type: "text" }, () => <TextContentEditor />)
-            .with({ type: "list" }, () => <ListMapByEditor />)
             .otherwise(() => null)}
         </AccordionContent>
       </AccordionItem>

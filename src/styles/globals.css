@@ -69,3 +69,7 @@
     -moz-appearance: textfield;
   }
 }
+
+.pdf-document-viewer {
+  size: 210mm 297mm;
+}

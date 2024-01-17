@@ -4,6 +4,7 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useFieldArray, useForm, useFormContext } from "react-hook-form";
 import { LuBookTemplate, LuUser, LuX } from "react-icons/lu";
 import { useSelectedOrganization } from "~/app/[locale]/(main)/[organization]/_components/organization-provider";
+import { InvoicePreview } from "~/app/[locale]/(main)/[organization]/invoices/_components/invoice-preview";
 import {
   Accordion,
   AccordionContent,
@@ -67,218 +68,243 @@ export function EditInvoiceForm(props: EditInvoiceFormProps) {
     );
   }, [invoiceItems]);
 
+  const templateId = form.watch("templateId");
+  const selectedTemplateQuery = api.invoiceTemplate.getById.useQuery(
+    {
+      id: templateId!,
+      organizationId: selectedOrganization.id,
+    },
+    { enabled: !!templateId },
+  );
+
   return (
     <Form {...form}>
-      <form onSubmit={handleSubmit} className="relative flex flex-col gap-6">
-        <Accordion
-          type="multiple"
-          className="max-w-4xl"
-          defaultValue={["general", "items"]}
+      <div className="flex flex-row justify-between gap-4">
+        <form
+          onSubmit={handleSubmit}
+          className="relative flex max-w-xl flex-col gap-6"
         >
-          <AccordionItem value="general" className="">
-            <AccordionTrigger className="text-muted-foreground">
-              General
-            </AccordionTrigger>
-            <AccordionContent className="grid w-full grid-cols-12 gap-4">
-              <FormField
-                control={form.control}
-                name="number"
-                render={({ field }) => (
-                  <FormItem className="col-span-12 flex flex-col md:col-span-6">
-                    <FormLabel>Invoice number</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormDescription />
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="reference"
-                render={({ field }) => (
-                  <FormItem className="col-span-12 flex flex-col md:col-span-6">
-                    <FormLabel>Reference number</FormLabel>
-                    <FormControl>
-                      <Input {...field} value={field.value ?? ""} />
-                    </FormControl>
-                    <FormDescription />
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+          <Accordion type="multiple" defaultValue={["general", "items"]}>
+            <AccordionItem value="general" className="">
+              <AccordionTrigger className="text-muted-foreground">
+                General
+              </AccordionTrigger>
+              <AccordionContent className="grid w-full grid-cols-12 gap-4">
+                <FormField
+                  control={form.control}
+                  name="number"
+                  render={({ field }) => (
+                    <FormItem className="col-span-12 flex flex-col md:col-span-6">
+                      <FormLabel>Invoice number</FormLabel>
+                      <FormControl>
+                        <Input {...field} />
+                      </FormControl>
+                      <FormDescription />
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="reference"
+                  render={({ field }) => (
+                    <FormItem className="col-span-12 flex flex-col md:col-span-6">
+                      <FormLabel>Reference number</FormLabel>
+                      <FormControl>
+                        <Input {...field} value={field.value ?? ""} />
+                      </FormControl>
+                      <FormDescription />
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-              <InvoiceTemplatePicker />
+                <InvoiceTemplatePicker />
 
-              <FormField
-                control={form.control}
-                name="variableSymbol"
-                render={({ field }) => (
-                  <FormItem className="col-span-12 flex flex-col md:col-span-6">
-                    <FormLabel>Variable symbol</FormLabel>
-                    <FormControl>
-                      <Input {...field} value={field.value ?? ""} />
-                    </FormControl>
-                    <FormDescription />
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                <FormField
+                  control={form.control}
+                  name="variableSymbol"
+                  render={({ field }) => (
+                    <FormItem className="col-span-12 flex flex-col md:col-span-6">
+                      <FormLabel>Variable symbol</FormLabel>
+                      <FormControl>
+                        <Input {...field} value={field.value ?? ""} />
+                      </FormControl>
+                      <FormDescription />
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-              <FormField
-                control={form.control}
-                name="constantSymbol"
-                render={({ field }) => (
-                  <FormItem className="col-span-12 flex flex-col md:col-span-6">
-                    <FormLabel>Constant symbol</FormLabel>
-                    <FormControl>
-                      <Input {...field} value={field.value ?? ""} />
-                    </FormControl>
-                    <FormDescription />
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                <FormField
+                  control={form.control}
+                  name="constantSymbol"
+                  render={({ field }) => (
+                    <FormItem className="col-span-12 flex flex-col md:col-span-6">
+                      <FormLabel>Constant symbol</FormLabel>
+                      <FormControl>
+                        <Input {...field} value={field.value ?? ""} />
+                      </FormControl>
+                      <FormDescription />
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-              <FormField
-                control={form.control}
-                name="issueDate"
-                render={({ field }) => (
-                  <FormItem className="col-span-12 flex flex-col md:col-span-6">
-                    <FormLabel>Issue date</FormLabel>
-                    <DatePicker value={field.value} setValue={field.onChange} />
-                    <FormDescription>
-                      The date when the invoice was issued.
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                <FormField
+                  control={form.control}
+                  name="issueDate"
+                  render={({ field }) => (
+                    <FormItem className="col-span-12 flex flex-col md:col-span-6">
+                      <FormLabel>Issue date</FormLabel>
+                      <DatePicker
+                        value={field.value}
+                        setValue={field.onChange}
+                      />
+                      <FormDescription>
+                        The date when the invoice was issued.
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-              <FormField
-                control={form.control}
-                name="dueDate"
-                render={({ field }) => (
-                  <FormItem className="col-span-12 flex flex-col md:col-span-6">
-                    <FormLabel>Due date</FormLabel>
-                    <DatePicker value={field.value} setValue={field.onChange} />
-                    <FormDescription></FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                <FormField
+                  control={form.control}
+                  name="dueDate"
+                  render={({ field }) => (
+                    <FormItem className="col-span-12 flex flex-col md:col-span-6">
+                      <FormLabel>Due date</FormLabel>
+                      <DatePicker
+                        value={field.value}
+                        setValue={field.onChange}
+                      />
+                      <FormDescription></FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-              <FormField
-                control={form.control}
-                name="supplyDate"
-                render={({ field }) => (
-                  <FormItem className="col-span-12 flex flex-col md:col-span-6">
-                    <FormLabel>Delivery date</FormLabel>
-                    <DatePicker
-                      value={field.value ?? undefined}
-                      setValue={field.onChange}
-                    />
-                    <FormDescription></FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </AccordionContent>
-          </AccordionItem>
-          <AccordionItem value="payment">
-            <AccordionTrigger className="text-muted-foreground">
-              Payment details
-            </AccordionTrigger>
-            <AccordionContent className="grid w-full grid-cols-12 gap-4">
-              <FormField
-                control={form.control}
-                name="paymentMethod"
-                render={({ field }) => (
-                  <FormItem className="col-span-12 flex flex-col md:col-span-6">
-                    <FormLabel>Payment method </FormLabel>
-                    <FormControl>
-                      {/* TODO: select */}
-                      <Input {...field} value={field.value ?? ""} />
-                    </FormControl>
-                    <FormDescription />
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                <FormField
+                  control={form.control}
+                  name="supplyDate"
+                  render={({ field }) => (
+                    <FormItem className="col-span-12 flex flex-col md:col-span-6">
+                      <FormLabel>Delivery date</FormLabel>
+                      <DatePicker
+                        value={field.value ?? undefined}
+                        setValue={field.onChange}
+                      />
+                      <FormDescription></FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="payment">
+              <AccordionTrigger className="text-muted-foreground">
+                Payment details
+              </AccordionTrigger>
+              <AccordionContent className="grid w-full grid-cols-12 gap-4">
+                <FormField
+                  control={form.control}
+                  name="paymentMethod"
+                  render={({ field }) => (
+                    <FormItem className="col-span-12 flex flex-col md:col-span-6">
+                      <FormLabel>Payment method </FormLabel>
+                      <FormControl>
+                        {/* TODO: select */}
+                        <Input {...field} value={field.value ?? ""} />
+                      </FormControl>
+                      <FormDescription />
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-              <FormField
-                control={form.control}
-                name="supplierBankAccount"
-                render={({ field }) => (
-                  <FormItem className="col-span-12 flex flex-col md:col-span-6">
-                    <FormLabel>Bank account</FormLabel>
-                    <FormControl>
-                      <Input {...field} value={field.value ?? ""} />
-                    </FormControl>
-                    <FormDescription />
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                <FormField
+                  control={form.control}
+                  name="supplierBankAccount"
+                  render={({ field }) => (
+                    <FormItem className="col-span-12 flex flex-col md:col-span-6">
+                      <FormLabel>Bank account</FormLabel>
+                      <FormControl>
+                        <Input {...field} value={field.value ?? ""} />
+                      </FormControl>
+                      <FormDescription />
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-              <FormField
-                control={form.control}
-                name="supplierBankCode"
-                render={({ field }) => (
-                  <FormItem className="col-span-12 flex flex-col md:col-span-6">
-                    <FormLabel>Bank code</FormLabel>
-                    <FormControl>
-                      <Input {...field} value={field.value ?? ""} />
-                    </FormControl>
-                    <FormDescription />
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </AccordionContent>
-          </AccordionItem>
+                <FormField
+                  control={form.control}
+                  name="supplierBankCode"
+                  render={({ field }) => (
+                    <FormItem className="col-span-12 flex flex-col md:col-span-6">
+                      <FormLabel>Bank code</FormLabel>
+                      <FormControl>
+                        <Input {...field} value={field.value ?? ""} />
+                      </FormControl>
+                      <FormDescription />
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </AccordionContent>
+            </AccordionItem>
 
-          <AccordionItem value="customer">
-            <AccordionTrigger className="text-muted-foreground">
-              Customer details
-            </AccordionTrigger>
-            <AccordionContent className="grid w-full grid-cols-12 gap-4">
-              <CustomerFields />
-            </AccordionContent>
-          </AccordionItem>
-          <AccordionItem value="supplier">
-            <AccordionTrigger className="text-muted-foreground">
-              Supplier details
-            </AccordionTrigger>
-            <AccordionContent className="grid w-full grid-cols-12 gap-4">
-              <SupplierFields />
-            </AccordionContent>
-          </AccordionItem>
-          <AccordionItem value="items">
-            <AccordionTrigger className="text-muted-foreground">
-              Items
-            </AccordionTrigger>
-            <AccordionContent className="grid w-full grid-cols-12 gap-4">
-              <InvoiceItems />
-              <Card className="col-span-12 max-w-4xl">
-                <CardContent className="flex flex-row justify-end p-4">
-                  <h4 className="text-2xl font-bold text-foreground">
-                    Total: {total} €
-                  </h4>
-                </CardContent>
-              </Card>
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
-        <div className="sticky bottom-0 bg-background py-4">
-          <div className="flex max-w-4xl flex-row items-center justify-end">
-            <Button type="submit" isLoading={editMutation.isLoading}>
-              Save
-            </Button>
+            <AccordionItem value="customer">
+              <AccordionTrigger className="text-muted-foreground">
+                Customer details
+              </AccordionTrigger>
+              <AccordionContent className="grid w-full grid-cols-12 gap-4">
+                <CustomerFields />
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="supplier">
+              <AccordionTrigger className="text-muted-foreground">
+                Supplier details
+              </AccordionTrigger>
+              <AccordionContent className="grid w-full grid-cols-12 gap-4">
+                <SupplierFields />
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="items">
+              <AccordionTrigger className="text-muted-foreground">
+                Items
+              </AccordionTrigger>
+              <AccordionContent className="grid w-full grid-cols-12 gap-4">
+                <InvoiceItems />
+                <Card className="col-span-12 ">
+                  <CardContent className="flex flex-row justify-end p-4">
+                    <h4 className="text-2xl font-bold text-foreground">
+                      Total: {total} €
+                    </h4>
+                  </CardContent>
+                </Card>
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
+
+          <div className="sticky bottom-0 bg-background py-4">
+            <div className="flex  flex-row items-center justify-end">
+              <Button type="submit" isLoading={editMutation.isLoading}>
+                Save
+              </Button>
+            </div>
           </div>
-        </div>
-      </form>
+        </form>
+        {selectedTemplateQuery.data && (
+          <div className="max-h-min min-h-[500px] flex-1">
+            <InvoicePreview
+              invoice={form.getValues()}
+              invoiceTemplate={selectedTemplateQuery.data}
+            />
+          </div>
+        )}
+      </div>
     </Form>
   );
 }

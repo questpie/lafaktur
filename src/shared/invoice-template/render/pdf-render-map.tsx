@@ -14,7 +14,6 @@ export const PDF_RENDER_MAP: TemplateRenderMap = {
               component={child}
               key={child.id}
               renderMap={PDF_RENDER_MAP}
-              // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
               context={context}
               resolver={resolver}
             />
@@ -24,6 +23,13 @@ export const PDF_RENDER_MAP: TemplateRenderMap = {
     );
   },
   view: ({ cmp, resolver, context }) => {
+    if (cmp.if) {
+      const ifValue = resolver(cmp.if, "value", context);
+      if (!ifValue) {
+        return null;
+      }
+    }
+
     return (
       <View style={cmp.style}>
         {cmp.children?.map((child) => (
@@ -31,7 +37,6 @@ export const PDF_RENDER_MAP: TemplateRenderMap = {
             component={child}
             key={child.id}
             resolver={resolver}
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             context={context}
             renderMap={PDF_RENDER_MAP}
           />
@@ -40,20 +45,39 @@ export const PDF_RENDER_MAP: TemplateRenderMap = {
     );
   },
 
-  image: ({ cmp }) => {
+  image: ({ cmp, resolver, context }) => {
+    if (cmp.if) {
+      const ifValue = resolver(cmp.if, "value", context);
+      if (!ifValue) {
+        return null;
+      }
+    }
     return (
       <View style={cmp.style}>
         <Text>TODO IMAGE RESOLUTION</Text>
       </View>
     );
   },
-  text: ({ cmp, resolver }) => {
-    const resolvedText = resolver(cmp.value ?? "", "node");
+  text: ({ cmp, resolver, context }) => {
+    if (cmp.if) {
+      const ifValue = resolver(cmp.if, "value", context);
+      if (!ifValue) {
+        return null;
+      }
+    }
+    const resolvedText = resolver(cmp.value ?? "", "node", context);
 
     return <Text style={cmp.style}>{resolvedText}</Text>;
   },
-  list: ({ cmp, resolver }) => {
-    const list = resolver(cmp.mapBy, "value");
+  list: ({ cmp, resolver, context }) => {
+    if (cmp.if) {
+      const ifValue = resolver(cmp.if, "value", context);
+      if (!ifValue) {
+        return null;
+      }
+    }
+
+    const list = resolver(cmp.mapBy, "value", context);
 
     if (!Array.isArray(list)) {
       throw new Error("Invalid value for list component");
@@ -66,8 +90,10 @@ export const PDF_RENDER_MAP: TemplateRenderMap = {
             component={cmp.item}
             key={`${cmp.id}-${i}`}
             resolver={resolver}
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-            context={item}
+            context={{
+              ...(item as Record<string, unknown>),
+              __scope: `${cmp.mapBy}_`,
+            }}
             renderMap={PDF_RENDER_MAP}
           />
         ))}

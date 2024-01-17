@@ -26,7 +26,11 @@ function editorResolver(text: string): ReactNode {
   const nodes = parseTemplateTextValue(text);
 
   return (
-    <span className={cn("pointer-events-none inline-flex items-center")}>
+    <span
+      className={cn(
+        "pointer-events-none inline-flex w-full items-center overflow-hidden",
+      )}
+    >
       {nodes.map((node, i) => {
         const key = `${node.value}-${i}`;
         if (node.type === "text") {
@@ -37,16 +41,15 @@ function editorResolver(text: string): ReactNode {
         const label = INVOICE_VARIABLE_LABELS[variable];
 
         return (
-          <Badge
+          <span
             key={key}
-            variant={"secondary"}
             className={cn(
-              "mx-[1px] line-clamp-1 max-w-full text-ellipsis whitespace-nowrap px-1 py-0",
+              "line-clamp-1 text-ellipsis rounded bg-muted-foreground px-[2px] text-background",
             )}
             style={{ fontSize: "Inherit" }}
           >
             {label}
-          </Badge>
+          </span>
         );
       })}
     </span>
