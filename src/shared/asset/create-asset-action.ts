@@ -2,8 +2,8 @@
 
 import { type Readable } from "stream";
 import { getServerAuthSession } from "~/server/auth";
-import { db } from "~/server/db";
-import { assetsTable, type Asset } from "~/server/db/schema";
+import { db } from "~/server/db/db-client";
+import { assetsTable, type Asset } from "~/server/db/db-schema";
 import { S3BucketNames, s3Client } from "~/server/s3/s3-client";
 import {
   CreateAssetErrors,
