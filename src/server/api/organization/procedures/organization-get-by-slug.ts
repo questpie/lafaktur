@@ -23,7 +23,7 @@ export const organizationGetBySlug = protectedProcedure
       )
       .where(
         and(
-          eq(organizationUsersTable.userId, ctx.session.user.id),
+          eq(organizationUsersTable.userId, ctx.session.user.userId),
           eq(organizationsTable.slug, input),
         ),
       )

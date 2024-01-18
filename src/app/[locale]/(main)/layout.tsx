@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { type PropsWithChildren } from "react";
-import { getServerAuthSession } from "~/server/auth";
+import { getServerAuthSession } from "~/server/auth/get-server-session";
 
 export default async function MainLayout(props: PropsWithChildren) {
   const session = await getServerAuthSession();

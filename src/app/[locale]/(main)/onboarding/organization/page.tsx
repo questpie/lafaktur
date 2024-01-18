@@ -2,9 +2,9 @@
 
 import { useQueryClient } from "@tanstack/react-query";
 import { getQueryKey } from "@trpc/react-query";
-import { useSession } from "next-auth/react";
 import { useRouter } from "next-nprogress-bar";
 import { useState } from "react";
+import { useSession } from "~/app/[locale]/auth/_components/auth-provider";
 import { Button } from "~/app/_components/ui/button";
 import { Input } from "~/app/_components/ui/input";
 import { Label } from "~/app/_components/ui/label";
@@ -26,9 +26,9 @@ export default function OrganizationOnboardingPage() {
       router.push(`/${data.slug}`);
     },
   });
-  const me = useSession().data!.user;
-
-  const [orgName, setName] = useState<string>(me.name ?? "");
+  const session = useSession();
+  const me = session?.user;
+  const [orgName, setName] = useState<string>(me?.name ?? "");
 
   const slug = normalizeOrganizationName(orgName);
 
@@ -44,7 +44,7 @@ export default function OrganizationOnboardingPage() {
       <div className="w-full">
         <div>
           <h1 className="text-4xl font-bold text-foreground">
-            Welcome {me.name?.split(" ")[0]} !
+            Welcome {me?.name.split(" ")[0]} !
           </h1>
           <p className="mt-1 text-lg text-muted-foreground">
             Please create an organization to get started.

@@ -4,7 +4,7 @@ import { z } from "zod";
 import { $t } from "~/i18n/dummy";
 import { withOrganizationAccess } from "~/server/api/organization/organization-queries";
 import { protectedProcedure } from "~/server/api/trpc";
-import { invoicesTable } from "~/server/db/db-schema";
+import { invoicesItemsTable, invoicesTable } from "~/server/db/db-schema";
 
 export const invoiceDeleteById = protectedProcedure
   .input(z.object({ id: z.number(), organizationId: z.number() }))
@@ -19,7 +19,7 @@ export const invoiceDeleteById = protectedProcedure
           .$dynamic(),
         {
           column: invoicesTable.organizationId,
-          userId: ctx.session.user.id,
+          userId: ctx.session.user.userId,
           organizationId: input.organizationId,
           role: "editor",
         },
@@ -34,9 +34,15 @@ export const invoiceDeleteById = protectedProcedure
         });
       }
 
+      /** delete invoice */
       await trx
         .delete(invoicesTable)
         .where(eq(invoicesTable.id, foundInvoice.id));
+
+      /** delete invoice items */
+      await trx
+        .delete(invoicesItemsTable)
+        .where(eq(invoicesItemsTable.invoiceId, foundInvoice.id));
 
       return { id: foundInvoice.id };
     });

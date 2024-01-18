@@ -14,7 +14,7 @@ const withBundleAnalyzer = (await import("@next/bundle-analyzer")).default({
 });
 
 /** @type {import("next").NextConfig} */
-const config = {
+let config = {
   experimental: {},
   eslint: {
     ignoreDuringBuilds: true,
@@ -22,6 +22,11 @@ const config = {
   output: "standalone",
 };
 
-export default withBundleAnalyzer(
-  million.next(withNextIntl(config), { auto: { rsc: true } }),
-);
+config = withBundleAnalyzer(withNextIntl(config));
+if (process.env.NODE_ENV === "production") {
+  config = million.next(config, {
+    auto: { rsc: true },
+  });
+}
+
+export default config;

@@ -7,12 +7,13 @@ import { type Viewport } from "next";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 import { notFound } from "next/navigation";
-import { NextAuthProvider } from "~/app/[locale]/auth/_components/next-auth-provider";
 import { AppProvider } from "~/app/[locale]/app-provider";
+import { AuthProvider } from "~/app/[locale]/auth/_components/auth-provider";
 import { ThemeProvider } from "~/app/_components/theme/theme-provider";
 import { cn } from "~/app/_utils/styles-utils";
 import { setRequestLocale } from "~/i18n/server";
 import { ALL_LOCALES } from "~/i18n/shared";
+import { getServerAuthSession } from "~/server/auth/get-server-session";
 import { TRPCReactProvider } from "~/trpc/react";
 
 export const metadata = {
@@ -46,6 +47,7 @@ export default async function RootLayout({
   setRequestLocale(locale);
 
   const messages = await getMessages({ locale });
+  const session = await getServerAuthSession();
 
   return (
     <html lang={locale}>
@@ -63,11 +65,11 @@ export default async function RootLayout({
             disableTransitionOnChange
             enableColorScheme
           >
-            <NextAuthProvider>
-              <TRPCReactProvider headers={headers()}>
-                <AppProvider>{children}</AppProvider>
-              </TRPCReactProvider>
-            </NextAuthProvider>
+            <TRPCReactProvider headers={headers()}>
+              <AppProvider>
+                <AuthProvider session={session}>{children}</AuthProvider>
+              </AppProvider>
+            </TRPCReactProvider>
           </ThemeProvider>
         </NextIntlClientProvider>
       </body>

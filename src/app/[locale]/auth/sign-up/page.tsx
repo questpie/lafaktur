@@ -1,7 +1,6 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { signIn } from "next-auth/react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next-nprogress-bar";
 import Link from "next/link";
@@ -27,6 +26,7 @@ import {
   FormMessage,
 } from "~/app/_components/ui/form";
 import { Input } from "~/app/_components/ui/input";
+import { signIn } from "~/shared/auth/auth-action";
 import { signUpSchema } from "~/shared/auth/auth-schemas";
 import { isTrpcError, tryToSetFormError } from "~/trpc/client-errors";
 import { api } from "~/trpc/react";
@@ -44,28 +44,19 @@ export default function SignUpPage() {
     resolver: zodResolver(signUpSchema),
   });
 
-  const router = useRouter();
   const signUpMutation = api.auth.signUp.useMutation({});
 
   const handleSubmit = form.handleSubmit(async (data) => {
     try {
       await signUpMutation.mutateAsync(data);
-      const signInResp = await signIn("credentials", {
-        redirect: false,
-        email: data.email,
-        password: data.password,
-      });
-      if (signInResp?.ok) {
-        return router.replace(`/onboarding/organization`);
-      }
-      /**
-       * Something failed while signing in, we should redirect to sign in page
-       */
-      router.replace("/auth/sign-in");
     } catch (err) {
       if (!isTrpcError(err)) throw err;
       tryToSetFormError(err, form, t);
     }
+    await signIn(
+      { email: data.email, password: data.password },
+      "/onboarding/organization",
+    );
   });
 
   return (

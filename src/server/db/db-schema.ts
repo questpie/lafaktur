@@ -8,14 +8,12 @@ import {
   pgEnum,
   pgTable,
   primaryKey,
-  text,
   timestamp as timestampOI,
   uniqueIndex,
   varchar,
   type PgTimestampConfig,
 } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
-import { type AdapterAccount } from "next-auth/adapters";
 import { typedJson } from "~/server/db/types/typed-json";
 import { DEFAULT_TEMPLATE } from "~/shared/invoice-template/invoice-template-constants";
 import {
@@ -266,7 +264,7 @@ export const organizationUsersTable = pgTable(
     organizationId: bigint("organization_id")
       .notNull()
       .references(() => organizationsTable.id),
-    userId: varchar("user_id", { length: 255 })
+    userId: varchar("user_id", { length: 21 })
       .notNull()
       .references(() => usersTable.id),
 
@@ -358,7 +356,7 @@ export const personalAccessTokensTable = pgTable("personal_access_tokens", {
   name: varchar("name", { length: 255 }).notNull(),
   token: varchar("token", { length: 255 }).notNull(),
   expires: timestamp("expires").notNull(),
-  userId: varchar("user_id", { length: 255 })
+  userId: varchar("user_id", { length: 21 })
     .notNull()
     .references(() => usersTable.id),
 });
@@ -382,13 +380,12 @@ export const insertPersonalAccessTokenSchema = createInsertSchema(
 );
 
 export const usersTable = pgTable("user", {
-  id: varchar("id", { length: 255 }).notNull().primaryKey(),
+  id: varchar("id", { length: 21 }).notNull().primaryKey(),
   name: varchar("name", { length: 255 }),
   email: varchar("email", { length: 255 }).notNull(),
   /**
    * password can be nullable because we can have users that are not local users
    */
-  password: varchar("password", { length: 255 }),
   emailVerified: timestamp("emailVerified").default(sql`CURRENT_TIMESTAMP(3)`),
   image: varchar("image", { length: 255 }),
 });
@@ -396,65 +393,32 @@ export const usersTable = pgTable("user", {
 export type User = typeof usersTable.$inferSelect;
 export type UserInsert = typeof usersTable.$inferInsert;
 
-export const usersRelations = relations(usersTable, ({ many }) => ({
-  accounts: many(accountsTable),
-  personalAccessTokens: many(personalAccessTokensTable),
-}));
+export const sessionsTable = pgTable("session", {
+  id: varchar("id", {
+    length: 128,
+  }).primaryKey(),
+  userId: varchar("user_id", {
+    length: 21,
+  })
+    .notNull()
+    .references(() => usersTable.id),
+  activeExpires: bigint("active_expires").notNull(),
+  idleExpires: bigint("idle_expires").notNull(),
+});
 
-export const accountsTable = pgTable(
-  "account",
-  {
-    userId: varchar("userId", { length: 255 }).notNull(),
-    type: varchar("type", { length: 255 })
-      .$type<AdapterAccount["type"] | "credentials">()
-      .notNull(),
-    provider: varchar("provider", { length: 255 }).notNull(),
-    providerAccountId: varchar("providerAccountId", {
-      length: 255,
-    }).notNull(),
-    refresh_token: text("refresh_token"),
-    access_token: text("access_token"),
-    expires_at: integer("expires_at"),
-    token_type: varchar("token_type", { length: 255 }),
-    scope: varchar("scope", { length: 255 }),
-    id_token: text("id_token"),
-    session_state: varchar("session_state", { length: 255 }),
-  },
-  (account) => ({
-    compoundKey: primaryKey({
-      columns: [account.provider, account.providerAccountId],
-    }),
-    userIdIdx: index().on(account.userId),
+export const userKeysTable = pgTable("user_key", {
+  id: varchar("id", {
+    length: 255,
+  }).primaryKey(),
+  userId: varchar("user_id", {
+    length: 21,
+  })
+    .notNull()
+    .references(() => usersTable.id),
+  hashedPassword: varchar("hashed_password", {
+    length: 255,
   }),
-);
-
-export const accountsRelations = relations(accountsTable, ({ one }) => ({
-  user: one(usersTable, {
-    fields: [accountsTable.userId],
-    references: [usersTable.id],
-  }),
-}));
-
-export const sessionsTable = pgTable(
-  "session",
-  {
-    sessionToken: varchar("sessionToken", { length: 255 })
-      .notNull()
-      .primaryKey(),
-    userId: varchar("userId", { length: 255 }).notNull(),
-    expires: timestamp("expires").notNull(),
-  },
-  (session) => ({
-    userIdIdx: index().on(session.userId),
-  }),
-);
-
-export const sessionsRelations = relations(sessionsTable, ({ one }) => ({
-  user: one(usersTable, {
-    fields: [sessionsTable.userId],
-    references: [usersTable.id],
-  }),
-}));
+});
 
 export const verificationTokenTypeEnum = pgEnum("verification_token_type", [
   "reset-password",

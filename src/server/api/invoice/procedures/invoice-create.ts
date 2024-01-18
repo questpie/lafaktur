@@ -22,7 +22,10 @@ export const invoiceCreate = protectedProcedure
           })
           .from(organizationsTable)
           .$dynamic(),
-        { userId: ctx.session.user.id, organizationId: input.organizationId },
+        {
+          userId: ctx.session.user.userId,
+          organizationId: input.organizationId,
+        },
       );
 
       if (!organization) {
@@ -42,7 +45,7 @@ export const invoiceCreate = protectedProcedure
           .$dynamic(),
         {
           column: invoicesTable.organizationId,
-          userId: ctx.session.user.id,
+          userId: ctx.session.user.userId,
           organizationId: input.organizationId,
         },
       ).limit(1);

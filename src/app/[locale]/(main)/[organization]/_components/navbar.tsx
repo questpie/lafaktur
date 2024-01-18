@@ -1,5 +1,4 @@
 "use client";
-import { signOut, useSession } from "next-auth/react";
 import { LuArrowLeft, LuLogOut, LuMenu } from "react-icons/lu";
 import {
   HeaderAction,
@@ -8,6 +7,7 @@ import {
 } from "~/app/[locale]/(main)/[organization]/_components/header";
 import { SearchBar } from "~/app/[locale]/(main)/[organization]/_components/searchbar";
 import { useSidebarControl } from "~/app/[locale]/(main)/[organization]/_components/sidebar";
+import { useSession } from "~/app/[locale]/auth/_components/auth-provider";
 import { ThemeToggle } from "~/app/_components/theme/theme-toggle";
 import {
   Avatar,
@@ -21,16 +21,16 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "~/app/_components/ui/dropdown-menu";
+import { signOut } from "~/shared/auth/auth-action";
 
 export default function Navbar() {
   const session = useSession();
-  const user = session.data?.user;
+  const user = session?.user;
 
   const { setIsOpen: setSidebarOpen } = useSidebarControl();
   const headerData = useHeaderData();
 
   const breadcrumbsData = useBreadcrumbsData();
-
   const goBackBreadcrumb = breadcrumbsData[breadcrumbsData.length - 2] ?? null;
 
   return (
@@ -55,7 +55,7 @@ export default function Navbar() {
               <DropdownMenuItem
                 className="gap-2"
                 onClick={async () => {
-                  await signOut({ callbackUrl: "/" });
+                  await signOut("/");
                 }}
               >
                 <LuLogOut /> Sign Out

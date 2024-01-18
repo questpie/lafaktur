@@ -19,7 +19,10 @@ export const customerCreate = protectedProcedure
           })
           .from(organizationsTable)
           .$dynamic(),
-        { userId: ctx.session.user.id, organizationId: input.organizationId },
+        {
+          userId: ctx.session.user.userId,
+          organizationId: input.organizationId,
+        },
       );
 
       if (!organization) {

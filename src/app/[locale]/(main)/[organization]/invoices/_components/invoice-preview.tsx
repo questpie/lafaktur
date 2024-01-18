@@ -71,7 +71,13 @@ export const invoiceResolver: TemplateVariableResolver = (
 
 export function InvoicePreview(props: InvoicePreviewProps) {
   return (
-    <PDFViewer className="h-full w-full">
+    <PDFViewer
+      className="h-full w-full"
+      showToolbar={false}
+      style={{
+        backgroundColor: "bg-transparent",
+      }}
+    >
       <TemplateRenderer
         invoiceTemplate={props.invoiceTemplate}
         renderMap={PDF_RENDER_MAP}

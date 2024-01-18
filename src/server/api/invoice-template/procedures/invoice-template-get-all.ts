@@ -30,7 +30,7 @@ export const invoiceTemplateGetAll = protectedProcedure
     const data = await withPagination(
       withOrganizationAccess(qb, {
         column: invoiceTemplatesTable.organizationId,
-        userId: ctx.session.user.id,
+        userId: ctx.session.user.userId,
         organizationId: input.organizationId,
       }),
       input,

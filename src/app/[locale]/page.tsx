@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { setRequestLocale } from "~/i18n/server";
-import { getServerAuthSession } from "~/server/auth";
+import { getServerAuthSession } from "~/server/auth/get-server-session";
 import { api } from "~/trpc/server";
 
 export default async function Home({ params }: { params: { locale: string } }) {

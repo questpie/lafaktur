@@ -12,8 +12,8 @@ import { type NextRequest } from "next/server";
 import superjson from "superjson";
 import { ZodError } from "zod";
 import { $t } from "~/i18n/dummy";
+import { auth } from "~/server/auth/lucia";
 
-import { getServerAuthSession } from "~/server/auth";
 import { db } from "~/server/db/db-client";
 
 /**
@@ -25,7 +25,7 @@ import { db } from "~/server/db/db-client";
  */
 
 interface CreateContextOptions {
-  headers: NextRequest["headers"];
+  req: NextRequest;
 }
 
 /**
@@ -39,11 +39,15 @@ interface CreateContextOptions {
  * @see https://create.t3.gg/en/usage/trpc#-serverapitrpcts
  */
 export const createInnerTRPCContext = async (opts: CreateContextOptions) => {
-  const session = await getServerAuthSession();
+  /** Setting session doesn't work here because we are just passing opts.req */
+  /** passing headers and cookies dons'nt work here, still we cannot use setSession */
+  const authRequest = auth.handleRequest(opts.req);
+  const session = await authRequest.validate();
 
   return {
     session,
-    headers: opts.headers,
+    nextReq: opts.req,
+    authRequest,
     db,
   };
 };
@@ -58,7 +62,7 @@ export const createTRPCContext = async (opts: { req: NextRequest }) => {
   // Fetch stuff that depends on the request
 
   return await createInnerTRPCContext({
-    headers: opts.req.headers,
+    req: opts.req,
   });
 };
 
@@ -109,7 +113,7 @@ export const publicProcedure = t.procedure;
 
 /** Reusable middleware that enforces users are logged in before running the procedure. */
 const enforceUserIsAuthed = t.middleware(({ ctx, next }) => {
-  if (!ctx.session || !ctx.session.user) {
+  if (!ctx.session?.user) {
     throw new TRPCError({
       code: "UNAUTHORIZED",
       message: $t("auth.err.pleaseLoginToContinue"),

@@ -19,7 +19,7 @@ export const customerGetById = protectedProcedure
         .$dynamic(),
       {
         column: customersTable.organizationId,
-        userId: ctx.session.user.id,
+        userId: ctx.session.user.userId,
       },
     ).where(and(eq(customersTable.id, input.id)));
 

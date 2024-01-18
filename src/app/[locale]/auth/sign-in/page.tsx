@@ -1,8 +1,6 @@
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { signIn } from "next-auth/react";
 import { useTranslations } from "next-intl";
-import { useRouter } from "next-nprogress-bar";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { FaGithub, FaGoogle } from "react-icons/fa";
@@ -32,6 +30,7 @@ import {
   FormMessage,
 } from "~/app/_components/ui/form";
 import { Input } from "~/app/_components/ui/input";
+import { signIn } from "~/shared/auth/auth-action";
 import { signInSchema } from "~/shared/auth/auth-schemas";
 
 export default function SignInPage() {
@@ -45,16 +44,12 @@ export default function SignInPage() {
     resolver: zodResolver(signInSchema),
   });
 
-  const router = useRouter();
+  // const signInMutation = api.auth.signIn.useMutation({});
 
   const handleSubmit = form.handleSubmit(async (data) => {
-    const signInResp = await signIn("credentials", {
-      redirect: false,
-      email: data.email,
-      password: data.password,
-    });
-    if (signInResp?.ok) {
-      return router.replace(`/`);
+    const signInResp = await signIn(data, "/");
+    if (!signInResp || signInResp?.success) {
+      return;
     }
 
     // This error is for CredentialsSignin, TODO: handle other errors

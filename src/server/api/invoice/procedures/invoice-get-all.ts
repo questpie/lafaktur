@@ -25,7 +25,7 @@ export const invoiceGetAll = protectedProcedure
           .$dynamic(),
         {
           column: invoicesTable.organizationId,
-          userId: ctx.session.user.id,
+          userId: ctx.session.user.userId,
           organizationId: input.organizationId,
         },
       ),

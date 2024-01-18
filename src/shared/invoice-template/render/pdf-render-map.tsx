@@ -53,7 +53,7 @@ export const PDF_RENDER_MAP: TemplateRenderMap = {
       }
     }
     return (
-      <View style={cmp.style}>
+      <View style={{ ...cmp.style }}>
         <Text>TODO IMAGE RESOLUTION</Text>
       </View>
     );

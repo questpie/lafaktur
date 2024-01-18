@@ -34,7 +34,7 @@ export const organizationCreate = protectedProcedure
 
       await trx.insert(organizationUsersTable).values({
         organizationId: Number(newOrganization?.id),
-        userId: ctx.session.user.id,
+        userId: ctx.session.user.userId,
         role: "owner",
       });
 

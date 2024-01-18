@@ -1,15 +1,11 @@
-import { TRPCError } from "@trpc/server";
-import { hash } from "bcrypt";
-import { randomUUID } from "crypto";
 import { eq } from "drizzle-orm";
+import { LuciaError } from "lucia";
+import { nanoid } from "nanoid";
 import { ZodError } from "zod";
 import { $t } from "~/i18n/dummy";
 import { publicProcedure } from "~/server/api/trpc";
-import {
-  accountsTable,
-  usersTable,
-  type UserInsert,
-} from "~/server/db/db-schema";
+import { LuciaProvider, auth } from "~/server/auth/lucia";
+import { usersTable } from "~/server/db/db-schema";
 import { signUpSchema } from "~/shared/auth/auth-schemas";
 
 export const signUp = publicProcedure
@@ -31,45 +27,36 @@ export const signUp = publicProcedure
         ]);
       }
 
-      const hashedPassword = await hash(input.password, 12);
-      const payload: UserInsert = {
-        email: input.email,
-        id: randomUUID(),
-        name: input.name,
-        password: hashedPassword,
-      };
-
-      await trx.insert(usersTable).values(payload);
-      const createdUser = await trx.query.usersTable.findFirst({
-        where: () => eq(usersTable.id, payload.id),
-      });
-
-      if (!createdUser) {
-        throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Could not create user",
+      try {
+        const user = await auth.createUser({
+          userId: nanoid(),
+          key: {
+            providerId: LuciaProvider.EMAIL,
+            providerUserId: input.email,
+            password: input.password,
+          },
+          attributes: {
+            email: input.email,
+            name: input.name,
+          },
         });
+
+        return {
+          id: user.userId,
+        };
+      } catch (e) {
+        if (e instanceof LuciaError && e.message === `AUTH_DUPLICATE_KEY_ID`) {
+          throw new ZodError([
+            {
+              code: "custom",
+              path: ["email"],
+              message: $t("auth.err.userAlreadyExists"),
+            },
+          ]);
+        }
+        // TODO: check and handle other error
+        // provided user attributes violates database rules (e.g. unique constraint)
+        // or unexpected database errors
       }
-
-      const createdAccount = await trx
-        .insert(accountsTable)
-        .values({
-          userId: createdUser.id,
-          type: "credentials",
-          provider: "credentials",
-          providerAccountId: createdUser.id,
-        })
-        .returning();
-
-      if (!createdAccount) {
-        throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Could not create account",
-        });
-      }
-
-      return {
-        id: payload.id,
-      };
     });
   });

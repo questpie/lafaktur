@@ -134,7 +134,8 @@
   "common": {
     "add": "Add",
     "err": {
-      "invalidOrganization": "You don't have access to this organization"
+      "invalidOrganization": "You don't have access to this organization",
+      "somethingWentWrong": "Something went wrong"
     }
   },
   "invoice": {

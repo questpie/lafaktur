@@ -21,7 +21,7 @@ export const invoiceTemplateDeleteById = protectedProcedure
           .from(invoiceTemplatesTable)
           .$dynamic(),
         {
-          userId: ctx.session.user.id,
+          userId: ctx.session.user.userId,
           column: invoiceTemplatesTable.organizationId,
         },
       )
