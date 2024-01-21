@@ -174,7 +174,11 @@
     }
   },
   "customer": {
-    "customerPage": {},
+    "customerPage": {
+      "mainAction": {
+        "label": "Upraviť zákazníka"
+      }
+    },
     "customersPage": {
       "title": "Vaši zákazníci",
       "mainAction": {
@@ -187,6 +191,17 @@
     "err": {
       "createFailed": "Nepodarilo sa vytvoriť zákazníka",
       "notFound": "Zákazník nebol nájdený"
+    },
+    "dataTable": {
+      "deleteAction": {
+        "title": "Vymazať zákazníka",
+        "description": "Naozaj chcete odstrániť tohto zákazníka?",
+        "confirm": "Odstrániť",
+        "cancel": "Zrušiť"
+      },
+      "loadMore": "Načítať viac",
+      "name": "Meno",
+      "email": "Email"
     }
   },
   "invoiceItem": {

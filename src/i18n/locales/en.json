@@ -187,7 +187,9 @@
       "createFailed": "Failed to create customer"
     },
     "customerPage": {
-      "mainAction": {}
+      "mainAction": {
+        "label": "Edit customer"
+      }
     },
     "customersPage": {
       "title": "Your customers",
@@ -197,6 +199,17 @@
     },
     "addCustomerPage": {
       "title": "Add customer"
+    },
+    "dataTable": {
+      "deleteAction": {
+        "title": "Delete customer",
+        "description": "Are you sure you want to delete this customer ?",
+        "confirm": "Delete",
+        "cancel": "Cancel"
+      },
+      "loadMore": "Load more",
+      "name": "Name",
+      "email": "Email"
     }
   }
 }
