@@ -116,13 +116,13 @@ const columns: ColumnDef<Customer>[] = [
       <span className="line-clamp-1 text-ellipsis">{String(getValue())}</span>
     ),
   },
-  // {
-  //   accessorKey: "email",
-  //   header: () => <Translate name={$t("customer.dataTable.email")} />,
-  //   cell: ({ getValue }) => (
-  //     <span className="line-clamp-1 text-ellipsis">{String(getValue())}</span>
-  //   ),
-  // },
+  {
+    accessorKey: "email",
+    header: () => <Translate name={$t("customer.dataTable.email")} />,
+    cell: ({ getValue }) => (
+      <span className="line-clamp-1 text-ellipsis">{String(getValue())}</span>
+    ),
+  },
   {
     id: "actions",
     cell: DeleteAction,

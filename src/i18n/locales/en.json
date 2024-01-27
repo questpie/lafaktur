@@ -133,6 +133,7 @@
   },
   "common": {
     "add": "Add",
+    "save": "Save",
     "err": {
       "invalidOrganization": "You don't have access to this organization",
       "somethingWentWrong": "Something went wrong"
@@ -198,7 +199,26 @@
       }
     },
     "addCustomerPage": {
-      "title": "Add customer"
+      "title": "Add customer",
+      "personalDetails": {
+        "title": "Personal details",
+        "name": "Customer name",
+        "email": "Email",
+        "phone": "Phone"
+      },
+      "location": {
+        "title": "Location",
+        "street": "Street",
+        "city": "City",
+        "zip": "Zip code",
+        "country": "Country"
+      },
+      "businessDetails": {
+        "title": "Business details",
+        "businessId": "Business ID",
+        "vatId": "VAT ID",
+        "taxId": "Tax ID"
+      }
     },
     "dataTable": {
       "deleteAction": {

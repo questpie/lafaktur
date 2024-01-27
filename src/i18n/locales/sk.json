@@ -131,6 +131,7 @@
   },
   "common": {
     "add": "Pridať",
+    "save": "Uložiť",
     "err": {
       "invalidOrganization": "K tejto organizácii nemáte prístup"
     }
@@ -186,7 +187,26 @@
       }
     },
     "addCustomerPage": {
-      "title": "Pridať zákazníka"
+      "title": "Pridať zákazníka",
+      "personalDetails": {
+        "title": "Osobné údaje",
+        "name": "Meno zákazníka",
+        "email": "Email",
+        "phone": "Telefónne číslo"
+      },
+      "location": {
+        "title": "Lokalita",
+        "street": "Ulica",
+        "city": "Mesto",
+        "zip": "PSČ",
+        "country": "Krajina"
+      },
+      "businessDetails": {
+        "title": "Obchodné údaje",
+        "businessId": "Bussiness ID",
+        "vatId": "VAT ID",
+        "taxId": "Tax ID"
+      }
     },
     "err": {
       "createFailed": "Nepodarilo sa vytvoriť zákazníka",

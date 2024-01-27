@@ -291,7 +291,7 @@ export function EditInvoiceForm(props: EditInvoiceFormProps) {
           <div className="sticky bottom-0 bg-background py-4">
             <div className="flex  flex-row items-center justify-end">
               <Button type="submit" isLoading={editMutation.isLoading}>
-                Save
+                {t("common.save")}
               </Button>
             </div>
           </div>

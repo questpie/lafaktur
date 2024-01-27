@@ -1,5 +1,6 @@
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useTranslations } from "next-intl";
 import { useForm } from "react-hook-form";
 import { useSelectedOrganization } from "~/app/[locale]/(main)/[organization]/_components/organization-provider";
 import {
@@ -19,7 +20,6 @@ import {
   FormMessage,
 } from "~/app/_components/ui/form";
 import { Input } from "~/app/_components/ui/input";
-import { invariant } from "~/app/_utils/misc-utils";
 import { insertCustomerSchema } from "~/server/db/db-schema";
 import { api } from "~/trpc/react";
 import type { RouterInputs } from "~/trpc/shared";
@@ -29,9 +29,9 @@ export type CreateCustomerFormValues = RouterInputs["customer"]["create"];
 export function CreateCustomerForm() {
   const createMutation = api.customer.create.useMutation();
 
-  const selectedOrganization = useSelectedOrganization();
+  const t = useTranslations();
 
-  invariant(selectedOrganization, "selectedOrganization is required");
+  const selectedOrganization = useSelectedOrganization();
 
   const form = useForm<CreateCustomerFormValues>({
     resolver: zodResolver(insertCustomerSchema),
@@ -53,7 +53,7 @@ export function CreateCustomerForm() {
         <Accordion type="multiple" defaultValue={["personal", "business"]}>
           <AccordionItem value="personal" className="">
             <AccordionTrigger className="text-muted-foreground">
-              Personal
+              {t("customer.addCustomerPage.personalDetails.title")}
             </AccordionTrigger>
             <AccordionContent className="grid w-full grid-cols-12 gap-4">
               <FormField
@@ -61,7 +61,9 @@ export function CreateCustomerForm() {
                 name="name"
                 render={({ field }) => (
                   <FormItem className="col-span-12 flex flex-col md:col-span-6">
-                    <FormLabel>Customer name</FormLabel>
+                    <FormLabel>
+                      {t("customer.addCustomerPage.personalDetails.name")}
+                    </FormLabel>
                     <FormControl>
                       <Input {...field} value={field.value ?? ""} />
                     </FormControl>
@@ -76,7 +78,9 @@ export function CreateCustomerForm() {
                 name="email"
                 render={({ field }) => (
                   <FormItem className="col-span-12 flex flex-col md:col-span-6">
-                    <FormLabel>Email</FormLabel>
+                    <FormLabel>
+                      {t("customer.addCustomerPage.personalDetails.email")}
+                    </FormLabel>
                     <FormControl>
                       <Input {...field} value={field.value ?? ""} />
                     </FormControl>
@@ -91,7 +95,9 @@ export function CreateCustomerForm() {
                 name="phone"
                 render={({ field }) => (
                   <FormItem className="col-span-12 flex flex-col md:col-span-6">
-                    <FormLabel>Phone</FormLabel>
+                    <FormLabel>
+                      {t("customer.addCustomerPage.personalDetails.phone")}
+                    </FormLabel>
                     <FormControl>
                       <Input {...field} value={field.value ?? ""} />
                     </FormControl>
@@ -105,7 +111,7 @@ export function CreateCustomerForm() {
 
           <AccordionItem value="location" className="">
             <AccordionTrigger className="text-muted-foreground">
-              Location
+              {t("customer.addCustomerPage.location.title")}
             </AccordionTrigger>
             <AccordionContent className="grid w-full grid-cols-12 gap-4">
               <FormField
@@ -113,7 +119,9 @@ export function CreateCustomerForm() {
                 name="street"
                 render={({ field }) => (
                   <FormItem className="col-span-12 flex flex-col md:col-span-6">
-                    <FormLabel>Street</FormLabel>
+                    <FormLabel>
+                      {t("customer.addCustomerPage.location.street")}
+                    </FormLabel>
                     <FormControl>
                       <Input {...field} value={field.value ?? ""} />
                     </FormControl>
@@ -128,7 +136,9 @@ export function CreateCustomerForm() {
                 name="city"
                 render={({ field }) => (
                   <FormItem className="col-span-12 flex flex-col md:col-span-6">
-                    <FormLabel>City</FormLabel>
+                    <FormLabel>
+                      {t("customer.addCustomerPage.location.city")}
+                    </FormLabel>
                     <FormControl>
                       <Input {...field} value={field.value ?? ""} />
                     </FormControl>
@@ -143,7 +153,9 @@ export function CreateCustomerForm() {
                 name="zip"
                 render={({ field }) => (
                   <FormItem className="col-span-12 flex flex-col md:col-span-6">
-                    <FormLabel>Zip code</FormLabel>
+                    <FormLabel>
+                      {t("customer.addCustomerPage.location.zip")}
+                    </FormLabel>
                     <FormControl>
                       <Input {...field} value={field.value ?? ""} />
                     </FormControl>
@@ -158,7 +170,9 @@ export function CreateCustomerForm() {
                 name="country"
                 render={({ field }) => (
                   <FormItem className="col-span-12 flex flex-col md:col-span-6">
-                    <FormLabel>Country</FormLabel>
+                    <FormLabel>
+                      {t("customer.addCustomerPage.location.country")}
+                    </FormLabel>
                     <FormControl>
                       <Input {...field} value={field.value ?? ""} />
                     </FormControl>
@@ -170,9 +184,10 @@ export function CreateCustomerForm() {
             </AccordionContent>
           </AccordionItem>
 
+          {/* TODO: transtale these 3 to slovak - which is which :) */}
           <AccordionItem value="business" className="">
             <AccordionTrigger className="text-muted-foreground">
-              Business
+              {t("customer.addCustomerPage.businessDetails.title")}
             </AccordionTrigger>
             <AccordionContent className="grid w-full grid-cols-12 gap-4">
               <FormField
@@ -180,7 +195,9 @@ export function CreateCustomerForm() {
                 name="businessId"
                 render={({ field }) => (
                   <FormItem className="col-span-12 flex flex-col md:col-span-6">
-                    <FormLabel>Business ID</FormLabel>
+                    <FormLabel>
+                      {t("customer.addCustomerPage.businessDetails.businessId")}
+                    </FormLabel>
                     <FormControl>
                       <Input {...field} value={field.value ?? ""} />
                     </FormControl>
@@ -195,7 +212,9 @@ export function CreateCustomerForm() {
                 name="taxId"
                 render={({ field }) => (
                   <FormItem className="col-span-12 flex flex-col md:col-span-6">
-                    <FormLabel>Tax ID</FormLabel>
+                    <FormLabel>
+                      {t("customer.addCustomerPage.businessDetails.taxId")}
+                    </FormLabel>
                     <FormControl>
                       <Input {...field} value={field.value ?? ""} />
                     </FormControl>
@@ -210,7 +229,9 @@ export function CreateCustomerForm() {
                 name="vatId"
                 render={({ field }) => (
                   <FormItem className="col-span-12 flex flex-col md:col-span-6">
-                    <FormLabel>VAT ID</FormLabel>
+                    <FormLabel>
+                      {t("customer.addCustomerPage.businessDetails.vatId")}
+                    </FormLabel>
                     <FormControl>
                       <Input {...field} value={field.value ?? ""} />
                     </FormControl>
@@ -225,7 +246,7 @@ export function CreateCustomerForm() {
 
         <div className="sticky bottom-0 bg-background py-4">
           <div className="flex  flex-row items-center justify-end">
-            <Button type="submit">Save</Button>
+            <Button type="submit">{t("common.save")}</Button>
           </div>
         </div>
       </form>
