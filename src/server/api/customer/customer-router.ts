@@ -1,5 +1,6 @@
 import { customerCreate } from "~/server/api/customer/procedures/customer-create";
 import { customerDeleteById } from "~/server/api/customer/procedures/customer-delete-by-id";
+import { customerEdit } from "~/server/api/customer/procedures/customer-edit";
 import { customerGetAll } from "~/server/api/customer/procedures/customer-get-all";
 import { customerGetById } from "~/server/api/customer/procedures/customer-get-by-id";
 import { createTRPCRouter } from "~/server/api/trpc";
@@ -9,4 +10,5 @@ export const customerRouter = createTRPCRouter({
   getAll: customerGetAll,
   getById: customerGetById,
   deleteById: customerDeleteById,
+  edit: customerEdit,
 });

@@ -185,7 +185,12 @@
   "customer": {
     "err": {
       "notFound": "Customer was not found",
-      "createFailed": "Failed to create customer"
+      "createFailed": "Failed to create customer",
+      "editFailed": "Failed to edit customer"
+    },
+    "success": {
+      "createSuccessful": "Customer created successfully",
+      "editSuccessful": "Customer edited successfully"
     },
     "customerPage": {
       "mainAction": {
@@ -197,6 +202,9 @@
       "mainAction": {
         "label": "Add customer"
       }
+    },
+    "editCustomerPage": {
+      "title": "Edit customer"
     },
     "addCustomerPage": {
       "title": "Add customer",

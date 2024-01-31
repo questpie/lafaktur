@@ -186,6 +186,9 @@
         "label": "Pridať zákazníka"
       }
     },
+    "editCustomerPage": {
+      "title": "Upraviť zákazníka"
+    },
     "addCustomerPage": {
       "title": "Pridať zákazníka",
       "personalDetails": {
@@ -210,7 +213,12 @@
     },
     "err": {
       "createFailed": "Nepodarilo sa vytvoriť zákazníka",
-      "notFound": "Zákazník nebol nájdený"
+      "notFound": "Zákazník nebol nájdený",
+      "editFailed": "Nepodarilo sa upraviť zákazníka"
+    },
+    "success": {
+      "createSuccessful": "Zákazník bol úspešne vytvorený",
+      "editSuccessful": "Zákazník bol úspešne upravený"
     },
     "dataTable": {
       "deleteAction": {

@@ -22,37 +22,44 @@ import {
   FormMessage,
 } from "~/app/_components/ui/form";
 import { Input } from "~/app/_components/ui/input";
-import { createCustomerSchema } from "~/shared/customer/customer-schema";
+import {
+  createCustomerSchema,
+  editCustomerSchema,
+} from "~/shared/customer/customer-schema";
 import { api } from "~/trpc/react";
-import type { RouterInputs } from "~/trpc/shared";
+import type { RouterInputs, RouterOutputs } from "~/trpc/shared";
 
-export type CreateCustomerFormValues = RouterInputs["customer"]["create"];
+export type EditCustomerFormValues = RouterInputs["customer"]["edit"];
 
-export function CreateCustomerForm() {
-  const createMutation = api.customer.create.useMutation();
+export type EditCustomerFormProps = {
+  customer: RouterOutputs["customer"]["getById"];
+};
 
-  const t = useTranslations();
+export function EditCustomerForm({ customer }: EditCustomerFormProps) {
+  const editMutation = api.customer.edit.useMutation();
 
   const router = useRouter();
 
+  const t = useTranslations();
+
   const selectedOrganization = useSelectedOrganization();
 
-  const form = useForm<CreateCustomerFormValues>({
-    resolver: zodResolver(createCustomerSchema),
+  const form = useForm<EditCustomerFormValues>({
+    resolver: zodResolver(editCustomerSchema),
     defaultValues: {
+      ...customer,
       organizationId: selectedOrganization.id,
     },
   });
 
   const handleSubmit = form.handleSubmit(async (values) => {
     try {
-      const res = await createMutation.mutateAsync(values);
-      if (res.id) {
-        toast.success(t("customer.success.createSuccessful"));
-        router.replace(`/${selectedOrganization.slug}/customers/${res.id}`);
-      }
+      await editMutation.mutateAsync(values);
+
+      toast.success(t("customer.success.editSuccessful"));
+      router.replace(`/${selectedOrganization.slug}/customers/${customer.id}`);
     } catch (err) {
-      toast.error(t("customer.err.createFailed"));
+      toast.error(t("customer.err.editFailed"));
     }
   });
 
@@ -62,7 +69,7 @@ export function CreateCustomerForm() {
         onSubmit={handleSubmit}
         className="relative flex max-w-xl flex-col gap-6"
       >
-        <Accordion type="multiple" defaultValue={["personal", "business"]}>
+        <Accordion type="multiple" defaultValue={["personal"]}>
           <AccordionItem value="personal" className="">
             <AccordionTrigger className="text-muted-foreground">
               {t("customer.addCustomerPage.personalDetails.title")}

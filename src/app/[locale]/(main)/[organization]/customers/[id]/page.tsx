@@ -1,10 +1,7 @@
 "use client";
 import { useTranslations } from "next-intl";
 import { LuPenSquare } from "react-icons/lu";
-import {
-  BreadcrumbSegment,
-  HeaderSegment,
-} from "~/app/[locale]/(main)/[organization]/_components/header";
+import { HeaderSegment } from "~/app/[locale]/(main)/[organization]/_components/header";
 import { useSelectedOrganization } from "~/app/[locale]/(main)/[organization]/_components/organization-provider";
 import { CustomerDetails } from "~/app/[locale]/(main)/[organization]/customers/_components/customer-details";
 import CustomerInvoicesDataTable from "~/app/[locale]/(main)/[organization]/customers/_components/customer-invoices-data-table";
@@ -34,11 +31,6 @@ export default function CustomerPage(props: CustomerPageProps) {
           href: `/${selectedOrganization.slug}/customers/${customer.id}/edit`,
           icon: <LuPenSquare />,
         }}
-      />
-      <BreadcrumbSegment
-        label={customer.name}
-        href={`/${props.params.organization}/customers/${props.params.id}`}
-        level={2}
       />
       <CustomerDetails customer={customer} />
       <CustomerInvoicesDataTable customer={customer} />

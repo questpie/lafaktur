@@ -2,14 +2,11 @@ import { TRPCError } from "@trpc/server";
 import { $t } from "~/i18n/dummy";
 import { getOrganization } from "~/server/api/organization/organization-queries";
 import { protectedProcedure } from "~/server/api/trpc";
-import {
-  customersTable,
-  insertCustomerSchema,
-  organizationsTable,
-} from "~/server/db/db-schema";
+import { customersTable, organizationsTable } from "~/server/db/db-schema";
+import { createCustomerSchema } from "~/shared/customer/customer-schema";
 
 export const customerCreate = protectedProcedure
-  .input(insertCustomerSchema)
+  .input(createCustomerSchema)
   .mutation(async ({ ctx, input }) => {
     return ctx.db.transaction(async (trx) => {
       const [organization] = await getOrganization(

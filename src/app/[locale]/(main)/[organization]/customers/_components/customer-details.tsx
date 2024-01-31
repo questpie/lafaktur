@@ -87,7 +87,7 @@ export function CustomerDetails(props: CustomerDetailsProps) {
             <span className="text-xs text-muted-foreground">
               {t("customer.addCustomerPage.businessDetails.businessId")}
             </span>
-            <span>{props.customer.businessId}</span>
+            <span>{props.customer.businessId ?? "-"}</span>
           </div>
           <div className="col-span-12 flex flex-col gap-1 md:col-span-6">
             <span className="text-xs text-muted-foreground">
