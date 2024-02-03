@@ -23,8 +23,7 @@ import {
 } from "~/app/_components/ui/form";
 import { Input } from "~/app/_components/ui/input";
 import {
-  createCustomerSchema,
-  editCustomerSchema,
+  editCustomerSchema
 } from "~/shared/customer/customer-schema";
 import { api } from "~/trpc/react";
 import type { RouterInputs, RouterOutputs } from "~/trpc/shared";

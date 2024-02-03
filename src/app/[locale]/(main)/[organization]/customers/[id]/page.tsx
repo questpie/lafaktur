@@ -3,6 +3,7 @@ import { useTranslations } from "next-intl";
 import { LuPenSquare } from "react-icons/lu";
 import { HeaderSegment } from "~/app/[locale]/(main)/[organization]/_components/header";
 import { useSelectedOrganization } from "~/app/[locale]/(main)/[organization]/_components/organization-provider";
+import { ChartsTest } from "~/app/[locale]/(main)/[organization]/customers/_components/charts-test";
 import { CustomerDetails } from "~/app/[locale]/(main)/[organization]/customers/_components/customer-details";
 import CustomerInvoicesDataTable from "~/app/[locale]/(main)/[organization]/customers/_components/customer-invoices-data-table";
 import { api } from "~/trpc/react";
@@ -33,6 +34,7 @@ export default function CustomerPage(props: CustomerPageProps) {
         }}
       />
       <CustomerDetails customer={customer} />
+      <ChartsTest />
       <CustomerInvoicesDataTable customer={customer} />
     </>
   );
