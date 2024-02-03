@@ -22,9 +22,7 @@ import {
   FormMessage,
 } from "~/app/_components/ui/form";
 import { Input } from "~/app/_components/ui/input";
-import {
-  editCustomerSchema
-} from "~/shared/customer/customer-schema";
+import { editCustomerSchema } from "~/shared/customer/customer-schema";
 import { api } from "~/trpc/react";
 import type { RouterInputs, RouterOutputs } from "~/trpc/shared";
 

@@ -12,14 +12,24 @@ export type CustomerPageProps = {
   params: { id: string; organization: string };
 };
 
-const ChartsTest = dynamic(
+// const ChartsTest = dynamic(
+//   () =>
+//     import(
+//       "~/app/[locale]/(main)/[organization]/customers/_components/charts-test"
+//     ).then((mod) => mod.ChartsTest),
+//   {
+//     ssr: false,
+//     loading: () => <p>Loading...</p>,
+//   },
+// );
+
+const LineChart = dynamic(
   () =>
     import(
-      "~/app/[locale]/(main)/[organization]/customers/_components/charts-test"
-    ).then((mod) => mod.ChartsTest),
+      "~/app/[locale]/(main)/[organization]/customers/_components/line"
+    ).then((mod) => mod.LineChart),
   {
     ssr: false,
-    loading: () => <p>Loading...</p>,
   },
 );
 
@@ -45,7 +55,8 @@ export default function CustomerPage(props: CustomerPageProps) {
         }}
       />
       <CustomerDetails customer={customer} />
-      <ChartsTest />
+      {/* <ChartsTest /> */}
+      <LineChart />
       <CustomerInvoicesDataTable customer={customer} />
     </>
   );
