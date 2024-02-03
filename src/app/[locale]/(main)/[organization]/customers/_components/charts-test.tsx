@@ -104,7 +104,6 @@ export function ChartsTest() {
         </Select>
       </div>
       <div className="h-[300px] w-full">
-        {/* TODO: render SSR? */}
         <Chart
           options={{
             data,
